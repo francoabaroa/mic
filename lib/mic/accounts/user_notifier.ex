@@ -8,7 +8,7 @@ defmodule Mic.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Mic", "contact@example.com"})
+      |> from({"MIC", "contact@example.com"})
       |> subject(subject)
       |> text_body(body)
 
