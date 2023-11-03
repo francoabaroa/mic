@@ -1,3 +1,9 @@
+# Before Every Commit
+
+1. Run `mix text` - fix any failing tests
+2. Run `mix compile`
+3. Any others?
+
 # Commit Message Semantics
 
 See how a minor change to your commit message style can make you a better programmer.
