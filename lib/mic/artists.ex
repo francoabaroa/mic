@@ -7,6 +7,7 @@ defmodule Mic.Artists do
   alias Mic.Repo
 
   alias Mic.Artists.Profile
+  alias Mic.Accounts.User
 
   @doc """
   Returns the list of profiles.
@@ -49,9 +50,9 @@ defmodule Mic.Artists do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_profile(attrs \\ %{}) do
+  def create_profile(%User{} = user, attrs \\ %{}) do
     %Profile{}
-    |> Profile.changeset(attrs)
+    |> Profile.user_changeset(user, attrs)
     |> Repo.insert()
   end
 

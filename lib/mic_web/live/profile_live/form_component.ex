@@ -81,11 +81,9 @@ defmodule MicWeb.ProfileLive.FormComponent do
   end
 
   defp save_profile(socket, :new, profile_params) do
-    # TODO: remove
-    # fetch_current_user
-    # profile_params = Map.put(profile_params, "user_id", socket.assigns.current_user.id)
+    user = socket.assigns.current_user
 
-    case Artists.create_profile(profile_params) do
+    case Artists.create_profile(user, profile_params) do
       {:ok, profile} ->
         notify_parent({:saved, profile})
 

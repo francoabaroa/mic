@@ -3,13 +3,15 @@ defmodule MicWeb.ProfileLiveTest do
 
   import Phoenix.LiveViewTest
   import Mic.ArtistsFixtures
+  import Mic.AccountsFixtures
 
   @create_attrs %{artist_name: "some artist_name", genre: "some genre", influences: "some influences", aspirations: "some aspirations", short_bio: "some short_bio", country: "some country", dob: "2023-11-01", spotify_name: "some spotify_name", youtube_name: "some youtube_name", tiktok_name: "some tiktok_name", instagram_name: "some instagram_name", facebook_name: "some facebook_name", twitter_name: "some twitter_name", website_url: "some website_url"}
   @update_attrs %{artist_name: "some updated artist_name", genre: "some updated genre", influences: "some updated influences", aspirations: "some updated aspirations", short_bio: "some updated short_bio", country: "some updated country", dob: "2023-11-02", spotify_name: "some updated spotify_name", youtube_name: "some updated youtube_name", tiktok_name: "some updated tiktok_name", instagram_name: "some updated instagram_name", facebook_name: "some updated facebook_name", twitter_name: "some updated twitter_name", website_url: "some updated website_url"}
   @invalid_attrs %{artist_name: nil, genre: nil, influences: nil, aspirations: nil, short_bio: nil, country: nil, dob: nil, spotify_name: nil, youtube_name: nil, tiktok_name: nil, instagram_name: nil, facebook_name: nil, twitter_name: nil, website_url: nil}
 
   defp create_profile(_) do
-    profile = profile_fixture()
+    user = user_fixture()
+    profile = profile_fixture(user)
     %{profile: profile}
   end
 

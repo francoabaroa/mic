@@ -4,8 +4,12 @@ defmodule MicWeb.ProfileLive.Index do
   alias Mic.Artists
   alias Mic.Artists.Profile
 
+  on_mount {MicWeb.UserAuth, :mount_current_user}
+
   @impl true
   def mount(_params, _session, socket) do
+    current_user = socket.assigns.current_user
+    socket = assign(socket, :current_user, current_user)
     {:ok, stream(socket, :profiles, Artists.list_profiles())}
   end
 
