@@ -1,0 +1,54 @@
+<.header>
+  Listing Profiles
+  <:actions>
+    <.link patch={~p"/profiles/new"}>
+      <.button>New Profile</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="profiles"
+  rows={@streams.profiles}
+  row_click={fn {_id, profile} -> JS.navigate(~p"/profiles/#{profile}") end}
+>
+  <:col :let={{_id, profile}} label="Artist name"><%= profile.artist_name %></:col>
+  <:col :let={{_id, profile}} label="Genre"><%= profile.genre %></:col>
+  <:col :let={{_id, profile}} label="Influences"><%= profile.influences %></:col>
+  <:col :let={{_id, profile}} label="Aspirations"><%= profile.aspirations %></:col>
+  <:col :let={{_id, profile}} label="Short bio"><%= profile.short_bio %></:col>
+  <:col :let={{_id, profile}} label="Country"><%= profile.country %></:col>
+  <:col :let={{_id, profile}} label="Dob"><%= profile.dob %></:col>
+  <:col :let={{_id, profile}} label="Spotify name"><%= profile.spotify_name %></:col>
+  <:col :let={{_id, profile}} label="Youtube name"><%= profile.youtube_name %></:col>
+  <:col :let={{_id, profile}} label="Tiktok name"><%= profile.tiktok_name %></:col>
+  <:col :let={{_id, profile}} label="Instagram name"><%= profile.instagram_name %></:col>
+  <:col :let={{_id, profile}} label="Facebook name"><%= profile.facebook_name %></:col>
+  <:col :let={{_id, profile}} label="Twitter name"><%= profile.twitter_name %></:col>
+  <:col :let={{_id, profile}} label="Website url"><%= profile.website_url %></:col>
+  <:action :let={{_id, profile}}>
+    <div class="sr-only">
+      <.link navigate={~p"/profiles/#{profile}"}>Show</.link>
+    </div>
+    <.link patch={~p"/profiles/#{profile}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, profile}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="profile-modal" show on_cancel={JS.patch(~p"/profiles")}>
+  <.live_component
+    module={MicWeb.ProfileLive.FormComponent}
+    id={@profile.id || :new}
+    title={@page_title}
+    action={@live_action}
+    profile={@profile}
+    patch={~p"/profiles"}
+  />
+</.modal>
