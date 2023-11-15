@@ -1,6 +1,7 @@
 defmodule MicWeb.AuthController do
   use MicWeb, :controller
 
+  # TODO: uncomment
   def spotify_callback(_conn, %{"code" => _code}) do
     # Exchange the code for an access token
     # case SpotifyService.exchange_code_for_token(code) do

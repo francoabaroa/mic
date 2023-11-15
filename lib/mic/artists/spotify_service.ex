@@ -25,6 +25,7 @@ defmodule SpotifyService do
       {"Content-Type", "application/x-www-form-urlencoded"}
     ]
 
+    # TODO: add env vars for this
     body =
       "grant_type=authorization_code&code=#{code}&redirect_uri=http://localhost:4000/auth/spotify/callback"
 
