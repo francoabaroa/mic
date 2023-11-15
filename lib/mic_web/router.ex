@@ -21,6 +21,8 @@ defmodule MicWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    get "/auth/spotify/callback", AuthController, :spotify_callback
   end
 
   # Other scopes may use custom stacks.

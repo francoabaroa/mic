@@ -9,7 +9,12 @@ defmodule MicWeb.ProfileLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
-    socket = assign(socket, :current_user, current_user)
+
+    socket =
+      socket
+      |> assign(:current_user, current_user)
+      |> assign(:spotify_data, %{})
+
     {:ok, stream(socket, :profiles, Artists.list_profiles())}
   end
 
@@ -47,5 +52,9 @@ defmodule MicWeb.ProfileLive.Index do
     {:ok, _} = Artists.delete_profile(profile)
 
     {:noreply, stream_delete(socket, :profiles, profile)}
+  end
+
+  def handle_event("fetch_artist", %{"value" => artist_name}, socket) do
+    {:noreply, assign(socket, :spotify_data, SpotifyService.fetch_artist(artist_name))}
   end
 end

@@ -20,6 +20,14 @@ if System.get_env("PHX_SERVER") do
   config :mic, MicWeb.Endpoint, server: true
 end
 
+if System.get_env("SPOTIFY_ENV_SET") do
+  config :mic, :spotify,
+    client_id: System.get_env("SPOTIFY_CLIENT_ID"),
+    client_secret: System.get_env("SPOTIFY_CLIENT_SECRET"),
+    api_url: System.get_env("SPOTIFY_API_URL"),
+    token_url: System.get_env("SPOTIFY_TOKEN_URL")
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

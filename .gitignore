@@ -37,6 +37,7 @@ npm-debug.log
 
 # Environment variables, if used
 .env
+.env.*
 
 # ElixirLS config
 .elixir_ls

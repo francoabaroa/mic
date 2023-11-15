@@ -19,14 +19,14 @@ defmodule MicWeb.ProfileLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:artist_name]} type="text" label="Artist name" />
+        <.input field={@form[:artist_name]} type="text" label="Artist name" phx-blur="fetch_artist" />
+        <.input field={@form[:country]} type="text" label="Country" />
         <.input field={@form[:genre]} type="text" label="Genre" />
         <.input field={@form[:influences]} type="text" label="Influences" />
         <.input field={@form[:aspirations]} type="text" label="Aspirations" />
         <.input field={@form[:short_bio]} type="text" label="Short bio" />
-        <.input field={@form[:country]} type="text" label="Country" />
         <.input field={@form[:dob]} type="date" label="Dob" />
-        <.input field={@form[:spotify_name]} type="text" label="Spotify name" />
+        <.input field={@form[:spotify_name]} type="text" label="Spotify name" value="" />
         <.input field={@form[:youtube_name]} type="text" label="Youtube name" />
         <.input field={@form[:tiktok_name]} type="text" label="Tiktok name" />
         <.input field={@form[:instagram_name]} type="text" label="Instagram name" />
