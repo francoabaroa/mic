@@ -347,10 +347,10 @@ defmodule Mic.Chat do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_file(%User{} = user, attrs \\ %{}) do
+  def create_file(%Message{} = message, %User{} = user, attrs \\ %{}) do
     %File{}
     |> File.user_changeset(user, attrs)
-    |> File.message_changeset(user, attrs)
+    |> File.message_changeset(message, attrs)
     |> Repo.insert()
   end
 
