@@ -42,3 +42,6 @@ npm-debug.log
 # ElixirLS config
 .elixir_ls
 
+# Project Notes
+CONSIDERATIONS.md
+
