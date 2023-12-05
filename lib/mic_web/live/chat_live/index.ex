@@ -7,15 +7,15 @@ defmodule MicWeb.ChatLive.Index do
 
   @type state :: %{messages: [Message.t()], loading: boolean(), streaming_message: Message.t()}
 
-  @spec dummy_messages() :: [Message.t()]
-  defp dummy_messages do
+  @spec initial_messages() :: [Message.t()]
+  defp initial_messages do
     [%Message{content: "Hi there! How can I assist you today?", sender: :assistant, id: 0}]
   end
 
   @spec initial_state() :: state
   defp initial_state do
     %{
-      messages: dummy_messages(),
+      messages: initial_messages(),
       loading: false,
       streaming_message: %Message{content: "", sender: :assistant, id: -1}
     }
