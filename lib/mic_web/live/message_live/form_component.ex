@@ -73,6 +73,7 @@ defmodule MicWeb.MessageLive.FormComponent do
   defp save_message(socket, :new, message_params) do
     # TODO: need to pass in assistant and thread here.
     # if thread does not exist, create it.
+    # TODO: fix function signature
     case Chat.create_message(message_params) do
       {:ok, message} ->
         notify_parent({:saved, message})

@@ -43,6 +43,7 @@ defmodule MicWeb do
         layouts: [html: MicWeb.Layouts]
 
       import Plug.Conn
+      # TODO: this this need to be commented out below?
       import MicWeb.Gettext
 
       unquote(verified_routes())
@@ -84,6 +85,7 @@ defmodule MicWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
+      # TODO: need to comment out?
       import MicWeb.CoreComponents
       import MicWeb.Gettext
 

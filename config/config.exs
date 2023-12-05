@@ -9,7 +9,34 @@ import Config
 
 config :mic,
   ecto_repos: [Mic.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  # TODO: remove
+  # or gpt-3.5-turbo
+  model: "gpt-3.5-turbo",
+  enabled_models: ["gpt-3.5-turbo", "davinci"],
+  default_model: :"gpt-4",
+  models: [
+    %{
+      id: :"gpt-4",
+      truncate_tokens: 8000
+    },
+    %{
+      id: :"gpt-3.5-turbo",
+      truncate_tokens: 4000
+    },
+    %{
+      id: :davinci,
+      truncate_tokens: 2200
+    },
+    %{
+      id: :"gpt-3.5-turbo-16k",
+      truncate_tokens: 15000
+    }
+  ],
+  # TODO: change to true below
+  enable_google_oauth: false,
+  restrict_email_domains: false,
+  allowed_email_domains: ["google.com"]
 
 # Configures the endpoint
 config :mic, MicWeb.Endpoint,

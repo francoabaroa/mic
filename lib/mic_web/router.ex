@@ -22,6 +22,8 @@ defmodule MicWeb.Router do
 
     get "/", PageController, :home
 
+    # TODO: remove or leave
+    get "/auth/google/callback", PageController, :oauth_callback
     get "/auth/spotify/callback", AuthController, :spotify_callback
   end
 
@@ -66,6 +68,9 @@ defmodule MicWeb.Router do
   scope "/", MicWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    # TODO: move into live just like chat
+    get "/scenario/:scenario_id", PageController, :scenario
+
     live_session :require_authenticated_user,
       on_mount: [{MicWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
@@ -86,6 +91,9 @@ defmodule MicWeb.Router do
 
       live "/messages/:id", MessageLive.Show, :show
       live "/messages/:id/show/edit", MessageLive.Show, :edit
+
+      # TODO: merge chat and messages
+      live "/chat", ChatLive.Index, :index
     end
   end
 

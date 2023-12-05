@@ -16,6 +16,12 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
+
+get_or_raise = fn key ->
+  System.get_env(key) ||
+    raise "#{key} is not set. Set the environment variable, or change this in runtime.exs"
+end
+
 if System.get_env("PHX_SERVER") do
   config :mic, MicWeb.Endpoint, server: true
 end
@@ -27,6 +33,15 @@ if System.get_env("SPOTIFY_ENV_SET") do
     api_url: System.get_env("SPOTIFY_API_URL"),
     token_url: System.get_env("SPOTIFY_TOKEN_URL")
 end
+
+config :ex_openai,
+  api_key: get_or_raise.("OPENAI_API_KEY"),
+  organization_key: get_or_raise.("OPENAI_ORGANIZATION_KEY"),
+  http_options: [recv_timeout: 30_000]
+
+config :elixir_auth_google,
+  client_id: System.get_env("GOOGLE_AUTH_CLIENT_ID"),
+  client_secret: System.get_env("GOOGLE_AUTH_CLIENT_SECRET")
 
 if config_env() == :prod do
   database_url =

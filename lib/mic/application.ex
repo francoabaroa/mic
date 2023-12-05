@@ -17,7 +17,8 @@ defmodule Mic.Application do
       # Start a worker by calling: Mic.Worker.start_link(arg)
       # {Mic.Worker, arg},
       # Start to serve requests, typically the last entry
-      MicWeb.Endpoint
+      MicWeb.Endpoint,
+      Mic.Chat.Tokenizer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

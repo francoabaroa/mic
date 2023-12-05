@@ -10,6 +10,13 @@ defmodule Mic.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
+      # TODO: do I need?
+      # releases: [
+      #   chatgpt: [
+      #     include_executables_for: [:unix],
+      #     applications: [runtime_tools: :permanent]
+      #   ]
+      # ]
     ]
   end
 
@@ -32,7 +39,7 @@ defmodule Mic.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:httpoison, "~> 1.8"},
+      {:httpoison, "~> 2.0.0", override: true},
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.9"},
       {:phoenix_ecto, "~> 4.4"},
@@ -52,7 +59,14 @@ defmodule Mic.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:ex_openai, ">=  1.4.0"},
+      {:earmark, "~> 1.4.37"},
+      {:elixir_auth_google, "~> 1.6.5"},
+      {:cachex, "~> 3.6"},
+      {:elixir_uuid, "~> 1.2"},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:tokenizers, "~> 0.3.0"}
     ]
   end
 
