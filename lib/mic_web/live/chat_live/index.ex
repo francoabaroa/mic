@@ -7,15 +7,19 @@ defmodule MicWeb.ChatLive.Index do
 
   @type state :: %{messages: [Message.t()], loading: boolean(), streaming_message: Message.t()}
 
-  @spec initial_messages() :: [Message.t()]
-  defp initial_messages do
+  @spec initial_messages(String.t() | nil) :: [Message.t()]
+  defp initial_messages(nil) do
     [%Message{content: "Hi there! How can I assist you today?", sender: :assistant, id: 0}]
   end
 
-  @spec initial_state() :: state
-  defp initial_state do
+  defp initial_messages(scenario_description) when is_binary(scenario_description) do
+    [%Message{content: scenario_description, sender: :assistant, id: 0}]
+  end
+
+  @spec initial_state(String.t() | nil) :: state
+  defp initial_state(scenario_description) do
     %{
-      messages: initial_messages(),
+      messages: initial_messages(scenario_description),
       loading: false,
       streaming_message: %Message{content: "", sender: :assistant, id: -1}
     }
@@ -28,32 +32,45 @@ defmodule MicWeb.ChatLive.Index do
     models = Application.get_env(:mic, :models, [model])
     scenarios = MicWeb.Scenario.default_scenarios()
 
+    # Determine the mode based on the presence of a scenario_id in the params
+    mode = if scenario_id = Map.get(params, "scenario_id"), do: :scenario, else: :chat
+
+    # Fetch the scenario if in scenario mode
+    scenario = if mode == :scenario, do: fetch_scenario(scenario_id), else: nil
+    scenario_description = if mode == :scenario, do: scenario.description, else: nil
+
     openai_pid =
-      case session do
-        %{"model" => model, "models" => models, "mode" => :scenario, "scenario" => scenario} ->
-          {:ok, pid} =
-            Mic.Chat.OpenAI.start_link(
-              messages: scenario.messages,
-              keep_context: Map.get(scenario, "keep_context", false)
-            )
+      if mode == :scenario do
+        init_settings = %{
+          messages: scenario.messages,
+          keep_context: Map.get(scenario, "keep_context", false)
+        }
 
-          pid
-
-        _ ->
-          {:ok, pid} = Mic.Chat.OpenAI.start_link(%{})
-          pid
+        {:ok, pid} = Mic.Chat.OpenAI.start_link(init_settings)
+        pid
+      else
+        init_settings = %{}
+        {:ok, pid} = Mic.Chat.OpenAI.start_link(init_settings)
+        pid
       end
 
     {:ok,
      socket
-     |> assign(initial_state())
+     |> assign(initial_state(scenario_description))
      |> assign(
        openai_pid: openai_pid,
        model: model,
        models: models,
        scenarios: scenarios,
-       mode: Map.get(session, "mode", :chat)
+       mode: mode,
+       scenario: scenario
      )}
+  end
+
+  # Fetches the scenario based on the scenario_id
+  defp fetch_scenario(scenario_id) do
+    MicWeb.Scenario.default_scenarios()
+    |> Enum.find(fn sc -> sc.id == scenario_id end)
   end
 
   def handle_event(ev, params, socket) do

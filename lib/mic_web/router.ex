@@ -68,9 +68,6 @@ defmodule MicWeb.Router do
   scope "/", MicWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    # TODO: move into live just like chat
-    get "/scenario/:scenario_id", PageController, :scenario
-
     live_session :require_authenticated_user,
       on_mount: [{MicWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
@@ -93,6 +90,7 @@ defmodule MicWeb.Router do
       live "/messages/:id/show/edit", MessageLive.Show, :edit
 
       # TODO: merge chat and messages
+      live "/chat/:scenario_id", ChatLive.Index, :index
       live "/chat", ChatLive.Index, :index
     end
   end
