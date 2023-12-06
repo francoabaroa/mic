@@ -96,7 +96,7 @@ defmodule MicWeb.Scenario do
         id: "analyze-contract",
         name: "📗 Analyze a music contract",
         description:
-          "I summarize music contracts and flag any potential red flags/predatory terms!",
+          "I summarize music contracts and flag any potential red flags/predatory terms. (Copy and paste for now - file upload coming soon).",
         messages: [
           %MicWeb.Message{
             content:
