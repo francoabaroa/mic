@@ -19,61 +19,10 @@ defmodule MicWeb.PageController do
     end
   end
 
-  defp render_page(conn, params, args) do
-    default_model = Application.get_env(:mic, :default_model, :"gpt-3.5-turbo")
-
-    session_model =
-      case get_session(conn) do
-        %{"model" => model} ->
-          model
-
-        _ ->
-          default_model
-      end
-
-    model =
-      case Map.get(params, "model", nil) do
-        nil -> session_model
-        m -> m
-      end
-
-    args =
-      Map.merge(
-        %{
-          "model" => model,
-          "models" => Application.get_env(:mic, :models, [model]),
-          "scenarios" => MicWeb.Scenario.default_scenarios()
-        },
-        args
-      )
-
-    conn = put_session(conn, "model", Map.get(params, "model", model))
-
-    if Application.get_env(:mic, :enable_google_oauth, false) do
-      protect_with_session(
-        conn,
-        params,
-        fn ->
-          live_render(conn, MicWeb.ChatLive.Index, session: args)
-        end
-      )
-    else
-      live_render(conn, MicWeb.ChatLive.Index, session: args)
-    end
-  end
-
   def home(conn, _params) do
     # The home page is often custom made,
     # so skip the default app layout.
     render(conn, :home, layout: false)
-  end
-
-  def scenario(conn, params) do
-    scenario =
-      MicWeb.Scenario.default_scenarios()
-      |> Enum.find(fn sc -> sc.id == Map.get(params, "scenario_id", nil) end)
-
-    render_page(conn, params, %{} |> Map.put("mode", :scenario) |> Map.put("scenario", scenario))
   end
 
   def oauth_callback(conn, %{"code" => code}) do
