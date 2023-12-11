@@ -4,6 +4,9 @@
     <.link patch={~p"/profiles/new"}>
       <.button>New Profile</.button>
     </.link>
+    <button id="spotify-auth-button" phx-click="auth_spotify" phx-hook="RedirectToSpotify">
+      Log Into Spotify
+    </button>
   </:actions>
 </.header>
 
@@ -42,7 +45,12 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="profile-modal" show on_cancel={JS.patch(~p"/profiles")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="profile-modal"
+  show
+  on_cancel={JS.patch(~p"/profiles")}
+>
   <.live_component
     module={MicWeb.ProfileLive.FormComponent}
     id={@profile.id || :new}
@@ -51,5 +59,6 @@
     profile={@profile}
     patch={~p"/profiles"}
     current_user={@current_user}
+    hooks={%{"RedirectToSpotify" => true}}
   />
 </.modal>

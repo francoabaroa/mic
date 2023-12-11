@@ -57,4 +57,23 @@ defmodule MicWeb.ProfileLive.Index do
   def handle_event("fetch_artist", %{"value" => artist_name}, socket) do
     {:noreply, assign(socket, :spotify_data, SpotifyService.fetch_artist(artist_name))}
   end
+
+  def handle_event("auth_spotify", _params, socket) do
+    config = Application.get_env(:mic, :spotify)
+    client_id = config[:client_id]
+    redirect_uri = config[:redirect_uri]
+    auth_url = config[:auth_url]
+
+    full_auth_url =
+      auth_url <>
+        URI.encode_query(%{
+          client_id: client_id,
+          response_type: "code",
+          redirect_uri: redirect_uri,
+          scope: "user-read-private user-read-email",
+          show_dialog: true
+        })
+
+    {:noreply, push_event(socket, "redirect_to_spotify", %{url: full_auth_url})}
+  end
 end

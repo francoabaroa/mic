@@ -12,6 +12,26 @@ defmodule SpotifyService do
     end
   end
 
+  def get_current_user_profile(access_token) do
+    config = spotify_config()
+    api_url = config[:api_url]
+
+    headers = [Authorization: "Bearer #{access_token}"]
+    url = "#{api_url}/me"
+
+    case HTTPoison.get(url, headers) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        user_data = decode_artist_data(body)
+        {:ok, user_data}
+
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        {:error, "Failed to fetch user profile. Status: #{status_code}. Response: #{body}"}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, reason}
+    end
+  end
+
   def exchange_code_for_token(code) do
     config = spotify_config()
     client_id = config[:client_id]

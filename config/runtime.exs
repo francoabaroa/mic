@@ -31,7 +31,9 @@ if System.get_env("SPOTIFY_ENV_SET") do
     client_id: System.get_env("SPOTIFY_CLIENT_ID"),
     client_secret: System.get_env("SPOTIFY_CLIENT_SECRET"),
     api_url: System.get_env("SPOTIFY_API_URL"),
-    token_url: System.get_env("SPOTIFY_TOKEN_URL")
+    token_url: System.get_env("SPOTIFY_TOKEN_URL"),
+    redirect_uri: System.get_env("SPOTIFY_REDIRECT_URI"),
+    auth_url: System.get_env("SPOTIFY_AUTH_URL")
 end
 
 config :ex_openai,

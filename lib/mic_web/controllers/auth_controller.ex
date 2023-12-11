@@ -1,21 +1,28 @@
 defmodule MicWeb.AuthController do
   use MicWeb, :controller
 
-  # TODO: uncomment
-  def spotify_callback(_conn, %{"code" => _code}) do
-    # Exchange the code for an access token
-    # case SpotifyService.exchange_code_for_token(code) do
-    #   {:ok, access_token} ->
-    #     # Store the access token in the session or database
-    #     # Redirect the user to another page, e.g., user dashboard
-    #     conn
-    #     |> put_flash(:info, "Successfully authenticated with Spotify.")
-    #     |> redirect(to: Routes.dashboard_path(conn, :index))
+  def spotify_callback(conn, %{"code" => code}) do
+    case SpotifyService.exchange_code_for_token(code) do
+      {:ok, access_token} ->
+        # TODO: Store the access token in the session or database
 
-    #   {:error, reason} ->
-    #     conn
-    #     |> put_flash(:error, "Failed to authenticate with Spotify: #{reason}")
-    #     |> redirect(to: Routes.page_path(conn, :index))
-    # end
+        # Fetch the current user's profile
+        case SpotifyService.get_current_user_profile(access_token) do
+          {:ok, _user_data} ->
+            conn
+            |> put_flash(:info, "Successfully authenticated with Spotify.")
+            |> redirect(to: "/")
+
+          {:error, _error} ->
+            conn
+            |> put_flash(:error, "Failed to retrieve user profile from Spotify.")
+            |> redirect(to: "/error")
+        end
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, "Failed to authenticate with Spotify: #{reason}")
+        |> redirect(to: "/error")
+    end
   end
 end
