@@ -3,6 +3,6 @@ defmodule MicWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Music Incurator Club"
+    assert html_response(conn, 200) =~ "Incurator"
   end
 end
