@@ -13,6 +13,7 @@ defmodule MicWeb.MessageListComponent do
           id={message.id}
           message={message.content}
           sender={message.sender}
+          assistant_type={@assistant_type}
         />
       <% end %>
     </div>

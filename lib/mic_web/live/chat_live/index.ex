@@ -58,6 +58,7 @@ defmodule MicWeb.ChatLive.Index do
      socket
      |> assign(initial_state(scenario_description))
      |> assign(
+       assistant_type: scenario_id,
        openai_pid: openai_pid,
        model: model,
        models: models,
