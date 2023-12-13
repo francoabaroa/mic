@@ -14,8 +14,12 @@ config :mic,
   # or gpt-3.5-turbo
   model: "gpt-3.5-turbo",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4",
+  default_model: :"gpt-4-1106-preview",
   models: [
+    %{
+      id: :"gpt-4-1106-preview",
+      truncate_tokens: 127_000
+    },
     %{
       id: :"gpt-4",
       truncate_tokens: 8000
