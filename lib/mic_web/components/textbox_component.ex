@@ -10,7 +10,7 @@ defmodule MicWeb.TextboxComponent do
   end
 
   def handle_event("onsubmit", %{"main" => %{"text" => text}}, socket) do
-    if String.length(text) >= 2 and socket.assigns.disabled == false do
+    if String.length(text) >= 1 and socket.assigns.disabled == false do
       socket.assigns.on_submit.(text)
       {:noreply, socket |> assign(form: new_form())}
     else
