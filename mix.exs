@@ -41,7 +41,7 @@ defmodule Mic.MixProject do
     [
       {:httpoison, "~> 2.0.0", override: true},
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.7.9"},
+      {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
