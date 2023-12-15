@@ -1,243 +1,100 @@
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
-  <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-    <div class="mx-auto max-w-xl lg:mx-0">
-      <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-        Curious about the Music Funnel, <%= @current_user.email %>?
+  <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
+    <div class="mx-auto max-w-4xl lg:mx-0">
+      <h1 class="text-brand mt-2 text-lg font-semibold leading-8">
+        Music Funnel: An alternative artist development path
       </h1>
-      <div class="flex mt-10">
-        <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-          Stay tuned!
-        </h1>
-      </div>
-    </div>
-  </div>
-<% else %>
-  <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-    <div class="mx-auto max-w-xl lg:mx-0">
-      <svg
-        version="1.1"
-        id="Layer_1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        x="0px"
-        y="0px"
-        width="20%"
-        height="20%"
-        viewBox="0 0 512 512"
-        enable-background="new 0 0 512 512"
-        xml:space="preserve"
-      >
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M111.723038,304.000092
-          C111.715332,259.837585 111.682632,216.175125 111.710396,172.512680
-          C111.731033,140.069366 133.156265,112.999344 164.755524,105.458832
-          C169.446121,104.339516 174.205002,103.659424 179.070038,103.662796
-          C233.064850,103.700279 287.059723,103.665451 341.054535,103.703529
-          C377.053375,103.728912 405.198669,128.254013 410.138367,163.860489
-          C410.434052,165.991852 410.328308,168.185547 410.328674,170.350250
-          C410.338409,227.678101 410.361908,285.005951 410.329224,342.333801
-          C410.309448,377.037079 386.131927,405.143921 351.759033,410.085297
-          C341.198944,411.603424 330.475891,411.095917 319.811523,411.091522
-          C273.983887,411.072662 228.156235,411.123871 182.328598,411.108551
-          C142.377182,411.095215 111.795845,380.499054 111.711258,340.496277
-          C111.685883,328.497620 111.718147,316.498840 111.723038,304.000092
-        M188.528656,393.648376
-          C239.006256,393.648071 289.483917,393.690857 339.961426,393.631073
-          C369.490479,393.596100 392.647919,370.446930 392.661316,341.044067
-          C392.687073,284.569031 392.677399,228.094009 392.662201,171.618988
-          C392.655121,145.170807 369.337708,121.461342 342.958313,121.407066
-          C288.649231,121.295311 234.339752,121.332741 180.030548,121.397217
-          C162.033340,121.418587 148.733307,130.226456 138.484741,144.367554
-          C130.739639,155.054337 129.474045,167.517639 129.438873,180.078720
-          C129.290527,233.054794 129.257034,286.032043 129.475479,339.007629
-          C129.525711,351.187897 132.776321,362.688843 140.314301,372.651337
-          C152.198639,388.358124 168.391342,394.313721 188.528656,393.648376
-        z"
-        />
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M237.628784,255.533508
-          C237.506027,269.987000 237.442841,283.974915 237.353470,297.962677
-          C237.311844,304.476410 234.781342,307.849060 229.697083,308.267761
-          C224.517471,308.694305 220.609543,305.297791 220.336349,298.913696
-          C219.852539,287.607422 219.974655,276.275055 219.852264,264.953552
-          C219.829422,262.840515 219.848984,260.727020 219.848984,256.962738
-          C214.033173,262.846527 209.295959,267.620270 204.580566,272.415497
-          C200.638367,276.424408 199.157364,276.307556 195.175186,272.394165
-          C190.446884,267.747559 185.490387,263.333130 180.545761,258.737213
-          C179.737320,260.394684 180.285294,262.736694 180.265656,264.951599
-          C180.178513,274.776733 180.217300,284.602936 180.189072,294.428650
-          C180.184296,296.091705 180.213791,297.773621 179.987579,299.413757
-          C179.215027,305.015228 175.689072,308.432526 170.987137,308.282135
-          C166.109467,308.126068 162.703079,304.205963 162.686249,298.324951
-          C162.626648,277.507599 162.669495,256.689972 162.657303,235.872452
-          C162.655075,232.061737 163.921997,228.891113 167.585129,227.374115
-          C171.462357,225.768463 175.160095,226.437149 178.124146,229.529434
-          C184.115540,235.780075 190.160034,241.990189 195.897644,248.469376
-          C198.768463,251.711227 200.721481,252.106903 203.771454,248.596558
-          C209.007797,242.569824 214.761292,236.995392 220.201065,231.141296
-          C223.357635,227.744308 226.883057,225.442841 231.647964,227.111801
-          C236.529846,228.821747 237.620743,233.078430 237.724747,237.594635
-          C237.858810,243.415604 237.706589,249.243149 237.628784,255.533508
-        z"
-        />
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M289.980896,286.812439
-          C275.624695,259.206757 294.001343,225.336807 326.853363,225.802353
-          C335.361786,225.922913 343.232758,228.654449 349.854828,234.265289
-          C354.498657,238.199982 355.475525,242.612946 352.722473,246.493896
-          C349.748871,250.685791 344.449615,251.475845 339.431946,248.042725
-          C331.581543,242.671448 323.551422,241.451324 315.075104,246.293198
-          C306.537537,251.170059 303.091003,258.813934 303.245117,268.404663
-          C303.506500,284.670959 321.135193,295.213684 335.550110,287.649872
-          C337.460114,286.647644 339.156372,285.240509 341.058868,284.221039
-          C345.230865,281.985443 349.947479,283.080322 352.581635,286.762482
-          C355.213135,290.440918 354.971741,294.715698 351.515991,298.086060
-          C346.080139,303.387512 339.268707,306.211304 331.904877,307.244385
-          C313.624634,309.808929 299.803467,302.714081 289.980896,286.812439
-        z"
-        />
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M274.029358,215.198578
-          C264.743530,220.491943 256.510132,220.172699 249.614212,214.469864
-          C242.801956,208.836258 240.319717,199.661697 243.374725,190.998199
-          C246.227005,182.909500 252.331635,178.655289 260.557465,177.908127
-          C268.446533,177.191544 274.932739,180.532257 279.120544,187.275085
-          C283.600647,194.488495 283.608276,202.051712 279.282867,209.453384
-          C278.023682,211.608139 276.433380,213.543427 274.029358,215.198578
-        z"
-        />
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M254.804016,239.064240
-          C257.925232,235.171844 261.644745,234.369064 265.787323,235.938263
-          C269.755676,237.441483 271.145721,241.020538 271.174194,244.785156
-          C271.311523,262.944458 271.329559,281.106964 271.117310,299.265167
-          C271.054016,304.683716 267.548950,308.082214 262.936615,308.326752
-          C257.966156,308.590271 254.342789,305.509583 253.433960,300.059082
-          C253.107437,298.100769 253.022690,296.084198 253.015213,294.093475
-          C252.957657,278.765076 252.955078,263.436432 252.912979,248.107956
-          C252.904678,245.085983 253.003082,242.103394 254.804016,239.064240
-        z"
-        />
-        <path
-          fill="#000000"
-          opacity="1.000000"
-          stroke="none"
-          d="
-        M257.621033,343.575928
-          C252.608948,340.468597 251.750671,336.060791 253.154541,331.259583
-          C254.272583,327.435944 257.421448,325.253357 261.344482,325.048187
-          C265.477295,324.832031 268.707672,326.839508 270.437378,330.705231
-          C272.218964,334.686890 271.747986,338.565796 268.793335,341.780792
-          C265.786377,345.052734 262.042145,345.691650 257.621033,343.575928
-        z"
-        />
-      </svg>
-      <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-        Welcome to
-      </h1>
-      <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter text-zinc-900">
-        Incurator
-      </p>
       <p class="mt-4 text-base leading-7 text-zinc-600">
-        Navigate the music industry with confidence, take control of your career, and join the biggest artist community in the world
+        Get another opportunity to be heard and helped by industry experts.
       </p>
-      <div class="flex">
-        <div class="w-full sm:w-auto">
-          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
-            <a
-              href="https://github.com/francoabaroa/mic/tree/main/docs"
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
-            >
-              <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
-              </span>
-              <span class="relative flex items-center gap-4 sm:flex-col">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" class="h-6 w-6">
-                  <path d="m12 4 10-2v18l-10 2V4Z" fill="#18181B" fill-opacity=".15" />
-                  <path
-                    d="M12 4 2 2v18l10 2m0-18v18m0-18 10-2v18l-10 2"
-                    stroke="#18181B"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                Guides &amp; Docs
-              </span>
-            </a>
-            <a
-              href="https://github.com/francoabaroa/mic"
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
-            >
-              <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
-              </span>
-              <span class="relative flex items-center gap-4 sm:flex-col">
-                <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M12 0C5.37 0 0 5.506 0 12.303c0 5.445 3.435 10.043 8.205 11.674.6.107.825-.262.825-.585 0-.292-.015-1.261-.015-2.291C6 21.67 5.22 20.346 4.98 19.654c-.135-.354-.72-1.446-1.23-1.738-.42-.23-1.02-.8-.015-.815.945-.015 1.62.892 1.845 1.261 1.08 1.86 2.805 1.338 3.495 1.015.105-.8.42-1.338.765-1.645-2.67-.308-5.46-1.37-5.46-6.075 0-1.338.465-2.446 1.23-3.307-.12-.308-.54-1.569.12-3.26 0 0 1.005-.323 3.3 1.26.96-.276 1.98-.415 3-.415s2.04.139 3 .416c2.295-1.6 3.3-1.261 3.3-1.261.66 1.691.24 2.952.12 3.26.765.861 1.23 1.953 1.23 3.307 0 4.721-2.805 5.767-5.475 6.075.435.384.81 1.122.81 2.276 0 1.645-.015 2.968-.015 3.383 0 .323.225.707.825.585a12.047 12.047 0 0 0 5.919-4.489A12.536 12.536 0 0 0 24 12.304C24 5.505 18.63 0 12 0Z"
-                    fill="#18181B"
-                  />
-                </svg>
-                Source Code
-              </span>
-            </a>
-          </div>
-          <div class="mt-10 grid grid-cols-1 gap-y-4 text-sm leading-6 text-zinc-700 sm:grid-cols-2">
-            <div>
-              <a
-                href="https://twitter.com/future_page_of_the_mic_club"
-                class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-zinc-50 hover:text-zinc-900"
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  aria-hidden="true"
-                  class="h-4 w-4 fill-zinc-400 group-hover:fill-zinc-600"
-                >
-                  <path d="M5.403 14c5.283 0 8.172-4.617 8.172-8.62 0-.131 0-.262-.008-.391A6.033 6.033 0 0 0 15 3.419a5.503 5.503 0 0 1-1.65.477 3.018 3.018 0 0 0 1.263-1.676 5.579 5.579 0 0 1-1.824.736 2.832 2.832 0 0 0-1.63-.916 2.746 2.746 0 0 0-1.821.319A2.973 2.973 0 0 0 8.076 3.78a3.185 3.185 0 0 0-.182 1.938 7.826 7.826 0 0 1-3.279-.918 8.253 8.253 0 0 1-2.64-2.247 3.176 3.176 0 0 0-.315 2.208 3.037 3.037 0 0 0 1.203 1.836A2.739 2.739 0 0 1 1.56 6.22v.038c0 .7.23 1.377.65 1.919.42.54 1.004.912 1.654 1.05-.423.122-.866.14-1.297.052.184.602.541 1.129 1.022 1.506a2.78 2.78 0 0 0 1.662.598 5.656 5.656 0 0 1-2.007 1.074A5.475 5.475 0 0 1 1 12.64a7.827 7.827 0 0 0 4.403 1.358" />
-                </svg>
-                Follow us on Twitter
-              </a>
-            </div>
-            <div>
-              <a
-                href="https://fly.io/docs/elixir/getting-started/"
-                class="group -mx-2 -my-0.5 inline-flex items-center gap-3 rounded-lg px-2 py-0.5 hover:bg-zinc-50 hover:text-zinc-900"
-              >
-                <svg
-                  viewBox="0 0 20 20"
-                  aria-hidden="true"
-                  class="h-4 w-4 fill-zinc-400 group-hover:fill-zinc-600"
-                >
-                  <path d="M1 12.5A4.5 4.5 0 005.5 17H15a4 4 0 001.866-7.539 3.504 3.504 0 00-4.504-4.272A4.5 4.5 0 004.06 8.235 4.502 4.502 0 001 12.5z" />
-                </svg>
-                Deploy MIC to Fly
-              </a>
-            </div>
-          </div>
-        </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">Introduction to Music Funnel</h2>
+        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
+          <li>
+            A platform that merges AI and music industry expertise, offering a structured seven-step process to foster musician development.
+          </li>
+          <li>
+            Empowers artists with personalized feedback, insightful marketing strategies, and professional production guidance for enhanced market entry and success.
+          </li>
+          <li>
+            Aligns with artists’ ambitions using a future earnings model, ensuring mutual success with no high upfront fees.
+          </li>
+          <li>
+            If you make it through the Music Funnel, you'll get access to strategic industry connections and tools for sustainable monetization and career growth.
+          </li>
+        </ul>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">
+          The Steps of Music Funnel
+        </h2>
+        <ul class="list-decimal pl-6 mt-4 text-sm leading-5 text-zinc-600">
+          <li>
+            <strong>Entry Submission</strong>: Registration, profile creation with social media, and work submission with a $10 fee for copyright agreement and expert review access.
+          </li>
+          <li>
+            <strong>Screening & Reclassification</strong>: AI and human experts evaluate market potential and suggest improvements or reclassification.
+          </li>
+          <li>
+            <strong>First Airing & Evaluation</strong>: Production review for talented artists and feedback for others to adjust submissions.
+          </li>
+          <li>
+            <strong>Production Review</strong>: Feedback on music production's mix, mastering, and overall sound quality, along with AI-driven insights for improvement.
+          </li>
+          <li>
+            <strong>Launch Analysis or Strategic Repositioning</strong>: Monitoring post-launch performance to inform release timing and promotional efforts.
+          </li>
+          <li>
+            <strong>Market Reaction: Rejection, Reposition, or Sign</strong>: Strategizing based on market response and AI analysis to guide artists through rejection, adjustments, or promotion phases.
+          </li>
+          <li>
+            <strong>Final Evaluation</strong>: Consideration of artists for signing, connecting them to an industry network, and planning for career acceleration.
+          </li>
+        </ul>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">Music Funnel: Beyond the App</h2>
+        <p class="mt-4 text-sm leading-5 text-zinc-600">
+          Offering a holistic experience tailored to each artist while balancing technology and personal attention to foster an environment conducive to creativity.
+        </p>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">Qualification for Music Funnel</h2>
+        <p class="mt-4 text-sm leading-5 text-zinc-600">
+          Qualification by merit through observable spikes in streaming counts, followers, or music scouts’ recognition. Access to guided processes is financed through a percentage of future earnings.
+        </p>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">Affordability and Monetization</h2>
+        <p class="mt-4 text-sm leading-5 text-zinc-600">
+          The royalties-share model that aligns with artist success, providing a cost-effective approach with mutual benefits.
+        </p>
+      </div>
+
+      <div class="mt-8">
+        <h2 class="text-brand text-md font-semibold leading-6">Conclusion</h2>
+        <p class="mt-4 text-sm leading-5 text-zinc-600">
+          Music Funnel provides an alternative to traditional record label signings with an AI-supported, expert human-led process to refine and promote artists' careers.
+        </p>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700">
+          Sign up for waitlist
+        </button>
       </div>
     </div>
-  </div>
+  </section>
+<% else %>
+  <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
+    <!-- TODO: Add content for guests goes here -->
+  <!-- You can include call-to-action (CTA) for sign-up or registration -->
+  <!-- Include a brief about Music Funnel to entice new users to join -->
+  </section>
 <% end %>
