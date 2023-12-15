@@ -68,6 +68,7 @@ defmodule MicWeb.Router do
   scope "/", MicWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    # TODO: make visible without auth
     get "/music-funnel", PageController, :funnel
 
     live_session :require_authenticated_user,
