@@ -9,7 +9,14 @@ defmodule MicWeb.ChatLive.Index do
 
   @spec initial_messages(String.t() | nil) :: [Message.t()]
   defp initial_messages(nil) do
-    [%Message{content: "Hi there! How can I assist you today?", sender: :assistant, id: 0}]
+    [
+      %Message{
+        content:
+          "Hi there, how can I assist you today?\n\nI can help with any general questions you have.",
+        sender: :assistant,
+        id: 0
+      }
+    ]
   end
 
   defp initial_messages(scenario_description) when is_binary(scenario_description) do
