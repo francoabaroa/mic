@@ -68,6 +68,8 @@ defmodule MicWeb.Router do
   scope "/", MicWeb do
     pipe_through [:browser, :require_authenticated_user]
 
+    get "/music-funnel", PageController, :funnel
+
     live_session :require_authenticated_user,
       on_mount: [{MicWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
