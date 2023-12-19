@@ -1,18 +1,18 @@
-<header class="px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
-    <div class="flex items-center gap-4">
-      <a href="/">
-        <img src={~p"/images/logo.svg"} width="48" />
-      </a>
-    </div>
-  </div>
-</header>
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
+  <header class="px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+      <div class="flex items-center gap-4">
+        <a href="/">
+          <img src={~p"/images/logo.svg"} width="48" />
+        </a>
+      </div>
+    </div>
+  </header>
   <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
     <div class="mx-auto max-w-xl lg:mx-0">
       <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-        Welcome <%= @current_user.email %>!
+        Welcome <span class="ml-2"><%= @current_user.email %>!</span>
       </h1>
       <div class="flex">
         <div class="w-full sm:w-auto">
