@@ -98,6 +98,7 @@ defmodule Mic.Chat.OpenAI do
           _ -> "Here are additional instructions that 'assistant' HAS TO follow: #{system_msgs}"
         end
 
+      # TODO: Need to edit?
       default_prompt =
         "This is a conversation between the 'user' and a helpful AI assistant called 'assistant'. Only those 2 users are in the conversation. 'assistant' is also very knowledgeable in programming, and provides long replies that go into extensive detail, in a conversational matter. 'assistant' uses markdown in replies.\nThe conversation starts after '-----'\n#{system_prompt}\n-----\n\n"
 
