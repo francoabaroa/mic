@@ -13,7 +13,7 @@ defmodule MicWeb.ProfileLive.Index do
     socket =
       socket
       |> assign(:current_user, current_user)
-      |> assign(:spotify_data, %{})
+      |> assign(:artist_options, %{})
 
     {:ok, stream(socket, :profiles, Artists.list_profiles())}
   end
@@ -55,7 +55,13 @@ defmodule MicWeb.ProfileLive.Index do
   end
 
   def handle_event("fetch_artist", %{"value" => artist_name}, socket) do
-    {:noreply, assign(socket, :spotify_data, SpotifyService.fetch_artist(artist_name))}
+    artists =
+      case SpotifyService.fetch_artist(artist_name) do
+        {:ok, artist_data} -> artist_data
+        {:error, _} -> []
+      end
+
+    {:noreply, assign(socket, :artist_options, artists)}
   end
 
   def handle_event("auth_spotify", _params, socket) do

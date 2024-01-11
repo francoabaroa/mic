@@ -5,6 +5,8 @@ defmodule MicWeb.ProfileLive.FormComponent do
 
   @impl true
   def render(assigns) do
+    assigns = Map.put_new(assigns, :artist_options, nil)
+
     ~H"""
     <div>
       <.header>
@@ -26,7 +28,16 @@ defmodule MicWeb.ProfileLive.FormComponent do
         <.input field={@form[:aspirations]} type="text" label="Aspirations" />
         <.input field={@form[:short_bio]} type="text" label="Short bio" />
         <.input field={@form[:dob]} type="date" label="Dob" />
-        <.input field={@form[:spotify_name]} type="text" label="Spotify name" value="" />
+        <%= if @artist_options do %>
+          <.input
+            field={@form[:spotify_name]}
+            type="select"
+            label="Select your Spotify name"
+            options={Enum.map(@artist_options, fn {name, _id} -> name end)}
+          />
+        <% else %>
+          <.input field={@form[:spotify_name]} type="text" label="Spotify name" value="" />
+        <% end %>
         <.input field={@form[:youtube_name]} type="text" label="Youtube name" />
         <.input field={@form[:tiktok_name]} type="text" label="Tiktok name" />
         <.input field={@form[:instagram_name]} type="text" label="Instagram name" />

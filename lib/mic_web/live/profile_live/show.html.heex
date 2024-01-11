@@ -27,13 +27,19 @@
 
 <.back navigate={~p"/profiles"}>Back to profiles</.back>
 
-<.modal :if={@live_action == :edit} id="profile-modal" show on_cancel={JS.patch(~p"/profiles/#{@profile}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="profile-modal"
+  show
+  on_cancel={JS.patch(~p"/profiles/#{@profile}")}
+>
   <.live_component
     module={MicWeb.ProfileLive.FormComponent}
     id={@profile.id}
     title={@page_title}
     action={@live_action}
     profile={@profile}
+    artist_options={@artist_options}
     patch={~p"/profiles/#{@profile}"}
     current_user={@current_user}
   />

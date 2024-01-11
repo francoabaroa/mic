@@ -99,12 +99,13 @@ defmodule SpotifyService do
     api_url = config[:api_url]
 
     headers = [Authorization: "Bearer #{access_token}"]
-    search_params = URI.encode_query(%{q: artist_name, type: "artist", limit: 1})
+    search_params = URI.encode_query(%{q: artist_name, type: "artist", limit: 5})
     url = "#{api_url}/search?#{search_params}"
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         artist_data = decode_artist_data(body)
+
         {:ok, artist_data}
 
       {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
@@ -116,9 +117,16 @@ defmodule SpotifyService do
   end
 
   defp decode_artist_data(body) do
-    # TODO: remove this
-    IO.inspect(body, label: "body")
-    # Decode the JSON response body to get the artist data
+    with {:ok, decoded} <- Jason.decode(body),
+         %{"artists" => %{"items" => artists}} <- decoded do
+      Enum.map(artists, fn artist ->
+        name = artist["name"]
+        id = artist["id"]
+        {name, id}
+      end)
+    else
+      _ -> {:error, "Failed to decode artist data"}
+    end
   end
 
   defp spotify_config do
