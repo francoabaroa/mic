@@ -1,0 +1,46 @@
+<.header>
+  Profile <%= @profile.id %>
+  <:subtitle>This is a profile record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/profiles/#{@profile}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit profile</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Artist name"><%= @profile.artist_name %></:item>
+  <:item title="Genre"><%= @profile.genre %></:item>
+  <:item title="Influences"><%= @profile.influences %></:item>
+  <:item title="Aspirations"><%= @profile.aspirations %></:item>
+  <:item title="Short bio"><%= @profile.short_bio %></:item>
+  <:item title="Country"><%= @profile.country %></:item>
+  <:item title="Dob"><%= @profile.dob %></:item>
+  <:item title="Spotify name"><%= @profile.spotify_name %></:item>
+  <:item title="Youtube name"><%= @profile.youtube_name %></:item>
+  <:item title="Tiktok name"><%= @profile.tiktok_name %></:item>
+  <:item title="Instagram name"><%= @profile.instagram_name %></:item>
+  <:item title="Facebook name"><%= @profile.facebook_name %></:item>
+  <:item title="Twitter name"><%= @profile.twitter_name %></:item>
+  <:item title="Website url"><%= @profile.website_url %></:item>
+</.list>
+
+<.back navigate={~p"/profiles"}>Back to profiles</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="profile-modal"
+  show
+  on_cancel={JS.patch(~p"/profiles/#{@profile}")}
+>
+  <.live_component
+    module={MicWeb.ProfileLive.FormComponent}
+    id={@profile.id}
+    title={@page_title}
+    action={@live_action}
+    profile={@profile}
+    artist_options={@artist_options}
+    patch={~p"/profiles/#{@profile}"}
+    current_user={@current_user}
+  />
+</.modal>
