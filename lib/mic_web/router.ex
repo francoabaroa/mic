@@ -71,6 +71,7 @@ defmodule MicWeb.Router do
 
     # TODO: make visible without auth
     get "/music-funnel", PageController, :funnel
+    get "/checklist", PageController, :checklist
 
     live_session :require_authenticated_user,
       on_mount: [{MicWeb.UserAuth, :ensure_authenticated}] do

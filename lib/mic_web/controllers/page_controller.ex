@@ -29,6 +29,10 @@ defmodule MicWeb.PageController do
     render(conn, :funnel)
   end
 
+  def checklist(conn, _params) do
+    render(conn, :checklist)
+  end
+
   def oauth_callback(conn, %{"code" => code}) do
     with {:ok, token} <- ElixirAuthGoogle.get_token(code, conn),
          %{access_token: access_token} <- token,
