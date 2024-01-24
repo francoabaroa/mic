@@ -60,7 +60,7 @@ defmodule Mic.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
-      {:ex_openai, ">=  1.4.0"},
+      {:ex_openai, ">=  1.5.0"},
       {:earmark, "~> 1.4.37"},
       {:elixir_auth_google, "~> 1.6.5"},
       {:cachex, "~> 3.6"},
