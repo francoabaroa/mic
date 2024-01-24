@@ -14,7 +14,7 @@ config :mic,
   # or gpt-3.5-turbo
   model: "gpt-3.5-turbo",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4-1106-preview",
+  default_model: :"gpt-3.5-turbo",
   models: [
     %{
       id: :"gpt-4-1106-preview",
