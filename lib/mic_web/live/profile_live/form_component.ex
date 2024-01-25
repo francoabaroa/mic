@@ -41,7 +41,9 @@ defmodule MicWeb.ProfileLive.FormComponent do
         <.input field={@form[:youtube_name]} type="text" label="Youtube name" />
         <.input field={@form[:tiktok_name]} type="text" label="Tiktok name" />
         <.input field={@form[:instagram_name]} type="text" label="Instagram name" />
-        <button phx-click="auth_instagram">Sign Into Instagram</button>
+        <button id="instagram-auth-button" phx-click="auth_instagram" phx-hook="AuthRedirects">
+          Sign Into Instagram
+        </button>
         <.input field={@form[:facebook_name]} type="text" label="Facebook name" />
         <.input field={@form[:twitter_name]} type="text" label="Twitter name" />
         <.input field={@form[:website_url]} type="text" label="Website url" />
