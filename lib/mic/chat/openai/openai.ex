@@ -82,6 +82,11 @@ defmodule Mic.Chat.OpenAI do
   end
 
   @impl true
+  def handle_call(:get_prefers_voice_chat, _from, state) do
+    {:reply, Map.get(state, :prefers_voice_chat, false), state}
+  end
+
+  @impl true
   def handle_call({:msg, m, streamer_pid, "davinci"} = params, from, state) do
     Logger.info("completing with davinci")
 
@@ -232,6 +237,37 @@ defmodule Mic.Chat.OpenAI do
           {:reply, {:error, reason}, state}
       end
     end
+  end
+
+  def generate_speech(input_text) do
+    case ExOpenAI.Audio.create_speech(input_text, :"tts-1", :onyx, stream: true) do
+      {:ok, audio_data} when is_binary(audio_data) ->
+        base64_audio = Base.encode64(audio_data)
+
+        {:ok, base64_audio}
+
+      {:error, reason} ->
+        Logger.error("Error in create_speech request: #{inspect(reason)}")
+        {:error, reason}
+
+      _ ->
+        Logger.error("Unexpected return value from ExOpenAI.Audio.create_speech")
+        {:error, :unexpected_return_value}
+    end
+  end
+
+  def set_prefers_voice_chat(pid, prefers_voice_chat) do
+    GenServer.cast(pid, {:set_prefers_voice_chat, prefers_voice_chat})
+  end
+
+  @impl true
+  def handle_cast({:set_prefers_voice_chat, prefers_voice_chat}, state) do
+    new_state = Map.put(state, :prefers_voice_chat, prefers_voice_chat)
+    {:noreply, new_state}
+  end
+
+  def get_prefers_voice_chat(pid) do
+    GenServer.call(pid, :get_prefers_voice_chat)
   end
 
   @spec start_link(init_settings) :: {:error, any} | {:ok, pid}

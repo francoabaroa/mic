@@ -1,4 +1,5 @@
 defmodule MicWeb.ChatLive.Index do
+  require Logger
   use MicWeb, :live_view
   alias MicWeb.Message
   alias MicWeb.LoadingIndicatorComponent
@@ -12,7 +13,7 @@ defmodule MicWeb.ChatLive.Index do
     [
       %Message{
         content:
-          "Hi there, how can I assist you today?\n\nI can help with any general questions you have.",
+          "Hi! I'm here to onboard you to Incurator.\n\nYou will be able to change your preferences later on.\n\nDo you want me to communicate with you via text or voice?",
         sender: :assistant,
         id: 0
       }
@@ -32,7 +33,9 @@ defmodule MicWeb.ChatLive.Index do
     }
   end
 
+  @impl Phoenix.LiveView
   def mount(params, session, socket) do
+    Phoenix.PubSub.subscribe(Mic.PubSub, "audio:topic")
     default_model = Application.get_env(:mic, :default_model, :"gpt-3.5-turbo")
     session_model = session |> Map.get("model", default_model)
     model = Map.get(params, "model", session_model)
@@ -81,6 +84,39 @@ defmodule MicWeb.ChatLive.Index do
     |> Enum.find(fn sc -> sc.id == scenario_id end)
   end
 
+  @impl Phoenix.LiveView
+  def handle_event("text_interaction", _params, socket) do
+    # If set, unset the preference for voice chat
+    send(self(), {:set_prefers_voice_chat, false})
+
+    new_message = %Message{
+      content: "I'll communicate through text, thanks!",
+      sender: :assistant,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("voice_interaction", _params, socket) do
+    # Set the preference for voice chat
+    send(self(), {:set_prefers_voice_chat, true})
+
+    new_message = %Message{
+      content: "I'll communicate through voice, thanks!",
+      sender: :assistant,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    {:noreply, socket}
+  end
+
   def handle_event(ev, params, socket) do
     IO.puts("handle event")
     IO.inspect(ev)
@@ -110,18 +146,69 @@ defmodule MicWeb.ChatLive.Index do
     ""
   end
 
-  def handle_data(%{id: _id, choices: choices}, state) do
-    streamed_text = parse_choices(choices)
-
-    streaming_message =
-      state.assigns.streaming_message
-      |> Map.put(:content, state.assigns.streaming_message.content <> streamed_text)
-
-    {:noreply,
-     state
-     |> assign(streaming_message: streaming_message)}
+  defp split_at_first_punctuation(text, punctuations) do
+    case Enum.reduce(punctuations, {nil, nil}, fn punct, acc ->
+           if acc == {nil, nil} and String.contains?(text, punct) do
+             [first_part | remaining] = String.split(text, punct, parts: 2)
+             {first_part <> punct, Enum.join(remaining, punct)}
+           else
+             acc
+           end
+         end) do
+      {nil, nil} -> {text, ""}
+      result -> result
+    end
   end
 
+  @impl ExOpenAI.StreamingClient
+  def handle_data(%{id: _id, choices: choices}, state) do
+    characters = [".", "?", "!"]
+    prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(state.assigns.openai_pid)
+    streamed_text = parse_choices(choices)
+
+    # Accumulate the streamed text
+    new_streaming_message_content = state.assigns.streaming_message.content <> streamed_text
+
+    if prefers_voice_chat == true &&
+         Enum.any?(characters, fn character ->
+           String.contains?(new_streaming_message_content, character)
+         end) do
+      # Split the text at the first period
+      {first_sentence, remaining_text} =
+        split_at_first_punctuation(new_streaming_message_content, characters)
+
+      # TODO: need to make this work with pid, and not using pubsub?
+      case Mic.Chat.OpenAI.generate_speech(first_sentence) do
+        {:ok, speech} when is_binary(speech) ->
+          Phoenix.PubSub.broadcast(
+            Mic.PubSub,
+            "audio:topic",
+            {:audio_chunk, %{chunk: speech}}
+          )
+
+        {:error, reason} ->
+          # Log the error for debugging purposes
+          Logger.error("TTS Error: #{inspect(reason)}")
+
+          # TODO: Notify the frontend of the error
+          push_event(state, "tts_error", %{error: "TTS processing failed"})
+      end
+
+      # Update the streaming_message in the state with the remaining text
+      # Rejoin remaining parts if there were more than one period
+      streaming_message = Map.put(state.assigns.streaming_message, :content, remaining_text)
+
+      {:noreply, assign(state, streaming_message: streaming_message)}
+    else
+      # If no period yet, just update the state with the accumulated content
+      streaming_message =
+        Map.put(state.assigns.streaming_message, :content, new_streaming_message_content)
+
+      {:noreply, assign(state, streaming_message: streaming_message)}
+    end
+  end
+
+  @impl ExOpenAI.StreamingClient
   def handle_error(e, state) do
     IO.puts("got error: #{inspect(e)}")
     Process.send(self(), {:set_error, "#{inspect(e)}"}, [])
@@ -130,6 +217,7 @@ defmodule MicWeb.ChatLive.Index do
     {:noreply, state}
   end
 
+  @impl ExOpenAI.StreamingClient
   def handle_finish(state) do
     # swap streaming message into a real message
     Process.send(
@@ -185,12 +273,25 @@ defmodule MicWeb.ChatLive.Index do
      |> push_event("newmessage", %{})}
   end
 
+  def handle_info({:audio_chunk, %{chunk: base64_audio}}, socket) do
+    # Push the audio_chunk event to the client
+    {:noreply, push_event(socket, "audio_chunk", %{chunk: base64_audio})}
+  end
+
   def handle_info({:update_messages, msgs}, socket) do
     {:noreply, assign(socket, %{messages: msgs})}
   end
 
   def handle_info(:stop_loading, socket) do
     {:noreply, assign(socket, %{loading: false})}
+  end
+
+  @impl true
+  def handle_info({:set_prefers_voice_chat, prefers_voice_chat}, socket) do
+    # Update the GenServer state that manages the OpenAI interaction
+    Mic.Chat.OpenAI.set_prefers_voice_chat(socket.assigns.openai_pid, prefers_voice_chat)
+
+    {:noreply, socket}
   end
 
   def handle_info({:msg_submit, text}, socket) do
