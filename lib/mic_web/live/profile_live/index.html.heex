@@ -4,7 +4,7 @@
     <.link patch={~p"/profiles/new"}>
       <.button>New Profile</.button>
     </.link>
-    <button id="spotify-auth-button" phx-click="auth_spotify" phx-hook="RedirectToSpotify">
+    <button id="spotify-auth-button" phx-click="auth_spotify" phx-hook="AuthRedirects">
       Log Into Spotify
     </button>
   </:actions>
@@ -60,6 +60,6 @@
     artist_options={@artist_options}
     patch={~p"/profiles"}
     current_user={@current_user}
-    hooks={%{"RedirectToSpotify" => true}}
+    hooks={%{"AuthRedirects" => true}}
   />
 </.modal>
