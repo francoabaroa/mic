@@ -28,7 +28,7 @@ defmodule MicWeb.MessageComponent do
     ~H"""
     <div class="w-[30px] flex flex-col relative items-end">
       <div
-        style="background-color: rgb(16, 163, 127);"
+        style="background-color: rgb(232, 93, 117);"
         class="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center"
       >
         <svg
