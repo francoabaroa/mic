@@ -195,6 +195,26 @@ defmodule MicWeb.MessageComponent do
             Voice
           </button>
         <% end %>
+        <%= if @id === 2 && @assistant_type === nil do %>
+          <button
+            phx-click="english_interaction"
+            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
+          >
+            English
+          </button>
+          <button
+            phx-click="spanish_interaction"
+            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
+          >
+            Spanish
+          </button>
+          <button
+            phx-click="portuguese_interaction"
+            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
+          >
+            Portuguese
+          </button>
+        <% end %>
       </div>
     </div>
     """

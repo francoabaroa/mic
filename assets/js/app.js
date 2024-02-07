@@ -65,10 +65,13 @@ Hooks.AuthRedirects = {
   }
 };
 
-Hooks.AudioHandler = {
+Hooks.VoiceAudioHandlers = {
   mounted() {
     this.handleEvent("audio_chunk", ({ chunk }) => {
-      // // Decode the base64 chunk and play the audio
+      // Object to keep track of processed chunks
+      const processedChunks = {};
+
+      // Decode the base64 chunk and play the audio
       function base64ToBlob(base64, mimeType) {
         let byteCharacters = atob(base64);
         let byteNumbers = new Array(byteCharacters.length);
@@ -79,17 +82,51 @@ Hooks.AudioHandler = {
         return new Blob([byteArray], { type: mimeType });
       }
 
-      let audioBlob = base64ToBlob(chunk, 'audio/mpeg');
-      let reader = new FileReader();
-      reader.onload = function () {
-        let arrayBuffer = this.result;
-        if (!sourceBuffer.updating && queue.length === 0) {
-          sourceBuffer.appendBuffer(arrayBuffer);
-        } else {
-          queue.push(arrayBuffer);
-        }
-      };
-      reader.readAsArrayBuffer(audioBlob);
+      // Check if the chunk has already been processed
+      if (!processedChunks[chunk]) {
+        let audioBlob = base64ToBlob(chunk, 'audio/mpeg');
+        processedChunks[chunk] = true;
+        let reader = new FileReader();
+        reader.onload = function () {
+          let arrayBuffer = this.result;
+          if (!sourceBuffer.updating && queue.length === 0) {
+            sourceBuffer.appendBuffer(arrayBuffer);
+          } else {
+            queue.push(arrayBuffer);
+          }
+        };
+        reader.readAsArrayBuffer(audioBlob);
+      }
+    });
+
+    let mediaRecorder;
+    let audioChunks = [];
+
+    this.handleEvent("start_recording", ({ record }) => {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          mediaRecorder.addEventListener("dataavailable", event => {
+            audioChunks.push(event.data);
+          });
+
+          mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks);
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = () => {
+              const base64AudioMessage = reader.result.split(',')[1];
+              this.pushEvent("transcribe_voice", { audio: base64AudioMessage });
+            };
+          });
+        });
+    });
+
+    this.handleEvent("stop_recording", () => {
+      audioChunks = [];
+      mediaRecorder.stop();
     });
   }
 };

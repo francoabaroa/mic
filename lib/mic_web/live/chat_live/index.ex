@@ -74,7 +74,8 @@ defmodule MicWeb.ChatLive.Index do
        models: models,
        scenarios: scenarios,
        mode: mode,
-       scenario: scenario
+       scenario: scenario,
+       text: ""
      )}
   end
 
@@ -86,11 +87,11 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def handle_event("text_interaction", _params, socket) do
-    # If set, unset the preference for voice chat
     send(self(), {:set_prefers_voice_chat, false})
 
     new_message = %Message{
-      content: "I'll communicate through text, thanks!",
+      content:
+        "I'll communicate through text, thanks!\n\nDo you prefer we talk in English, Spanish or Portuguese?",
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -102,11 +103,11 @@ defmodule MicWeb.ChatLive.Index do
   end
 
   def handle_event("voice_interaction", _params, socket) do
-    # Set the preference for voice chat
     send(self(), {:set_prefers_voice_chat, true})
 
     new_message = %Message{
-      content: "I'll communicate through voice, thanks!",
+      content:
+        "I'll communicate through voice, thanks!\n\nDo you prefer we talk in English, Spanish or Portuguese?",
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -115,6 +116,85 @@ defmodule MicWeb.ChatLive.Index do
     send(self(), {:add_message, new_message})
 
     {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("english_interaction", _params, socket) do
+    new_message = %Message{
+      content: "Perfect. What is your artist name?",
+      sender: :assistant,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("spanish_interaction", _params, socket) do
+    new_message = %Message{
+      content: "Perfecto. Cual es tu nombre de artista?",
+      sender: :assistant,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("portuguese_interaction", _params, socket) do
+    new_message = %Message{
+      content: "Perfeito. Qual é o seu nome artístico?",
+      sender: :assistant,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("initiate_voice_transcription", _params, socket) do
+    {:noreply, push_event(socket, "start_recording", %{record: true})}
+  end
+
+  def handle_event("stop_voice_transcription", _params, socket) do
+    {:noreply, push_event(socket, "stop_recording", %{record: true})}
+  end
+
+  @impl true
+  def handle_event("transcribe_voice", %{"audio" => audio_data_base64}, socket) do
+    # Decode the base64 audio data to its original binary form
+    {:ok, audio_data_binary} = Base.decode64(audio_data_base64)
+
+    case Mic.Chat.OpenAI.transcribe_voice(audio_data_binary) do
+      {:ok, text} ->
+        updated_socket = handle_chat_message(text, socket)
+
+        {:noreply, updated_socket}
+
+      {:error, reason} ->
+        Logger.error("Transcription Error: #{inspect(reason)}")
+        push_event(socket, "transcription_error", %{error: "Voice transcription failed"})
+        {:noreply, socket}
+    end
+  end
+
+  defp handle_chat_message(text, socket) do
+    # Check if text is not empty and the socket is not disabled before submitting
+    if String.length(text) >= 1 do
+      # Send the message to the LiveView process to be handled in handle_info/2
+      Process.send(self(), {:msg_submit, text}, [])
+    end
+
+    # Return just the socket, not {:noreply, socket}
+    socket
   end
 
   def handle_event(ev, params, socket) do
@@ -162,45 +242,24 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl ExOpenAI.StreamingClient
   def handle_data(%{id: _id, choices: choices}, state) do
-    characters = [".", "?", "!"]
+    characters = [".", "?"]
     prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(state.assigns.openai_pid)
     streamed_text = parse_choices(choices)
 
     # Accumulate the streamed text
     new_streaming_message_content = state.assigns.streaming_message.content <> streamed_text
 
+    # TODO: delete unused logic below
     if prefers_voice_chat == true &&
-         Enum.any?(characters, fn character ->
-           String.contains?(new_streaming_message_content, character)
-         end) do
-      # Split the text at the first period
+         Enum.any?(characters, &String.contains?(new_streaming_message_content, &1)) do
       {first_sentence, remaining_text} =
         split_at_first_punctuation(new_streaming_message_content, characters)
 
-      # TODO: need to make this work with pid, and not using pubsub?
-      case Mic.Chat.OpenAI.generate_speech(first_sentence) do
-        {:ok, speech} when is_binary(speech) ->
-          Phoenix.PubSub.broadcast(
-            Mic.PubSub,
-            "audio:topic",
-            {:audio_chunk, %{chunk: speech}}
-          )
-
-        {:error, reason} ->
-          # Log the error for debugging purposes
-          Logger.error("TTS Error: #{inspect(reason)}")
-
-          # TODO: Notify the frontend of the error
-          push_event(state, "tts_error", %{error: "TTS processing failed"})
-      end
-
-      # Update the streaming_message in the state with the remaining text
-      # Rejoin remaining parts if there were more than one period
-      streaming_message = Map.put(state.assigns.streaming_message, :content, remaining_text)
+      streaming_message =
+        Map.put(state.assigns.streaming_message, :content, new_streaming_message_content)
 
       {:noreply, assign(state, streaming_message: streaming_message)}
     else
-      # If no period yet, just update the state with the accumulated content
       streaming_message =
         Map.put(state.assigns.streaming_message, :content, new_streaming_message_content)
 
@@ -261,6 +320,18 @@ defmodule MicWeb.ChatLive.Index do
 
     # insert into stateful openai container so we have history
     Mic.Chat.OpenAI.insert_message(socket.assigns.openai_pid, msg)
+
+    case Mic.Chat.OpenAI.generate_speech(msg.content) do
+      {:ok, speech} when is_binary(speech) ->
+        Phoenix.PubSub.broadcast(
+          Mic.PubSub,
+          "audio:topic",
+          {:audio_chunk, %{chunk: speech}}
+        )
+
+      {:error, reason} ->
+        Logger.error("TTS Error: #{inspect(reason)}")
+    end
 
     Process.send(self(), :stop_loading, [])
 

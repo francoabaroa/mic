@@ -239,6 +239,44 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
+  def transcribe_voice(audio_content) do
+    # TEMP: Temporary filename
+    file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/temp_audio.mp3"
+
+    # Write audio content to a file
+    File.write!(file_path, audio_content)
+
+    # Read the content back from the file
+    case File.read(file_path) do
+      {:ok, file_content} ->
+        case ExOpenAI.Audio.create_transcription(
+               {"temp_audio.mp3", file_content},
+               "whisper-1"
+             ) do
+          {:ok, %ExOpenAI.Components.CreateTranscriptionResponse{text: transcription_text}} ->
+            Logger.debug("transcription_text: #{inspect(transcription_text)}")
+            # If the transcription is successful, you get the transcribed text here
+            # TODO: delete written file
+            File.rm(file_path)
+            {:ok, transcription_text}
+
+          {:error, reason} ->
+            Logger.error("Error in create_transcription request: #{inspect(reason)}")
+            {:error, reason}
+
+          _ ->
+            Logger.error("Unexpected return value from ExOpenAI.Audio.create_transcription")
+            {:error, :unexpected_return_value}
+        end
+
+      {:error, read_error} ->
+        # Clean up and error handling
+        File.rm(file_path)
+        Logger.error("Error reading file: #{inspect(read_error)}")
+        {:error, read_error}
+    end
+  end
+
   def generate_speech(input_text) do
     case ExOpenAI.Audio.create_speech(input_text, :"tts-1", :onyx, stream: true) do
       {:ok, audio_data} when is_binary(audio_data) ->

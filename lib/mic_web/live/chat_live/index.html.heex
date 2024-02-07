@@ -2,7 +2,7 @@
   id="chatgpt"
   class="flex"
   style="height: calc(100vh - 64px); flex-direction: column"
-  phx-hook="AudioHandler"
+  phx-hook="VoiceAudioHandlers"
 >
   <div class="mb-32" style="flex-grow: 1;">
     <div>
@@ -31,6 +31,7 @@
     <.live_component
       on_submit={fn val -> Process.send(self(), {:msg_submit, val}, []) end}
       module={MicWeb.TextboxComponent}
+      text={@text}
       disabled={@loading}
       id="textbox"
     />
