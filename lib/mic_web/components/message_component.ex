@@ -164,6 +164,28 @@ defmodule MicWeb.MessageComponent do
   defp parse_content(content), do: content
 
   def render(assigns) do
+    # TODO: fix this to use @ eventually
+    %{language_preference: language_preference, message: message_to_check} = assigns
+
+    {text_button, voice_button} =
+      case language_preference do
+        :english -> {"Text", "Voice"}
+        :spanish -> {"Texto", "Voz"}
+        :portuguese -> {"Texto", "Voz"}
+        _ -> {"Text", "Voice"}
+      end
+
+    # TODO: change this to use enum or something
+    should_show_text_voice_buttons =
+      if message_to_check == "Perfect. Do you want me to communicate with you via text or voice?" or
+           message_to_check == "Perfecto. ¿Quieres que me comunique contigo por texto o voz?" or
+           message_to_check ==
+             "Perfeito. Você quer que eu me comunique com você por texto ou voz?" do
+        true
+      else
+        false
+      end
+
     assigns =
       assigns
       |> assign(:parsed_content, process_markdown(assigns.message))
@@ -183,20 +205,6 @@ defmodule MicWeb.MessageComponent do
         <%= raw(@parsed_content) %>
         <%= if @id === 0 && @assistant_type === nil do %>
           <button
-            phx-click="text_interaction"
-            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
-          >
-            Text
-          </button>
-          <button
-            phx-click="voice_interaction"
-            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
-          >
-            Voice
-          </button>
-        <% end %>
-        <%= if @id === 2 && @assistant_type === nil do %>
-          <button
             phx-click="english_interaction"
             class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
           >
@@ -213,6 +221,20 @@ defmodule MicWeb.MessageComponent do
             class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
           >
             Portuguese
+          </button>
+        <% end %>
+        <%= if should_show_text_voice_buttons && @assistant_type === nil do %>
+          <button
+            phx-click="text_interaction"
+            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
+          >
+            <%= text_button %>
+          </button>
+          <button
+            phx-click="voice_interaction"
+            class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
+          >
+            <%= voice_button %>
           </button>
         <% end %>
       </div>

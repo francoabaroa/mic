@@ -87,6 +87,11 @@ defmodule Mic.Chat.OpenAI do
   end
 
   @impl true
+  def handle_call(:get_language_preference, _from, state) do
+    {:reply, Map.get(state, :language_preference, false), state}
+  end
+
+  @impl true
   def handle_call({:msg, m, streamer_pid, "davinci"} = params, from, state) do
     Logger.info("completing with davinci")
 
@@ -304,8 +309,22 @@ defmodule Mic.Chat.OpenAI do
     {:noreply, new_state}
   end
 
+  @impl true
+  def handle_cast({:set_language_preference, language_preference}, state) do
+    new_state = Map.put(state, :language_preference, language_preference)
+    {:noreply, new_state}
+  end
+
+  def set_language_preference(pid, language_preference) do
+    GenServer.cast(pid, {:set_language_preference, language_preference})
+  end
+
   def get_prefers_voice_chat(pid) do
     GenServer.call(pid, :get_prefers_voice_chat)
+  end
+
+  def get_language_preference(pid) do
+    GenServer.call(pid, :get_language_preference)
   end
 
   @spec start_link(init_settings) :: {:error, any} | {:ok, pid}

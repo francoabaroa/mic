@@ -13,7 +13,7 @@ defmodule MicWeb.ChatLive.Index do
     [
       %Message{
         content:
-          "Hi! I'm here to onboard you to Incurator.\n\nYou will be able to change your preferences later on.\n\nDo you want me to communicate with you via text or voice?",
+          "Hi! I'm here to onboard you to Incurator.\n\nYou will be able to change your preferences later on.\n\nDo you prefer we talk in English, Spanish or Portuguese?",
         sender: :assistant,
         id: 0
       }
@@ -75,7 +75,8 @@ defmodule MicWeb.ChatLive.Index do
        scenarios: scenarios,
        mode: mode,
        scenario: scenario,
-       text: ""
+       text: "",
+       language_preference: :english
      )}
   end
 
@@ -88,10 +89,19 @@ defmodule MicWeb.ChatLive.Index do
   @impl Phoenix.LiveView
   def handle_event("text_interaction", _params, socket) do
     send(self(), {:set_prefers_voice_chat, false})
+    language_preference = Mic.Chat.OpenAI.get_language_preference(socket.assigns.openai_pid)
+
+    message_content =
+      case language_preference do
+        :english -> "I'll communicate through text, thanks! What is your artist name?"
+        :spanish -> "Me comunicaré por texto, ¡gracias! ¿Cuál es tu nombre de artista?"
+        :portuguese -> "Vou me comunicar por texto, obrigado! Qual é o seu nome artístico?"
+        # Default message
+        _ -> "I'll communicate through text, thanks! What is your artist name?"
+      end
 
     new_message = %Message{
-      content:
-        "I'll communicate through text, thanks!\n\nDo you prefer we talk in English, Spanish or Portuguese?",
+      content: message_content,
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -104,10 +114,38 @@ defmodule MicWeb.ChatLive.Index do
 
   def handle_event("voice_interaction", _params, socket) do
     send(self(), {:set_prefers_voice_chat, true})
+    language_preference = Mic.Chat.OpenAI.get_language_preference(socket.assigns.openai_pid)
+
+    message_content =
+      case language_preference do
+        :english ->
+          "I'll communicate through voice, thanks! What is your artist name?"
+
+        :spanish ->
+          "Me comunicaré por voz, ¡gracias! ¿Cuál es tu nombre de artista?"
+
+        :portuguese ->
+          "Vou me comunicar por voz, obrigado! Qual é o seu nome artístico?"
+
+        # Default message
+        _ ->
+          "I'll communicate through voice after this message, thanks! What is your artist name?"
+      end
+
+    case Mic.Chat.OpenAI.generate_speech(message_content) do
+      {:ok, speech} when is_binary(speech) ->
+        Phoenix.PubSub.broadcast(
+          Mic.PubSub,
+          "audio:topic",
+          {:audio_chunk, %{chunk: speech}}
+        )
+
+      {:error, reason} ->
+        Logger.error("TTS Error: #{inspect(reason)}")
+    end
 
     new_message = %Message{
-      content:
-        "I'll communicate through voice, thanks!\n\nDo you prefer we talk in English, Spanish or Portuguese?",
+      content: message_content,
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -120,8 +158,10 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def handle_event("english_interaction", _params, socket) do
+    send(self(), {:set_language_preference, :english})
+
     new_message = %Message{
-      content: "Perfect. What is your artist name?",
+      content: "Perfect. Do you want me to communicate with you via text or voice?",
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -134,8 +174,10 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def handle_event("spanish_interaction", _params, socket) do
+    send(self(), {:set_language_preference, :spanish})
+
     new_message = %Message{
-      content: "Perfecto. Cual es tu nombre de artista?",
+      content: "Perfecto. ¿Quieres que me comunique contigo por texto o voz?",
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -148,8 +190,10 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def handle_event("portuguese_interaction", _params, socket) do
+    send(self(), {:set_language_preference, :portuguese})
+
     new_message = %Message{
-      content: "Perfeito. Qual é o seu nome artístico?",
+      content: "Perfeito. Você quer que eu me comunique com você por texto ou voz?",
       sender: :assistant,
       # The ID will be updated in handle_info
       id: 0
@@ -363,6 +407,15 @@ defmodule MicWeb.ChatLive.Index do
     Mic.Chat.OpenAI.set_prefers_voice_chat(socket.assigns.openai_pid, prefers_voice_chat)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:set_language_preference, language_preference}, socket) do
+    # Update the GenServer state that manages the OpenAI interaction
+    Mic.Chat.OpenAI.set_language_preference(socket.assigns.openai_pid, language_preference)
+
+    # Assign the language_preference to the socket's assigns
+    {:noreply, assign(socket, :language_preference, language_preference)}
   end
 
   def handle_info({:msg_submit, text}, socket) do
