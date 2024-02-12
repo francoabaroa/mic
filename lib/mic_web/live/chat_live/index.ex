@@ -219,7 +219,7 @@ defmodule MicWeb.ChatLive.Index do
 
     case Mic.Chat.OpenAI.transcribe_voice(audio_data_binary) do
       {:ok, text} ->
-        updated_socket = handle_chat_message(text, socket)
+        updated_socket = handle_transcribed_chat_message(text, socket)
 
         {:noreply, updated_socket}
 
@@ -230,7 +230,7 @@ defmodule MicWeb.ChatLive.Index do
     end
   end
 
-  defp handle_chat_message(text, socket) do
+  defp handle_transcribed_chat_message(text, socket) do
     # Check if text is not empty and the socket is not disabled before submitting
     if String.length(text) >= 1 do
       # Send the message to the LiveView process to be handled in handle_info/2
