@@ -361,20 +361,23 @@ defmodule MicWeb.ChatLive.Index do
   def handle_info({:commit_streaming_message, msg}, socket) do
     new_id = Enum.count(socket.assigns.messages) + 1
     msg = Map.put(msg, :id, new_id)
+    prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(socket.assigns.openai_pid)
 
     # insert into stateful openai container so we have history
     Mic.Chat.OpenAI.insert_message(socket.assigns.openai_pid, msg)
 
-    case Mic.Chat.OpenAI.generate_speech(msg.content) do
-      {:ok, speech} when is_binary(speech) ->
-        Phoenix.PubSub.broadcast(
-          Mic.PubSub,
-          "audio:topic",
-          {:audio_chunk, %{chunk: speech}}
-        )
+    if prefers_voice_chat do
+      case Mic.Chat.OpenAI.generate_speech(msg.content) do
+        {:ok, speech} when is_binary(speech) ->
+          Phoenix.PubSub.broadcast(
+            Mic.PubSub,
+            "audio:topic",
+            {:audio_chunk, %{chunk: speech}}
+          )
 
-      {:error, reason} ->
-        Logger.error("TTS Error: #{inspect(reason)}")
+        {:error, reason} ->
+          Logger.error("TTS Error: #{inspect(reason)}")
+      end
     end
 
     Process.send(self(), :stop_loading, [])
