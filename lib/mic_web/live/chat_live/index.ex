@@ -91,14 +91,30 @@ defmodule MicWeb.ChatLive.Index do
     send(self(), {:set_prefers_voice_chat, false})
     language_preference = Mic.Chat.OpenAI.get_language_preference(socket.assigns.openai_pid)
 
-    message_content =
+    {message_content, prepended_user_message} =
       case language_preference do
-        :english -> "I'll communicate through text, thanks! What is your artist name?"
-        :spanish -> "Me comunicaré por texto, ¡gracias! ¿Cuál es tu nombre de artista?"
-        :portuguese -> "Vou me comunicar por texto, obrigado! Qual é o seu nome artístico?"
+        :english ->
+          {"I'll communicate through text, thanks! What is your artist name?", "Text"}
+
+        :spanish ->
+          {"Me comunicaré por texto, ¡gracias! ¿Cuál es tu nombre de artista?", "Texto"}
+
+        :portuguese ->
+          {"Vou me comunicar por texto, obrigado! Qual é o seu nome artístico?", "Texto"}
+
         # Default message
-        _ -> "I'll communicate through text, thanks! What is your artist name?"
+        _ ->
+          {"I'll communicate through text, thanks! What is your artist name?", "Text"}
       end
+
+    new_message = %Message{
+      content: prepended_user_message,
+      sender: :user,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
 
     new_message = %Message{
       content: message_content,
@@ -116,20 +132,20 @@ defmodule MicWeb.ChatLive.Index do
     send(self(), {:set_prefers_voice_chat, true})
     language_preference = Mic.Chat.OpenAI.get_language_preference(socket.assigns.openai_pid)
 
-    message_content =
+    {message_content, prepended_user_message} =
       case language_preference do
         :english ->
-          "I'll communicate through voice, thanks! What is your artist name?"
+          {"I'll communicate through voice, thanks! What is your artist name?", "Voice"}
 
         :spanish ->
-          "Me comunicaré por voz, ¡gracias! ¿Cuál es tu nombre de artista?"
+          {"Me comunicaré por voz, ¡gracias! ¿Cuál es tu nombre de artista?", "Voz"}
 
         :portuguese ->
-          "Vou me comunicar por voz, obrigado! Qual é o seu nome artístico?"
+          {"Vou me comunicar por voz, obrigado! Qual é o seu nome artístico?", "Voz"}
 
         # Default message
         _ ->
-          "I'll communicate through voice after this message, thanks! What is your artist name?"
+          {"I'll communicate through voice, thanks! What is your artist name?", "Voice"}
       end
 
     case Mic.Chat.OpenAI.generate_speech(message_content) do
@@ -143,6 +159,15 @@ defmodule MicWeb.ChatLive.Index do
       {:error, reason} ->
         Logger.error("TTS Error: #{inspect(reason)}")
     end
+
+    new_message = %Message{
+      content: prepended_user_message,
+      sender: :user,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
 
     new_message = %Message{
       content: message_content,
@@ -161,6 +186,15 @@ defmodule MicWeb.ChatLive.Index do
     send(self(), {:set_language_preference, :english})
 
     new_message = %Message{
+      content: "English",
+      sender: :user,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    new_message = %Message{
       content: "Perfect. Do you want me to communicate with you via text or voice?",
       sender: :assistant,
       # The ID will be updated in handle_info
@@ -177,6 +211,15 @@ defmodule MicWeb.ChatLive.Index do
     send(self(), {:set_language_preference, :spanish})
 
     new_message = %Message{
+      content: "Spanish",
+      sender: :user,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
+
+    new_message = %Message{
       content: "Perfecto. ¿Quieres que me comunique contigo por texto o voz?",
       sender: :assistant,
       # The ID will be updated in handle_info
@@ -191,6 +234,15 @@ defmodule MicWeb.ChatLive.Index do
   @impl Phoenix.LiveView
   def handle_event("portuguese_interaction", _params, socket) do
     send(self(), {:set_language_preference, :portuguese})
+
+    new_message = %Message{
+      content: "Portugese",
+      sender: :user,
+      # The ID will be updated in handle_info
+      id: 0
+    }
+
+    send(self(), {:add_message, new_message})
 
     new_message = %Message{
       content: "Perfeito. Você quer que eu me comunique com você por texto ou voz?",
@@ -425,6 +477,8 @@ defmodule MicWeb.ChatLive.Index do
     self = self()
 
     model = Map.get(socket.assigns, :model)
+    Logger.debug("here123")
+    Logger.debug(inspect(socket.assigns))
 
     Process.send(
       self,
