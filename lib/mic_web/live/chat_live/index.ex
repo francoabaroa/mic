@@ -477,8 +477,6 @@ defmodule MicWeb.ChatLive.Index do
     self = self()
 
     model = Map.get(socket.assigns, :model)
-    Logger.debug("here123")
-    Logger.debug(inspect(socket.assigns))
 
     Process.send(
       self,
