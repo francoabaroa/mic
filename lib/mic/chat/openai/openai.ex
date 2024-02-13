@@ -185,6 +185,7 @@ defmodule Mic.Chat.OpenAI do
 
     with msgs <- state.messages ++ [new_msg(m)] do
       # strip out things that are over the token limit
+      # TODO: need to update this - token limit check
       filtered_msgs =
         msgs
         |> Enum.reverse()

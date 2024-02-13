@@ -76,7 +76,8 @@ defmodule MicWeb.ChatLive.Index do
        mode: mode,
        scenario: scenario,
        text: "",
-       language_preference: :english
+       language_preference: :english,
+       current_question: nil
      )}
   end
 
@@ -125,7 +126,7 @@ defmodule MicWeb.ChatLive.Index do
 
     send(self(), {:add_message, new_message})
 
-    {:noreply, socket}
+    {:noreply, assign(socket, current_question: :artist_name)}
   end
 
   def handle_event("voice_interaction", _params, socket) do
@@ -178,7 +179,7 @@ defmodule MicWeb.ChatLive.Index do
 
     send(self(), {:add_message, new_message})
 
-    {:noreply, socket}
+    {:noreply, assign(socket, current_question: :artist_name)}
   end
 
   @impl Phoenix.LiveView
@@ -484,8 +485,68 @@ defmodule MicWeb.ChatLive.Index do
       []
     )
 
+    # TODO: this is hacky - maybe make own onboarding liveview where all of this is abstracted there. look at other TODOs in CurrentFixes
+    must_ask =
+      ". Be friendly, curious and use their artist name to talk to them. You MUST now ask the artist this question: "
+
+    do_not_acknowledge =
+      " Do NOT acknowledge that you were told to ask a question, simply ask the question: "
+
+    artist_llm_intro =
+      "You will be helping a music artist build their profile by asking them questions I will give you and tell you to ask. Only ask these questions that I give you. Right now, the user is entering what their artist name is. "
+
+    {appended_question, next_question_to_set} =
+      case socket.assigns.current_question do
+        :artist_name ->
+          {must_ask <> do_not_acknowledge <> "What's your music genre?", :genre}
+
+        :genre ->
+          {must_ask <> do_not_acknowledge <> "Who are your main music artist influences?",
+           :influences}
+
+        :influences ->
+          {must_ask <> do_not_acknowledge <> "How did you get started in music?", :short_bio}
+
+        :short_bio ->
+          {must_ask <> do_not_acknowledge <> "What are your aspirations?", :aspirations}
+
+        :aspirations ->
+          {must_ask <> do_not_acknowledge <> "Which country are you from?", :country}
+
+        :country ->
+          {must_ask <> do_not_acknowledge <> "What's your date of birth?", :dob}
+
+        :dob ->
+          {"", :end}
+
+        # Handle unexpected cases
+        _ ->
+          {"", nil}
+      end
+
+    # If it's artist_name, need to give the LLM context about what is going on since its the first one
+    text_to_pass =
+      if socket.assigns.current_question == :artist_name do
+        artist_llm_intro <> text
+      else
+        text
+      end
+
+    # Need to respect user language preference
+    language_to_speak =
+      case socket.assigns.language_preference do
+        :spanish -> "Remember to talk to the user in Spanish. "
+        :portuguese -> "Remember to talk to the user in Portugese. "
+        _ -> "Remember to talk to the user in English. "
+      end
+
     spawn(fn ->
-      case Mic.Chat.OpenAI.send(socket.assigns.openai_pid, text, model, self) do
+      case Mic.Chat.OpenAI.send(
+             socket.assigns.openai_pid,
+             language_to_speak <> text_to_pass <> appended_question,
+             model,
+             self
+           ) do
         {:ok, result} when is_reference(result) ->
           nil
 
@@ -502,6 +563,10 @@ defmodule MicWeb.ChatLive.Index do
       end
     end)
 
-    {:noreply, socket |> assign(:loading, true) |> clear_flash()}
+    {:noreply,
+     socket
+     |> assign(:loading, true)
+     |> assign(:current_question, next_question_to_set)
+     |> clear_flash()}
   end
 end
