@@ -77,7 +77,8 @@ defmodule MicWeb.ChatLive.Index do
        scenario: scenario,
        text: "",
        language_preference: :english,
-       current_question: nil
+       current_question: nil,
+       profile_data: %{}
      )}
   end
 
@@ -294,6 +295,23 @@ defmodule MicWeb.ChatLive.Index do
     socket
   end
 
+  defp generate_profile_description(socket) do
+    # TODO: fill out
+  end
+
+  defp generate_valid_dob_struct(text) do
+    case Mic.Chat.OpenAI.generate_iso_8601_date_string(text) do
+      {:ok, response} ->
+        case Date.from_iso8601(response.content) do
+          {:ok, date_struct} ->
+            date_struct
+
+          {:error, reason} ->
+            Logger.error("Chat Completions DOB Struct Error: #{inspect(reason)}")
+        end
+    end
+  end
+
   def handle_event(ev, params, socket) do
     IO.puts("handle event")
     IO.inspect(ev)
@@ -454,6 +472,19 @@ defmodule MicWeb.ChatLive.Index do
   end
 
   def handle_info(:stop_loading, socket) do
+    if socket.assigns.current_question == :end do
+      # Once onboarding questionnare is done, save profile
+      case Mic.Artists.create_profile(socket.assigns.current_user, socket.assigns.profile_data) do
+        {:ok, profile} ->
+          # Handle success, e.g., assign the profile to the socket or redirect
+          {:noreply, assign(socket, profile: profile)}
+
+        {:error, changeset} ->
+          # Handle error, e.g., assign the error to the socket for display
+          {:noreply, assign(socket, error: changeset)}
+      end
+    end
+
     {:noreply, assign(socket, %{loading: false})}
   end
 
@@ -495,26 +526,65 @@ defmodule MicWeb.ChatLive.Index do
     artist_llm_intro =
       "You will be helping a music artist build their profile by asking them questions I will give you and tell you to ask. Only ask these questions that I give you. Right now, the user is entering what their artist name is. "
 
+    # Extract the profile data from the socket assigns
+    profile_data = socket.assigns.profile_data
+
+    # Update the profile data based on the current question
+    updated_profile_data =
+      case socket.assigns.current_question do
+        :artist_name ->
+          Map.put(profile_data, :artist_name, text)
+
+        :genre ->
+          Map.put(profile_data, :genre, text)
+
+        :influences ->
+          Map.put(profile_data, :influences, text)
+
+        # TODO: maybe dont save short_bio under this? save it under :music_beginnings
+        :short_bio ->
+          Map.put(profile_data, :short_bio, text)
+
+        :aspirations ->
+          Map.put(profile_data, :aspirations, text)
+
+        :country ->
+          Map.put(profile_data, :country, text)
+
+        :dob ->
+          valid_date_struct = generate_valid_dob_struct(text)
+          Map.put(profile_data, :dob, valid_date_struct)
+
+        _ ->
+          profile_data
+      end
+
+    artist_name = Map.get(updated_profile_data, :artist_name)
+
     {appended_question, next_question_to_set} =
       case socket.assigns.current_question do
         :artist_name ->
-          {must_ask <> do_not_acknowledge <> "What's your music genre?", :genre}
+          {must_ask <> do_not_acknowledge <> "What's your music genre #{artist_name}?", :genre}
 
         :genre ->
-          {must_ask <> do_not_acknowledge <> "Who are your main music artist influences?",
+          {must_ask <>
+             do_not_acknowledge <> "Who are your main music artist influences #{artist_name}?",
            :influences}
 
         :influences ->
-          {must_ask <> do_not_acknowledge <> "How did you get started in music?", :short_bio}
+          {must_ask <> do_not_acknowledge <> "How did you get started in music #{artist_name}?",
+           :short_bio}
 
         :short_bio ->
-          {must_ask <> do_not_acknowledge <> "What are your aspirations?", :aspirations}
+          {must_ask <> do_not_acknowledge <> "What are your aspirations #{artist_name}?",
+           :aspirations}
 
         :aspirations ->
-          {must_ask <> do_not_acknowledge <> "Which country are you from?", :country}
+          {must_ask <> do_not_acknowledge <> "Which country are you from #{artist_name}?",
+           :country}
 
         :country ->
-          {must_ask <> do_not_acknowledge <> "What's your date of birth?", :dob}
+          {must_ask <> do_not_acknowledge <> "What's your date of birth #{artist_name}?", :dob}
 
         :dob ->
           {"", :end}
@@ -567,6 +637,7 @@ defmodule MicWeb.ChatLive.Index do
      socket
      |> assign(:loading, true)
      |> assign(:current_question, next_question_to_set)
+     |> assign(:profile_data, updated_profile_data)
      |> clear_flash()}
   end
 end

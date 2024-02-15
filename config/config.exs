@@ -17,7 +17,7 @@ config :mic,
   default_model: :"gpt-3.5-turbo",
   models: [
     %{
-      id: :"gpt-4-1106-preview",
+      id: :"gpt-4-turbo-preview",
       truncate_tokens: 127_000
     },
     %{

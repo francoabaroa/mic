@@ -300,6 +300,31 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
+  def generate_iso_8601_date_string(input_text) do
+    msgs = [
+      %ExOpenAI.Components.ChatCompletionRequestUserMessage{
+        role: :user,
+        content:
+          "Please format the given DOB as ISO-8601 YYYY-MM-DD. DOB: " <>
+            input_text <> " ONLY RETURN THE ISO-8601 STRING, NOTHING ELSE."
+      }
+    ]
+
+    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
+      {:ok, res} ->
+        first = List.first(res.choices)
+        {:ok, first.message}
+
+      {:error, reason} ->
+        Logger.error("Error in generate_iso_8601_date_string request: #{inspect(reason)}")
+        {:error, reason}
+
+      _ ->
+        Logger.error("Unexpected return value from Chat Completions")
+        {:error, :unexpected_return_value}
+    end
+  end
+
   def set_prefers_voice_chat(pid, prefers_voice_chat) do
     GenServer.cast(pid, {:set_prefers_voice_chat, prefers_voice_chat})
   end
