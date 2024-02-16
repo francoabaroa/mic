@@ -191,7 +191,8 @@ defmodule Mic.Chat.OpenAI do
         |> Enum.reverse()
         |> Enum.reduce_while(%{msgs: [], tokens: 0}, fn msg, acc ->
           with msg_tokens <- Mic.Chat.Tokenizer.count_tokens!(msg.content) do
-            if msg_tokens + acc.tokens > 4000 do
+            # Depending on model this could be 15_000 or 127_000
+            if msg_tokens + acc.tokens > 15000 do
               {:halt, acc}
             else
               {:cont, %{msgs: acc.msgs ++ [msg], tokens: acc.tokens + msg_tokens}}
@@ -260,7 +261,6 @@ defmodule Mic.Chat.OpenAI do
                "whisper-1"
              ) do
           {:ok, %ExOpenAI.Components.CreateTranscriptionResponse{text: transcription_text}} ->
-            Logger.debug("transcription_text: #{inspect(transcription_text)}")
             # If the transcription is successful, you get the transcribed text here
             # TODO: delete written file
             File.rm(file_path)
@@ -296,6 +296,31 @@ defmodule Mic.Chat.OpenAI do
 
       _ ->
         Logger.error("Unexpected return value from ExOpenAI.Audio.create_speech")
+        {:error, :unexpected_return_value}
+    end
+  end
+
+  def generate_artist_profile_description(input_text) do
+    msgs = [
+      %ExOpenAI.Components.ChatCompletionRequestUserMessage{
+        role: :user,
+        content:
+          "Context: Pretend you are an expert, detailed, wise biography writer. You are able to ask some key questions to a music artist about them and their career and gather enough information to write a detailed, descriptive biography about that music artist.\n\nInstruction: Create a detailed biography of [Artist's Name], a [Genre(s)] artist with a rich background and diverse influences in the music industry. [Artist's Name], hailing from [Country] and born on [Date of Birth], discovered their passion for music [Musical Beginnings], marking the beginning of their musical journey. Their style has been profoundly shaped by artists such as [Influences]. [Artist's Name]'s aspirations include [Aspirations], aiming to leave their own significant mark on the music world. They have achieved notable milestones including [Significant Milestones].\n\nWith [Music Education], [Artist's Name] plays [Instruments Played]. Their experiences performing live, such as [Live Performances], have enriched their connection with audiences, enhancing their stage presence and musical depth. This is their [Spotify Bio], reflecting their achievements, their character and how they view their artistry. Future goals for [Artist's Name] include [Aspirations], with a vision to innovate and inspire within the [Genre(s)] genre. This biography captures the essence of [Artist's Name]'s musical identity, from their roots to their aspirations, instruments mastery, and the impact of their work. Think step by step using chain of thought reasoning to give the best, most detailed biography based on the above information.\n\nInput: " <>
+            input_text
+      }
+    ]
+
+    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
+      {:ok, res} ->
+        first = List.first(res.choices)
+        {:ok, first.message}
+
+      {:error, reason} ->
+        Logger.error("Error in generate_artist_profile_description request: #{inspect(reason)}")
+        {:error, reason}
+
+      _ ->
+        Logger.error("Unexpected return value from Chat Completions")
         {:error, :unexpected_return_value}
     end
   end

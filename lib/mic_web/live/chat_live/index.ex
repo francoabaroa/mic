@@ -40,13 +40,36 @@ defmodule MicWeb.ChatLive.Index do
     session_model = session |> Map.get("model", default_model)
     model = Map.get(params, "model", session_model)
     models = Application.get_env(:mic, :models, [model])
-    scenarios = MicWeb.Scenario.default_scenarios()
+
+    artist_ai_description =
+      try do
+        profile = Mic.Artists.get_profile_by_user_id!(socket.assigns.current_user.id)
+        profile.artist_ai_description
+      rescue
+        Ecto.NoResultsError ->
+          # This block executes if no profile is found, returning a default or nil
+          Logger.debug("No profile found for user.")
+          nil
+      end
+
+    instructions_to_append =
+      if artist_ai_description != nil do
+        "Here is a biography of the artist who you will be assisting today: " <>
+          artist_ai_description <>
+          " Always use their biography to give them personalized and useful responses tailored to them and their history."
+      else
+        ""
+      end
+
+    scenarios = MicWeb.Scenario.default_scenarios(instructions_to_append)
 
     # Determine the mode based on the presence of a scenario_id in the params
     mode = if scenario_id = Map.get(params, "scenario_id"), do: :scenario, else: :chat
 
     # Fetch the scenario if in scenario mode
-    scenario = if mode == :scenario, do: fetch_scenario(scenario_id), else: nil
+    scenario =
+      if mode == :scenario, do: fetch_scenario(scenario_id, instructions_to_append), else: nil
+
     scenario_description = if mode == :scenario, do: scenario.description, else: nil
 
     openai_pid =
@@ -83,8 +106,8 @@ defmodule MicWeb.ChatLive.Index do
   end
 
   # Fetches the scenario based on the scenario_id
-  defp fetch_scenario(scenario_id) do
-    MicWeb.Scenario.default_scenarios()
+  defp fetch_scenario(scenario_id, instructions_to_append) do
+    MicWeb.Scenario.default_scenarios(instructions_to_append)
     |> Enum.find(fn sc -> sc.id == scenario_id end)
   end
 
@@ -295,8 +318,30 @@ defmodule MicWeb.ChatLive.Index do
     socket
   end
 
-  defp generate_profile_description(socket) do
-    # TODO: fill out
+  defp generate_profile_description(profile_data) do
+    query_string =
+      profile_data
+      |> Map.to_list()
+      |> Enum.map(fn {key, value} ->
+        value_string =
+          case value do
+            # Correctly checks if the value is a Date struct
+            %Date{} = date -> Date.to_string(date)
+            # Handles all other types by converting them to string
+            _ -> to_string(value)
+          end
+
+        "#{String.upcase(to_string(key))}: #{value_string}"
+      end)
+      |> Enum.join(". ")
+
+    case Mic.Chat.OpenAI.generate_artist_profile_description(query_string) do
+      {:ok, response} ->
+        response
+
+      {:error, reason} ->
+        Logger.error("Chat Completions Generate Profile Description Error: #{inspect(reason)}")
+    end
   end
 
   defp generate_valid_dob_struct(text) do
@@ -473,15 +518,36 @@ defmodule MicWeb.ChatLive.Index do
 
   def handle_info(:stop_loading, socket) do
     if socket.assigns.current_question == :end do
-      # Once onboarding questionnare is done, save profile
-      case Mic.Artists.create_profile(socket.assigns.current_user, socket.assigns.profile_data) do
-        {:ok, profile} ->
-          # Handle success, e.g., assign the profile to the socket or redirect
-          {:noreply, assign(socket, profile: profile)}
+      has_profile =
+        try do
+          Mic.Artists.get_profile_by_user_id!(socket.assigns.current_user.id)
+          # If the function succeeds, return true
+          true
+        rescue
+          Ecto.NoResultsError ->
+            # This block executes if no profile is found, returning a default or nil
+            Logger.debug("No profile found for user.")
+            nil
+        end
 
-        {:error, changeset} ->
-          # Handle error, e.g., assign the error to the socket for display
-          {:noreply, assign(socket, error: changeset)}
+      if has_profile == nil do
+        profile_data = socket.assigns.profile_data
+        # Generate ai description
+        description = generate_profile_description(profile_data)
+
+        # Update profile_data object and pass that to create_profile
+        updated_profile_data = Map.put(profile_data, :artist_ai_description, description.content)
+
+        # Once onboarding questionnare is done, save profile
+        case Mic.Artists.create_profile(socket.assigns.current_user, updated_profile_data) do
+          {:ok, profile} ->
+            # Handle success, e.g., assign the profile to the socket or redirect to home
+            {:noreply, assign(socket, profile: profile)}
+
+          {:error, changeset} ->
+            # Handle error, e.g., assign the error to the socket for display
+            {:noreply, assign(socket, error: changeset)}
+        end
       end
     end
 
@@ -542,11 +608,35 @@ defmodule MicWeb.ChatLive.Index do
           Map.put(profile_data, :influences, text)
 
         # TODO: maybe dont save short_bio under this? save it under :music_beginnings
-        :short_bio ->
-          Map.put(profile_data, :short_bio, text)
+        # :short_bio ->
+        #   Map.put(profile_data, :short_bio, text)
 
         :aspirations ->
           Map.put(profile_data, :aspirations, text)
+
+        :musical_beginnings ->
+          Map.put(profile_data, :musical_beginnings, text)
+
+        :artist_ai_description ->
+          Map.put(profile_data, :artist_ai_description, text)
+
+        :spotify_bio ->
+          Map.put(profile_data, :spotify_bio, text)
+
+        :music_education ->
+          Map.put(profile_data, :music_education, text)
+
+        :instruments_played ->
+          Map.put(profile_data, :instruments_played, text)
+
+        :significant_milestones ->
+          Map.put(profile_data, :significant_milestones, text)
+
+        :spotify_bio ->
+          Map.put(profile_data, :spotify_bio, text)
+
+        :live_performances ->
+          Map.put(profile_data, :live_performances, text)
 
         :country ->
           Map.put(profile_data, :country, text)
@@ -564,27 +654,60 @@ defmodule MicWeb.ChatLive.Index do
     {appended_question, next_question_to_set} =
       case socket.assigns.current_question do
         :artist_name ->
-          {must_ask <> do_not_acknowledge <> "What's your music genre #{artist_name}?", :genre}
+          {must_ask <> do_not_acknowledge <> "What's your music genre, #{artist_name}?", :genre}
 
         :genre ->
           {must_ask <>
-             do_not_acknowledge <> "Who are your main music artist influences #{artist_name}?",
+             do_not_acknowledge <>
+             "Are there any specific musicians or artists who have inspired or influenced your musical style, #{artist_name}?",
            :influences}
 
         :influences ->
-          {must_ask <> do_not_acknowledge <> "How did you get started in music #{artist_name}?",
-           :short_bio}
+          {must_ask <>
+             do_not_acknowledge <> "When did your passion for music first begin, #{artist_name}?",
+           :musical_beginnings}
 
-        :short_bio ->
-          {must_ask <> do_not_acknowledge <> "What are your aspirations #{artist_name}?",
-           :aspirations}
+        :musical_beginnings ->
+          {must_ask <>
+             do_not_acknowledge <>
+             "What are your future goals or aspirations in music, #{artist_name}?", :aspirations}
 
         :aspirations ->
-          {must_ask <> do_not_acknowledge <> "Which country are you from #{artist_name}?",
+          {must_ask <>
+             do_not_acknowledge <>
+             "Did you have any formal training or education in music or are you self-taught, #{artist_name}?",
+           :music_education}
+
+        :music_education ->
+          {must_ask <>
+             do_not_acknowledge <>
+             "What instruments do you play, and how did you learn to play them, #{artist_name}?",
+           :instruments_played}
+
+        :instruments_played ->
+          {must_ask <>
+             do_not_acknowledge <>
+             "Can you share any significant milestones or achievements in your musical career so far, #{artist_name}?",
+           :significant_milestones}
+
+        :significant_milestones ->
+          {must_ask <>
+             do_not_acknowledge <>
+             "If you have a biography in your Spotify page, can you copy and paste it here please #{artist_name}, if not just type no",
+           :spotify_bio}
+
+        :spotify_bio ->
+          {must_ask <>
+             do_not_acknowledge <>
+             "Have you ever performed in front of an audience? If yes, what was that experience like, #{artist_name}?",
+           :live_performances}
+
+        :live_performances ->
+          {must_ask <> do_not_acknowledge <> "Which country are you from, #{artist_name}?",
            :country}
 
         :country ->
-          {must_ask <> do_not_acknowledge <> "What's your date of birth #{artist_name}?", :dob}
+          {must_ask <> do_not_acknowledge <> "What's your date of birth, #{artist_name}?", :dob}
 
         :dob ->
           {"", :end}

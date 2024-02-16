@@ -27,6 +27,13 @@ defmodule MicWeb.ProfileLive.FormComponent do
         <.input field={@form[:influences]} type="text" label="Influences" />
         <.input field={@form[:aspirations]} type="text" label="Aspirations" />
         <.input field={@form[:short_bio]} type="text" label="Short bio" />
+        <.input field={@form[:artist_ai_description]} type="text" label="Artist AI description" />
+        <.input field={@form[:musical_beginnings]} type="text" label="Musical Beginnings" />
+        <.input field={@form[:spotify_bio]} type="text" label="Spotify Bio" />
+        <.input field={@form[:music_education]} type="text" label="Music Education" />
+        <.input field={@form[:instruments_played]} type="text" label="Instruments Played" />
+        <.input field={@form[:significant_milestones]} type="text" label="Significant Milestones" />
+        <.input field={@form[:live_performances]} type="text" label="Live Performances" />
         <.input field={@form[:dob]} type="date" label="Dob" />
         <%= if @artist_options do %>
           <.input
