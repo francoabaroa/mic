@@ -310,6 +310,7 @@ defmodule Mic.Chat.OpenAI do
       }
     ]
 
+    # TODO: Fix timeout happening with gpt-4-turbo-preview
     case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
       {:ok, res} ->
         first = List.first(res.choices)
