@@ -542,16 +542,22 @@ defmodule MicWeb.ChatLive.Index do
         case Mic.Artists.create_profile(socket.assigns.current_user, updated_profile_data) do
           {:ok, profile} ->
             # Handle success, e.g., assign the profile to the socket or redirect to home
-            {:noreply, assign(socket, profile: profile)}
+            updated_socket =
+              socket
+              |> assign(:profile, profile)
+              |> assign(:loading, false)
+
+            # Redirect to the root path
+            {:noreply, push_redirect(updated_socket, to: "/")}
 
           {:error, changeset} ->
             # Handle error, e.g., assign the error to the socket for display
             {:noreply, assign(socket, error: changeset)}
         end
       end
+    else
+      {:noreply, assign(socket, %{loading: false})}
     end
-
-    {:noreply, assign(socket, %{loading: false})}
   end
 
   @impl true
@@ -710,7 +716,8 @@ defmodule MicWeb.ChatLive.Index do
           {must_ask <> do_not_acknowledge <> "What's your date of birth, #{artist_name}?", :dob}
 
         :dob ->
-          {"", :end}
+          {"Please end this interaction by telling saying thank you to #{artist_name} for creating their profile and that they will be routed to the home page shortly.",
+           :end}
 
         # Handle unexpected cases
         _ ->
