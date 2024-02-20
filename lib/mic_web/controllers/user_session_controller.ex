@@ -5,7 +5,9 @@ defmodule MicWeb.UserSessionController do
   alias MicWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
-    create(conn, params, "Account created successfully!")
+    conn
+    |> put_session(:user_return_to, ~p"/chat")
+    |> create(params, "Account created successfully!")
   end
 
   def create(conn, %{"_action" => "password_updated"} = params) do
