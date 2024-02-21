@@ -22,7 +22,8 @@ defmodule MicWeb.PageController do
   def home(conn, _params) do
     # The home page is often custom made,
     # so skip the default app layout.
-    render(conn, :home, layout: false)
+    # TODO: what should I do here?
+    render(conn, :home)
   end
 
   def funnel(conn, _params) do

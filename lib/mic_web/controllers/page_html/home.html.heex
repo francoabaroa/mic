@@ -1,15 +1,6 @@
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
-  <header class="px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
-      <div class="flex items-center gap-4">
-        <a href="/">
-          <img src={~p"/images/logo.svg"} width="48" />
-        </a>
-      </div>
-    </div>
-  </header>
-  <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
+  <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
     <div class="mx-auto max-w-xl lg:mx-0">
       <h1 class="text-brand mt-10 flex items-center text-lg font-semibold leading-6">
         Welcome <span class="ml-2"><%= @current_user.email %>!</span>
@@ -375,7 +366,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 <% else %>
   <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
     <div class="mx-auto max-w-xl lg:mx-0">
@@ -474,10 +465,10 @@ c57 -54 62 -127 14 -185 -54 -64 -144 -61 -203 5 -52 60 -37 152 32 196 46 29
       </div>
       <div class="flex">
         <div class="w-full sm:w-auto">
-          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
             <a
               href="https://github.com/francoabaroa/mic/tree/main/docs"
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
+              class="group relative rounded-2xl px-6 py-4 m-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
               </span>
@@ -496,12 +487,12 @@ c57 -54 62 -127 14 -185 -54 -64 -144 -61 -203 5 -52 60 -37 152 32 196 46 29
                 >
                   <path d="M3 2v1c0 1 2 1 2 2S3 6 3 7s2 1 2 2-2 1-2 2 2 1 2 2" /><path d="M18 6h.01" /><path d="M6 18h.01" /><path d="M20.83 8.83a4 4 0 0 0-5.66-5.66l-12 12a4 4 0 1 0 5.66 5.66Z" /><path d="M18 11.66V22a4 4 0 0 0 4-4V6" />
                 </svg>
-                AI Tools
+                <span>AI Tools</span>
               </span>
             </a>
             <a
               href="https://github.com/francoabaroa/mic/tree/main/docs"
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
+              class="group relative rounded-2xl px-6 py-4 m-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
               </span>
@@ -520,7 +511,7 @@ c57 -54 62 -127 14 -185 -54 -64 -144 -61 -203 5 -52 60 -37 152 32 196 46 29
                 >
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
-                Music Funnel
+                <span>Music Funnel</span>
               </span>
             </a>
           </div>
