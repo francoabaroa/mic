@@ -95,24 +95,25 @@ defmodule MicWeb.UserAuth do
     conn = assign(conn, :current_user, user)
 
     # Check if the user has a profile
-    user_has_profile =
+    {user_has_profile, profile_artist_name} =
       if user do
         try do
-          Mic.Artists.get_profile_by_user_id!(user.id)
+          profile = Mic.Artists.get_profile_by_user_id!(user.id)
           # If the function succeeds, assign true
-          true
+          {true, profile.artist_name}
         rescue
           Ecto.NoResultsError ->
             # This block executes if no profile is found
-            false
+            {false, nil}
         end
       else
         # If there's no user, set user_has_profile to false
-        false
+        {false, nil}
       end
 
     # Assign the result to the connection
-    assign(conn, :user_has_profile, user_has_profile)
+    conn = assign(conn, :user_has_profile, user_has_profile)
+    assign(conn, :profile_artist_name, profile_artist_name)
   end
 
   defp ensure_user_token(conn) do
