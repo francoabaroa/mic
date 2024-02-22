@@ -65,6 +65,84 @@ Hooks.AuthRedirects = {
   }
 };
 
+Hooks.CommentsChart = {
+  mounted() {
+    var ctx = this.el.getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'Comments',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            data: [0, 14, 15, 22, 26, 36, 45]
+          }
+        ]
+      },
+      options: {}
+    });
+    this.handleEvent("comments", ({ comments }) => {
+      console.log('comments: ', comments)
+      this.chart.data.datasets[0].data = comments;
+      this.chart.update();
+    });
+  }
+}
+
+Hooks.StreamsChart = {
+  mounted() {
+    var ctx = this.el.getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'Streams',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            data: [0, 13, 7, 3, 25, 29, 45]
+          }
+        ]
+      },
+      options: {}
+    });
+    this.handleEvent("streams", ({ streams }) => {
+      console.log('streams: ', streams)
+      this.chart.data.datasets[0].data = streams;
+      this.chart.update();
+    });
+  }
+}
+
+Hooks.LikesChart = {
+  mounted() {
+    var ctx = this.el.getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'Likes',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            data: [0, 10, 5, 2, 20, 30, 45]
+          },
+        ]
+      },
+      options: {}
+    });
+    this.handleEvent("likes", ({ likes }) => {
+      console.log('likes: ', likes)
+      this.chart.data.datasets[0].data = likes;
+      this.chart.update();
+    });
+  }
+}
+
 Hooks.VoiceAudioHandlers = {
   mounted() {
     this.handleEvent("audio_chunk", ({ chunk }) => {

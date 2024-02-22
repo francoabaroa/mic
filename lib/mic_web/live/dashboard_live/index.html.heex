@@ -1,0 +1,41 @@
+<section class="px-4 py-8 sm:px-6 lg:px-8">
+  <div class="container mx-auto">
+    <h1 class="text-center text-lg font-semibold leading-8">
+      Marim Career Metrics
+    </h1>
+    <span class="block text-center mb-4">Caution: Mock Data</span>
+    <!-- Responsive grid container -->
+    <%!-- TOOD: fix small charts in large view, due to app.html.heex, how can we avoid this? --%>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="ignore_dashboard" phx-update="ignore">
+      <div>
+        <canvas id="streamsChart" phx-hook="StreamsChart"></canvas>
+        <button
+          class="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          phx-click="nextStreams"
+        >
+          Randomize
+        </button>
+      </div>
+      <!-- Chart 2: Likes -->
+      <div>
+        <canvas id="likesChart" phx-hook="LikesChart"></canvas>
+        <button
+          class="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          phx-click="nextLikes"
+        >
+          Randomize
+        </button>
+      </div>
+      <!-- Chart 3: Comments -->
+      <div>
+        <canvas id="commentsChart" phx-hook="CommentsChart"></canvas>
+        <button
+          class="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+          phx-click="nextComments"
+        >
+          Randomize
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

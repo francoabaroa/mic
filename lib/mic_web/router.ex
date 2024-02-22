@@ -98,6 +98,8 @@ defmodule MicWeb.Router do
       # TODO: merge chat and messages
       live "/chat/:scenario_id", ChatLive.Index, :index
       live "/chat", ChatLive.Index, :index
+
+      live "/dashboard", DashboardLive.Index, :index
     end
   end
 
