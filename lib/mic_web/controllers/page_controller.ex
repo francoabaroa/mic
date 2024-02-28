@@ -56,8 +56,11 @@ defmodule MicWeb.PageController do
 
   def my_insights(conn, _params) do
     personalized_resources = get_personalized_resources(conn.assigns.current_user)
+    personalized_resources_html = clean_html(personalized_resources)
 
-    render(conn, :my_insights, personalized_resources: format_content(personalized_resources))
+    render(conn, :my_insights,
+      personalized_resources: add_collapsible_list(personalized_resources_html)
+    )
   end
 
   defp get_personalized_resources(user) do
@@ -76,19 +79,7 @@ defmodule MicWeb.PageController do
     end
   end
 
-  def format_content(content) do
-    # TODO: fix this, this is going to break soon. temp
-    steps_html =
-      content
-      |> String.split(~r/Step \d+:/)
-      |> Enum.reject(&(&1 == ""))
-      |> Enum.map(&String.trim/1)
-      |> Enum.with_index(1)
-      |> Enum.map(fn {part, index} ->
-        "<strong><h3>Step #{index}:</h3></strong><p>#{part}</p>"
-      end)
-      |> Enum.join("\n")
-
+  def add_collapsible_list(content) do
     """
     <button type="button" class="collapsible-list">
     <span class="collapsible-button-content">Distribution
@@ -97,9 +88,16 @@ defmodule MicWeb.PageController do
     </button>
 
     <div class="collapsible-content">
-      #{steps_html}
+      #{content}
     </div>
     """
+  end
+
+  def clean_html(html_string) do
+    # Remove the specific unwanted prefix
+    String.replace(html_string, "```html", "")
+    # To ensure any closing tag is also removed if present
+    |> String.replace("```", "")
   end
 
   def oauth_callback(conn, %{"code" => code}) do

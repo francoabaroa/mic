@@ -13,9 +13,9 @@ config :mic,
   # TODO: remove
   # or gpt-3.5-turbo
   # gpt-4-turbo-preview
-  model: "gpt-3.5-turbo",
+  model: "gpt-4-turbo-preview",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-3.5-turbo",
+  default_model: :"gpt-4-turbo-preview",
   models: [
     %{
       id: :"gpt-4-turbo-preview",

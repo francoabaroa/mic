@@ -311,7 +311,7 @@ defmodule Mic.Chat.OpenAI do
     ]
 
     # TODO: Fix timeout happening with gpt-4-turbo-preview
-    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
+    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
       {:ok, res} ->
         first = List.first(res.choices)
         {:ok, first.message}
@@ -680,13 +680,29 @@ defmodule Mic.Chat.OpenAI do
     msgs = [
       %ExOpenAI.Components.ChatCompletionRequestUserMessage{
         role: :user,
-        content:
-          "Given:\n1. A detailed subject 'syllabus' concerning a specific facet of the music industry.\n2. A comprehensive music artist biography.\n\nYour task is to merge insights from the syllabus with the unique attributes and career phase of the artist, using chain of thought reasoning to formulate personalized, actionable advice for the music artist. Focus on leveraging the artist's strengths while addressing any identified weaknesses or opportunities for growth in the context of the syllabus topic. Consider the following steps:\n\nStep 1: Summarize Key Points\n- Briefly summarize the main takeaways from the artist's biography, highlighting their genre, career stage, past successes, current challenges, and unique traits.\n- Extract the core principles and opportunities described in the syllabus that are most applicable to music distribution.\n\nStep 2: Identify Gaps and Opportunities\n- Based on the artist's career stage and goals, identify any gaps in their current approach to music distribution.\n- Highlight opportunities for growth or improvement in their distribution strategy.\n\nStep 3: Formulate Actionable Advice\n- Combine insights from both the biography and syllabus to create steps the artist can take to enhance their music distribution. This could include platform optimizations, content strategies, partnerships, or diversification approaches.\n\nStep 4: Personalize Step-by-Step Plan\n- Provide a step-by-step action plan tailored to the artist. This should be based on their specific circumstances and designed to capitalize on the opportunities identified.\n\nStep 5: Measure and Adjust\n- Suggest methods for the artist to measure the effectiveness of implemented actions.\n- Recommend a mindset of flexibility and adaptation, encouraging iterative improvements based on results.\n\nIn your response, incorporate insights and strategies from the syllabus with the artist's biography details to develop a targeted advice plan that places them on a path to enhanced music distribution success. Please keep it under 2 pages." <>
-            " Artist Biography: #{artist_description} - Syllabus: #{syllabus}"
+        content: """
+                Given:
+        1. A detailed subject syllabus concerning a specific facet of the music industry (and advice regarding it).
+        2. A comprehensive music artist biography.
+
+        Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations.
+
+        Please follow these guidelines for the output:
+        - Output must be in a easy-to-read HTML object string organized properly. Make sure to bold any headings.
+        - Focus solely on including recommendations.
+        - Provide the recommendations in a concise format, ideally fitting within two pages of text.
+        - Employ step-by-step thinking using chain of thought reasoning to ensure the recommendations are highly personalized and actionable for the artist according to their biography.
+
+        Here are the details you'll base your recommendations on:
+
+        Artist Biography: #{artist_description}
+
+        Syllabus: #{syllabus}
+        """
       }
     ]
 
-    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
+    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
       {:ok, res} ->
         first = List.first(res.choices)
         {:ok, first.message}
