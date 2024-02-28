@@ -348,7 +348,7 @@ defmodule MicWeb.ChatLive.Index do
     case Mic.Chat.OpenAI.generate_artist_tailored_content(artist_description, resource_subject) do
       {:ok, response} ->
         # return it in the correct Resource object
-        # check if Resource already exists for subject, if so update JSONB content if not create resource
+        # check if Resource already exists for subject, if so update resource content, if not create resource
         %{
           subject: resource_subject,
           # Assuming content is a list of maps
