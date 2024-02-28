@@ -9,7 +9,31 @@
         <div class="w-full sm:w-auto">
           <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
             <a
-              href={~p"/checklist"}
+              href={~p"/my-insights"}
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
+            >
+              <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
+              </span>
+              <span class="relative flex items-center gap-4 sm:flex-col">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-zap"
+                >
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                My Insights
+              </span>
+            </a>
+            <a
+              href={~p"/podcasts"}
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -33,7 +57,7 @@
               </span>
             </a>
             <a
-              href={~p"/checklist"}
+              href={~p"/articles"}
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -57,7 +81,7 @@
               </span>
             </a>
             <a
-              href={~p"/checklist"}
+              href={~p"/tutorials"}
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -81,7 +105,7 @@
               </span>
             </a>
             <a
-              href={~p"/checklist"}
+              href={~p"/webinars"}
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
               <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
@@ -121,35 +145,11 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="lucide lucide-zap"
-                >
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
-                Insights
-              </span>
-            </a>
-            <a
-              href={~p"/checklist"}
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
-            >
-              <span class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
-              </span>
-              <span class="relative flex items-center gap-4 sm:flex-col">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
                   class="lucide lucide-list-checks"
                 >
                   <path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" /><path d="M13 6h8" /><path d="M13 12h8" /><path d="M13 18h8" />
                 </svg>
-                Checklist
+                Must-Have's
               </span>
             </a>
           </div>
@@ -161,5 +161,10 @@
   <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
     <!-- TODO: Add content for guests goes here -->
   <!-- Include a brief about the artist development program to entice new users to join -->
+    <div class="mx-auto max-w-xl lg:mx-0">
+      <h1 class="text-brand mt-10 flex items-center text-lg font-semibold leading-6">
+        Sign up today to get access!
+      </h1>
+    </div>
   </section>
 <% end %>

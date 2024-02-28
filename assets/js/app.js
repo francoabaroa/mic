@@ -209,6 +209,19 @@ Hooks.VoiceAudioHandlers = {
   }
 };
 
+let collapsibleList = document.getElementsByClassName("collapsible-list");
+for (let i = 0; i < collapsibleList.length; i++) {
+  collapsibleList[i].addEventListener("click", function () {
+    this.classList.toggle("active");
+    let content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+
 // TODO: What is the correct fix for this?
 document.addEventListener('click', function () {
   if (!audioInitialized) {

@@ -70,9 +70,14 @@ defmodule MicWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     # TODO: make visible without auth
+    get "/articles", PageController, :articles
     get "/checklist", PageController, :checklist
     get "/educational-hub", PageController, :educational_hub
     get "/music-funnel", PageController, :funnel
+    get "/my-insights", PageController, :my_insights
+    get "/podcasts", PageController, :podcasts
+    get "/tutorials", PageController, :tutorials
+    get "/webinars", PageController, :webinars
 
     live_session :require_authenticated_user,
       on_mount: [{MicWeb.UserAuth, :ensure_authenticated}] do

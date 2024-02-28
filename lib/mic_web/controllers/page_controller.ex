@@ -38,6 +38,70 @@ defmodule MicWeb.PageController do
     render(conn, :educational_hub)
   end
 
+  def podcasts(conn, _params) do
+    render(conn, :podcasts)
+  end
+
+  def articles(conn, _params) do
+    render(conn, :articles)
+  end
+
+  def tutorials(conn, _params) do
+    render(conn, :tutorials)
+  end
+
+  def webinars(conn, _params) do
+    render(conn, :webinars)
+  end
+
+  def my_insights(conn, _params) do
+    personalized_resources = get_personalized_resources(conn.assigns.current_user)
+
+    render(conn, :my_insights, personalized_resources: format_content(personalized_resources))
+  end
+
+  defp get_personalized_resources(user) do
+    # TODO: eventually add a for loop to fetch all subjects resources
+    # Define the subject you are interested in
+    subject = :distribution
+
+    case Mic.Artists.get_resource_by_user_id_and_subject!(user.id, subject) do
+      %Mic.Artists.Resource{} = resource ->
+        # TODO: Need to define what this map looks like. For now its column content, with a list of maps title content keypair
+        resource.content |> List.first() |> Map.get("content")
+
+      _error ->
+        # Handle the case where no resource is found or an error occurs
+        "No personalized content available. Check back later."
+    end
+  end
+
+  def format_content(content) do
+    # TODO: fix this, this is going to break soon. temp
+    steps_html =
+      content
+      |> String.split(~r/Step \d+:/)
+      |> Enum.reject(&(&1 == ""))
+      |> Enum.map(&String.trim/1)
+      |> Enum.with_index(1)
+      |> Enum.map(fn {part, index} ->
+        "<strong><h3>Step #{index}:</h3></strong><p>#{part}</p>"
+      end)
+      |> Enum.join("\n")
+
+    """
+    <button type="button" class="collapsible-list">
+    <span class="collapsible-button-content">Distribution
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unfold-vertical"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg>
+    </span>
+    </button>
+
+    <div class="collapsible-content">
+      #{steps_html}
+    </div>
+    """
+  end
+
   def oauth_callback(conn, %{"code" => code}) do
     with {:ok, token} <- ElixirAuthGoogle.get_token(code, conn),
          %{access_token: access_token} <- token,

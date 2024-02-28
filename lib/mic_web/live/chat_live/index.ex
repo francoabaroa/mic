@@ -344,6 +344,22 @@ defmodule MicWeb.ChatLive.Index do
     end
   end
 
+  defp generate_tailored_content(artist_description, resource_subject) do
+    case Mic.Chat.OpenAI.generate_artist_tailored_content(artist_description, resource_subject) do
+      {:ok, response} ->
+        # return it in the correct Resource object
+        # check if Resource already exists for subject, if so update JSONB content if not create resource
+        %{
+          subject: resource_subject,
+          # Assuming content is a list of maps
+          content: [%{title: "#{resource_subject}", content: response.content}]
+        }
+
+      {:error, reason} ->
+        Logger.error("Chat Completions Generate Tailored Content Error: #{inspect(reason)}")
+    end
+  end
+
   defp generate_valid_dob_struct(text) do
     case Mic.Chat.OpenAI.generate_iso_8601_date_string(text) do
       {:ok, response} ->
@@ -535,24 +551,53 @@ defmodule MicWeb.ChatLive.Index do
         # Generate ai description
         description = generate_profile_description(profile_data)
 
+        # Generate initial tailored resources for distribution
+        # TODO: eventually add more subjects with for loop
+        distribution_resource = generate_tailored_content(description.content, :distribution)
+
         # Update profile_data object and pass that to create_profile
         updated_profile_data = Map.put(profile_data, :artist_ai_description, description.content)
 
-        # Once onboarding questionnare is done, save profile
-        case Mic.Artists.create_profile(socket.assigns.current_user, updated_profile_data) do
-          {:ok, profile} ->
-            # Handle success, e.g., assign the profile to the socket or redirect to home
-            updated_socket =
-              socket
-              |> assign(:profile, profile)
-              |> assign(:loading, false)
+        has_subject_resource =
+          try do
+            Mic.Artists.get_resource_by_user_id_and_subject!(
+              socket.assigns.current_user.id,
+              :distribution
+            )
 
-            # Redirect to the root path
-            {:noreply, push_redirect(updated_socket, to: "/")}
+            true
+          rescue
+            Ecto.NoResultsError ->
+              # This block executes if no resource is found, returning a default or nil
+              Logger.debug("No subject resource found for user.")
+              nil
+          end
 
-          {:error, changeset} ->
-            # Handle error, e.g., assign the error to the socket for display
-            {:noreply, assign(socket, error: changeset)}
+        if has_subject_resource == nil do
+          # TODO: eventually need to add line for updating resource when subject already exists
+          case Mic.Artists.create_resource(socket.assigns.current_user, distribution_resource) do
+            {:ok, _resource} ->
+              # Once onboarding questionnare is done, save profile
+              case Mic.Artists.create_profile(socket.assigns.current_user, updated_profile_data) do
+                {:ok, profile} ->
+                  # Handle success, e.g., assign the profile to the socket or redirect to home
+                  updated_socket =
+                    socket
+                    |> assign(:profile, profile)
+                    |> assign(:loading, false)
+
+                  # Redirect to the root path
+                  {:noreply, push_redirect(updated_socket, to: "/")}
+
+                {:error, changeset} ->
+                  # Handle error, e.g., assign the error to the socket for display
+                  {:noreply, assign(socket, error: changeset)}
+              end
+
+            {:error, changeset} ->
+              # Handle error, e.g., assign the error to the socket for display
+              {:noreply, assign(socket, error: changeset)}
+          end
         end
       end
     else
