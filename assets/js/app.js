@@ -84,14 +84,13 @@ Hooks.CommentsChart = {
       options: {}
     });
     this.handleEvent("comments", ({ comments }) => {
-      console.log('comments: ', comments)
       this.chart.data.datasets[0].data = comments;
       this.chart.update();
     });
   }
 }
 
-Hooks.StreamsChart = {
+Hooks.ListenersChart = {
   mounted() {
     var ctx = this.el.getContext('2d');
     this.chart = new Chart(ctx, {
@@ -100,7 +99,7 @@ Hooks.StreamsChart = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
           {
-            label: 'Streams',
+            label: 'Listeners',
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             borderColor: 'rgba(255, 99, 132, 1)',
             data: [0, 13, 7, 3, 25, 29, 45]
@@ -109,9 +108,8 @@ Hooks.StreamsChart = {
       },
       options: {}
     });
-    this.handleEvent("streams", ({ streams }) => {
-      console.log('streams: ', streams)
-      this.chart.data.datasets[0].data = streams;
+    this.handleEvent("listeners", ({ listeners }) => {
+      this.chart.data.datasets[0].data = listeners;
       this.chart.update();
     });
   }
@@ -136,7 +134,6 @@ Hooks.LikesChart = {
       options: {}
     });
     this.handleEvent("likes", ({ likes }) => {
-      console.log('likes: ', likes)
       this.chart.data.datasets[0].data = likes;
       this.chart.update();
     });

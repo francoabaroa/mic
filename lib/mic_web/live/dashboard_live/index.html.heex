@@ -1,17 +1,17 @@
 <section class="px-4 py-8 sm:px-6 lg:px-8">
   <div class="container mx-auto">
     <h1 class="text-center text-lg font-semibold leading-8">
-      Marim Career Metrics
+      Artist Career Metrics
     </h1>
     <span class="block text-center mb-4">Caution: Mock Data</span>
     <!-- Responsive grid container -->
     <%!-- TOOD: fix small charts in large view, due to app.html.heex, how can we avoid this? --%>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="ignore_dashboard" phx-update="ignore">
       <div>
-        <canvas id="streamsChart" phx-hook="StreamsChart"></canvas>
+        <canvas id="listenersChart" phx-hook="ListenersChart"></canvas>
         <button
           class="mt-2 flex justify-center items-center bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
-          phx-click="nextStreams"
+          phx-click="nextListeners"
         >
           Refresh
         </button>

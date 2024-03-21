@@ -6,9 +6,57 @@ defmodule Mic.Artists do
   import Ecto.Query, warn: false
   alias Mic.Repo
 
+  alias Mic.Artists.Chartmetric
   alias Mic.Artists.Profile
   alias Mic.Artists.Resource
   alias Mic.Accounts.User
+
+  def get_artist_metrics(artist_id) do
+    with {:ok, spotify_stats} <- Chartmetric.get_artist_spotify_stats(artist_id),
+         {:ok, instagram_stats} <- Chartmetric.get_artist_instagram_stats(artist_id),
+         {:ok, youtube_stats} <- Chartmetric.get_artist_youtube_stats(artist_id) do
+      metrics = %{
+        listeners: extract_listeners(spotify_stats),
+        likes: extract_likes(instagram_stats),
+        comments: extract_comments(youtube_stats),
+        followers: extract_followers(spotify_stats, instagram_stats, youtube_stats)
+      }
+
+      {:ok, metrics}
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp extract_listeners(spotify_stats) do
+    spotify_stats["listeners"]
+    |> Enum.map(fn %{"value" => value} -> value end)
+  end
+
+  defp extract_likes(instagram_stats) do
+    instagram_stats["followers"]
+    |> Enum.map(fn %{"value" => value} -> value end)
+  end
+
+  defp extract_comments(youtube_stats) do
+    youtube_stats["daily_views"]
+    |> Enum.map(fn %{"value" => value} -> value end)
+  end
+
+  defp extract_followers(spotify_stats, instagram_stats, youtube_stats) do
+    spotify_followers = get_value(spotify_stats, ["followers"])
+    instagram_followers = get_value(instagram_stats, ["followers"])
+    youtube_subscribers = get_value(youtube_stats, ["subscribers"])
+
+    (spotify_followers || 0) + (instagram_followers || 0) + (youtube_subscribers || 0)
+  end
+
+  defp get_value(stats, keys) do
+    case get_in(stats, keys) do
+      nil -> nil
+      followers -> followers |> List.last() |> Map.get("value")
+    end
+  end
 
   @doc """
   Returns the list of profiles.
