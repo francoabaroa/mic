@@ -247,7 +247,7 @@ defmodule Mic.Chat.OpenAI do
   end
 
   def transcribe_voice(audio_content) do
-    # TEMP: Temporary filename
+    # TODO: TEMP: Temporary filename
     file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/temp_audio.mp3"
 
     # Write audio content to a file
