@@ -189,6 +189,7 @@ defmodule MicWeb.MessageComponent do
     assigns =
       assigns
       |> assign(:parsed_content, process_markdown(assigns.message))
+      |> assign(:should_show_text_voice_buttons, should_show_text_voice_buttons)
 
     ~H"""
     <div class={"chat #{style(@sender)}"}>
@@ -223,7 +224,7 @@ defmodule MicWeb.MessageComponent do
             Portuguese
           </button>
         <% end %>
-        <%= if should_show_text_voice_buttons && @assistant_type === nil do %>
+        <%= if @should_show_text_voice_buttons && @assistant_type === nil do %>
           <button
             phx-click="text_interaction"
             class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"

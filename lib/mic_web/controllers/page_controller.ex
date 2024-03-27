@@ -1,8 +1,6 @@
 defmodule MicWeb.PageController do
   use MicWeb, :controller
 
-  import Phoenix.LiveView.Controller
-
   defp protect_with_session(conn, _params, fx) do
     case get_session(conn) do
       %{"oauth_google_token" => _token, "oauth_expiration" => expiration} ->
