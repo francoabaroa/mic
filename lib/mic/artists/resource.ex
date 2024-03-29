@@ -7,7 +7,7 @@ defmodule Mic.Artists.Resource do
 
   schema "resources" do
     field :content, {:array, :map}
-
+    # TODO: add more values, look at threads
     field :subject, Ecto.Enum,
       values: [
         :distribution,

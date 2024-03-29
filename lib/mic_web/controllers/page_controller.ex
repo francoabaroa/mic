@@ -54,41 +54,55 @@ defmodule MicWeb.PageController do
 
   def my_insights(conn, _params) do
     personalized_resources = get_personalized_resources(conn.assigns.current_user)
-    personalized_resources_html = clean_html(personalized_resources)
 
     render(conn, :my_insights,
-      personalized_resources: add_collapsible_list(personalized_resources_html)
+      personalized_resources: add_collapsible_list(personalized_resources)
     )
   end
 
   defp get_personalized_resources(user) do
-    # TODO: eventually add a for loop to fetch all subjects resources
-    # Define the subject you are interested in
-    subject = :distribution
+    subjects = [:distribution, :finance]
 
-    case Mic.Artists.get_resource_by_user_id_and_subject!(user.id, subject) do
-      %Mic.Artists.Resource{} = resource ->
-        # TODO: Need to define what this map looks like. For now its column content, with a list of maps title content keypair
-        resource.content |> List.first() |> Map.get("content")
+    personalized_resources =
+      Enum.map(subjects, fn subject ->
+        case Mic.Artists.get_resource_by_user_id_and_subject!(user.id, subject) do
+          # TODO: Need to define what this map type looks like. For now its column content, with a list of maps title content keypair
+          %Mic.Artists.Resource{} = resource ->
+            %{
+              subject: subject,
+              content: resource.content |> List.first() |> Map.get("content")
+            }
 
-      _error ->
-        # Handle the case where no resource is found or an error occurs
-        "No personalized content available. Check back later."
-    end
+          _error ->
+            %{
+              subject: subject,
+              content: "No personalized content available for #{subject}. Check back later."
+            }
+        end
+      end)
+
+    personalized_resources
   end
 
-  def add_collapsible_list(content) do
-    """
-    <button type="button" class="collapsible-list">
-    <span class="collapsible-button-content">Distribution
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unfold-vertical"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg>
-    </span>
-    </button>
+  def add_collapsible_list(personalized_resources) do
+    Enum.map(personalized_resources, fn %{subject: subject, content: content} ->
+      cleaned_content =
+        content
+        |> clean_html
 
-    <div class="collapsible-content">
-      #{content}
-    </div>
-    """
+      """
+      <button type="button" class="collapsible-list">
+      <span class="collapsible-button-content">#{String.capitalize(to_string(subject))}
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unfold-vertical"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg>
+      </span>
+      </button>
+
+      <div class="collapsible-content">
+        #{cleaned_content}
+      </div>
+      """
+    end)
+    |> Enum.join("\n")
   end
 
   def clean_html(html_string) do

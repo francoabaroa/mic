@@ -7,11 +7,14 @@ defmodule Mic.Jobs.GenerateArtistTailoredResourcesJob do
 
   @impl Oban.Worker
   def perform(%Oban.Job{
-        args: %{"current_user" => current_user, "description_content" => description_content}
+        args: %{
+          "current_user" => current_user,
+          "description_content" => description_content,
+          "subject" => subject
+        }
       }) do
-    # TODO: eventually add more subjects with for loop, right now hardcoded
-    distribution_resource = generate_tailored_content(description_content, :distribution)
-    create_or_update_resource(current_user["id"], distribution_resource)
+    resource = generate_tailored_content(description_content, subject)
+    create_or_update_resource(current_user["id"], resource)
     :ok
   end
 
@@ -40,6 +43,8 @@ defmodule Mic.Jobs.GenerateArtistTailoredResourcesJob do
   end
 
   defp generate_tailored_content(artist_description, resource_subject) do
+    resource_subject = String.to_existing_atom(resource_subject)
+
     case Mic.Chat.OpenAI.generate_artist_tailored_content(artist_description, resource_subject) do
       {:ok, response} ->
         build_resource(resource_subject, response.content)

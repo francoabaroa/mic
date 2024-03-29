@@ -73,9 +73,7 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
   defp create_profile(model, updated_profile_data_with_atom_keys, current_user_id, current_user) do
     case Mic.Artists.create_profile(model, updated_profile_data_with_atom_keys) do
       {:ok, profile} ->
-        has_subject_resource = check_subject_resource(current_user_id)
-
-        if has_subject_resource == nil do
+        unless check_subject_resource(current_user_id) do
           enqueue_generate_resources_job(current_user, profile.artist_ai_description)
         end
 
@@ -87,22 +85,30 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
   end
 
   defp check_subject_resource(current_user_id) do
-    try do
-      Mic.Artists.get_resource_by_user_id_and_subject!(current_user_id, :distribution)
-      true
-    rescue
-      Ecto.NoResultsError ->
-        Logger.debug("No subject resource found for user.")
-        nil
-    end
+    subjects = [:distribution, :finance]
+
+    Enum.any?(subjects, fn subject ->
+      try do
+        Mic.Artists.get_resource_by_user_id_and_subject!(current_user_id, subject)
+        true
+      rescue
+        Ecto.NoResultsError ->
+          false
+      end
+    end)
   end
 
   defp enqueue_generate_resources_job(current_user, description_content) do
-    Mic.Jobs.GenerateArtistTailoredResourcesJob.new(%{
-      "current_user" => current_user,
-      "description_content" => description_content
-    })
-    |> Oban.insert()
+    subjects = [:distribution, :finance]
+
+    Enum.each(subjects, fn subject ->
+      Mic.Jobs.GenerateArtistTailoredResourcesJob.new(%{
+        "current_user" => current_user,
+        "description_content" => description_content,
+        "subject" => subject
+      })
+      |> Oban.insert()
+    end)
   end
 
   defp convert_keys_to_atoms(map) do
