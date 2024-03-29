@@ -10,6 +10,7 @@ defmodule Mic.Application do
     children = [
       MicWeb.Telemetry,
       Mic.Repo,
+      {Oban, Application.fetch_env!(:mic, Oban)},
       {DNSCluster, query: Application.get_env(:mic, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Mic.PubSub},
       # Start the Finch HTTP client for sending emails

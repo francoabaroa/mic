@@ -65,6 +65,7 @@ defmodule Mic.MixProject do
       {:elixir_auth_google, "~> 1.6.5"},
       {:cachex, "~> 3.6"},
       {:elixir_uuid, "~> 1.2"},
+      {:oban, "~> 2.17"},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:tokenizers, "~> 0.3.0"}
     ]

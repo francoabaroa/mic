@@ -311,6 +311,7 @@ defmodule Mic.Chat.OpenAI do
     ]
 
     # TODO: Fix timeout happening with gpt-4-turbo-preview
+    # TODO: make this model dependant on env var
     case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
       {:ok, res} ->
         first = List.first(res.choices)
@@ -685,7 +686,7 @@ defmodule Mic.Chat.OpenAI do
         1. A detailed subject syllabus concerning a specific facet of the music industry (and advice regarding it).
         2. A comprehensive music artist biography.
 
-        Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations.
+        Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations. The insights sheet should be tailored to the artist based on their biography.
 
         Please follow these guidelines for the output:
         - Output must be in a easy-to-read HTML object string organized properly. Make sure to bold any headings.
@@ -702,6 +703,7 @@ defmodule Mic.Chat.OpenAI do
       }
     ]
 
+    # TODO: make this model dependant on env var
     case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
       {:ok, res} ->
         first = List.first(res.choices)

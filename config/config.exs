@@ -7,15 +7,19 @@
 # General application configuration
 import Config
 
+config :mic, Oban,
+  repo: Mic.Repo,
+  queues: [default: 10]
+
 config :mic,
   ecto_repos: [Mic.Repo],
   generators: [timestamp_type: :utc_datetime],
-  # TODO: remove
+  # TODO: remove, make dynamic
   # or gpt-3.5-turbo
   # gpt-4-turbo-preview
-  model: "gpt-4-turbo-preview",
+  model: "gpt-3.5-turbo",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4-turbo-preview",
+  default_model: :"gpt-3.5-turbo",
   models: [
     %{
       id: :"gpt-4-turbo-preview",
