@@ -93,6 +93,7 @@ defmodule Mic.Chat.OpenAI do
 
   @impl true
   def handle_call({:msg, m, streamer_pid, "davinci"} = params, from, state) do
+    # TODO: remove davinci modles
     Logger.info("completing with davinci")
 
     with msgs <- state.messages ++ [new_msg(m)] do
