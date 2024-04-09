@@ -17,10 +17,15 @@ config :mic,
   # TODO: remove, make dynamic
   # or gpt-3.5-turbo
   # gpt-4-turbo-preview
+  # gpt-4-turbo
   model: "gpt-3.5-turbo",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
   default_model: :"gpt-3.5-turbo",
   models: [
+    %{
+      id: :"gpt-4-turbo",
+      truncate_tokens: 127_000
+    },
     %{
       id: :"gpt-4-turbo-preview",
       truncate_tokens: 127_000
