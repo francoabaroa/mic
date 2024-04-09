@@ -2,27 +2,32 @@ defmodule Mic.Chat.Thread do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @cast ~w(user_id openai_thread_id metadata category)a
-  @required ~w(user_id openai_thread_id category)a
+  @cast ~w(openai_thread_id metadata thread_category)a
+  @required ~w(thread_category)a
 
   schema "threads" do
     field :openai_thread_id, Ecto.UUID
     field :metadata, :map
 
-    field :category, Ecto.Enum,
+    field :thread_category, Ecto.Enum,
       values: [
-        :community,
+        :onboarding,
+        :essentials,
         :distribution,
-        :education,
-        :finance,
-        :general,
+        :contract_analyzer,
+        :mental_wellness,
         :health,
+        :general,
+        :finance,
         :legal,
         :marketing,
         :operational,
         :production,
         :strategy,
-        :talent
+        :talent,
+        :education,
+        :community,
+        :other
       ]
 
     belongs_to :user, Mic.Accounts.User

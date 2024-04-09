@@ -52,10 +52,12 @@ defmodule Mic.Chat do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_message(%Assistant{} = assistant, %Thread{} = thread, attrs \\ %{}) do
-    %Message{}
+  def create_message(%Assistant{} = assistant, %User{} = user, attrs \\ %{}) do
+    message = %Message{}
+
+    message
     |> Message.assistant_changeset(assistant, attrs)
-    |> Message.thread_changeset(thread, attrs)
+    |> Message.user_changeset(user, attrs)
     |> Repo.insert()
   end
 
@@ -73,9 +75,6 @@ defmodule Mic.Chat do
   """
   def update_message(%Message{} = message, attrs) do
     message
-    # TODO: remove
-    # |> Message.assistant_changeset(attrs)
-    # |> Message.thread_changeset(attrs)
     |> Message.changeset(attrs)
     |> Repo.update()
   end
@@ -253,8 +252,19 @@ defmodule Mic.Chat do
   """
   def create_assistant(attrs \\ %{}) do
     %Assistant{}
-    |> Assistant.changeset(attrs)
+    |> build_changeset(attrs)
     |> Repo.insert()
+  end
+
+  defp build_changeset(assistant, attrs) do
+    case Map.has_key?(attrs, "user_id") or Map.has_key?(attrs, :user_id) do
+      true ->
+        user = Mic.Accounts.get_user!(attrs["user_id"] || attrs[:user_id])
+        Assistant.user_changeset(assistant, user, attrs)
+
+      false ->
+        Assistant.changeset(assistant, attrs)
+    end
   end
 
   @doc """

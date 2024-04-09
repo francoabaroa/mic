@@ -4,6 +4,7 @@ defmodule MicWeb.MessageLive.FormComponent do
   alias Mic.Chat
 
   @impl true
+  # TODO: delete this view before prod
   def render(assigns) do
     ~H"""
     <div>
@@ -20,7 +21,6 @@ defmodule MicWeb.MessageLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:assistant_id]} type="text" label="Assistant" />
-        <.input field={@form[:thread_id]} type="text" label="Thread" />
         <.input field={@form[:content]} type="text" label="Content" />
         <.input field={@form[:role]} type="text" label="Role" />
         <:actions>

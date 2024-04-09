@@ -2,21 +2,26 @@ defmodule Mic.Chat.Message do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @cast ~w(assistant_id thread_id run_id content role metadata file_ids created_at openai_message_id)a
-  @required ~w(assistant_id thread_id content role openai_message_id)a
+  @cast ~w(thread_id run_id content role metadata file_ids created_at openai_message_id model_id)a
+  @required ~w(content role model_id)a
 
+  # TODO: use redact: true for sensitive fields before production
   schema "messages" do
     field :content, {:array, :map}
-    field :role, Ecto.Enum, values: [:assistant, :user]
+    field :role, Ecto.Enum, values: [:assistant, :user, :system]
+    # model id is the LLM used (gpt-3.5, gpt-3.5-turbo-0125, gpt-4, opus, haiku, etc)
+    field :model_id, :string
+
     field :metadata, :map
     field :file_ids, {:array, :string}
     field :created_at, :integer
     field :openai_message_id, Ecto.UUID
 
-    # could be the assistant this message was directed to, or the assistant authored this message. check role for more clarification
+    # could be the assistant this message was directed to, or the assistant that authored this message. check role for more clarification
     belongs_to :assistant, Mic.Chat.Assistant
     belongs_to :thread, Mic.Chat.Thread
     belongs_to :run, Mic.Chat.Run
+    belongs_to :user, Mic.Accounts.User
 
     timestamps(type: :utc_datetime)
   end
@@ -29,6 +34,7 @@ defmodule Mic.Chat.Message do
     |> assoc_constraint(:assistant)
     |> assoc_constraint(:thread)
     |> assoc_constraint(:run)
+    |> assoc_constraint(:user)
   end
 
   @doc false
@@ -50,5 +56,12 @@ defmodule Mic.Chat.Message do
     message
     |> changeset(attrs)
     |> put_assoc(:run, run)
+  end
+
+  @doc false
+  def user_changeset(message, %Mic.Accounts.User{} = user, attrs) do
+    message
+    |> changeset(attrs)
+    |> put_assoc(:user, user)
   end
 end

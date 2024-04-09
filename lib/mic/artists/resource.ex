@@ -7,19 +7,26 @@ defmodule Mic.Artists.Resource do
 
   schema "resources" do
     field :content, {:array, :map}
-    # TODO: add more values, look at threads
+
     field :subject, Ecto.Enum,
       values: [
+        :onboarding,
+        :essentials,
         :distribution,
-        :finance,
-        :general,
+        :contract_analyzer,
+        :mental_wellness,
         :health,
+        :general,
+        :finance,
         :legal,
         :marketing,
         :operational,
         :production,
         :strategy,
-        :talent
+        :talent,
+        :education,
+        :community,
+        :other
       ]
 
     belongs_to :user, Mic.Accounts.User

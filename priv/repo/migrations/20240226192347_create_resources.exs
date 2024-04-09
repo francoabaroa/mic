@@ -2,7 +2,23 @@ defmodule Mic.Repo.Migrations.CreateResources do
   use Ecto.Migration
 
   def change do
-    execute "CREATE TYPE subject AS ENUM ('distribution', 'finance', 'general', 'health', 'legal', 'marketing', 'operational', 'production', 'strategy', 'talent')"
+    execute "CREATE TYPE subject AS ENUM ('onboarding',
+        'essentials',
+        'distribution',
+        'contract_analyzer',
+        'mental_wellness',
+        'health',
+        'general',
+        'finance',
+        'legal',
+        'marketing',
+        'operational',
+        'production',
+        'strategy',
+        'talent',
+        'education',
+        'community',
+        'other')"
 
     create table(:resources) do
       add :content, :jsonb

@@ -2,16 +2,16 @@ defmodule Mic.Repo.Migrations.CreateMessages do
   use Ecto.Migration
 
   def change do
-    execute "CREATE TYPE role AS ENUM ('assistant', 'user')"
+    execute "CREATE TYPE role AS ENUM ('assistant', 'user', 'system')"
 
     create table(:messages) do
-      add :thread_id, references(:threads, on_delete: :nothing), null: false
-
-      # could be the assistant this message was directed to, or the assistant authored this message. check role for more clarification
-      add :assistant_id, references(:assistants, on_delete: :nothing), null: false
-      add :run_id, references(:runs, on_delete: :nothing)
-      add :content, :jsonb
       add :role, :role, null: false
+      add :content, :jsonb, null: false
+      add :model_id, :string, null: false
+      add :assistant_id, references(:assistants, on_delete: :nothing), null: false
+      add :user_id, references(:users, on_delete: :nothing), null: false
+      add :thread_id, references(:threads, on_delete: :nothing)
+      add :run_id, references(:runs, on_delete: :nothing)
       add :metadata, :map
       add :file_ids, {:array, :string}
       add :created_at, :integer
@@ -20,6 +20,7 @@ defmodule Mic.Repo.Migrations.CreateMessages do
       timestamps(type: :utc_datetime)
     end
 
+    create index(:messages, [:user_id])
     create index(:messages, [:assistant_id])
     create index(:messages, [:thread_id])
   end

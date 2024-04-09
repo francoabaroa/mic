@@ -1,8 +1,11 @@
 defmodule MicWeb.UserRegistrationLive do
   use MicWeb, :live_view
 
+  require Logger
+
   alias Mic.Accounts
   alias Mic.Accounts.User
+  alias Mic.Chat
 
   def render(assigns) do
     ~H"""
@@ -61,6 +64,40 @@ defmodule MicWeb.UserRegistrationLive do
             user,
             &url(~p"/users/confirm/#{&1}")
           )
+
+        # Pre-create 5 assistants for the user
+        # TODO: need to create any other addtl assistants
+        assistant_creation_results =
+          Enum.map(
+            [:onboarding, :essentials, :distribution, :contract_analyzer, :mental_wellness],
+            fn assistant_type ->
+              case Chat.create_assistant(%{
+                     name: "#{Atom.to_string(assistant_type)} Assistant",
+                     assistant_type: assistant_type,
+                     user_id: user.id
+                   }) do
+                {:ok, assistant} ->
+                  # Assistant created successfully
+                  {:ok, assistant}
+
+                {:error, reason} ->
+                  # Handle the error case, e.g., log the error, notify the user, etc.
+                  Logger.error("Error creating assistant: #{inspect(reason)}")
+                  {:error, reason}
+              end
+            end
+          )
+
+        # Check if any assistant creation failed
+        failed_creations =
+          Enum.filter(assistant_creation_results, fn result -> match?({:error, _}, result) end)
+
+        if length(failed_creations) > 0 do
+          # Handle the case when one or more assistant creations failed
+          error_reasons = Enum.map(failed_creations, fn {_, reason} -> reason end)
+          # Log the error and continue without raising an exception
+          Logger.error("Failed to create assistants: #{inspect(error_reasons)}")
+        end
 
         changeset = Accounts.change_user_registration(user)
         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}

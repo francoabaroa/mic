@@ -6,6 +6,7 @@ defmodule Mic.Accounts.UserToken do
   @hash_algorithm :sha256
   @rand_size 32
 
+  # TODO: Update this before prod
   # It is very important to keep the reset password token expiry short,
   # since someone with access to the email may take over the account.
   @reset_password_validity_in_days 1
