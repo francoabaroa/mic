@@ -67,26 +67,31 @@ defmodule MicWeb.UserRegistrationLive do
 
         # Pre-create 5 assistants for the user
         # TODO: need to create any other addtl assistants
-        assistant_creation_results =
-          Enum.map(
-            [:onboarding, :essentials, :distribution, :contract_analyzer, :mental_wellness],
-            fn assistant_type ->
-              case Chat.create_assistant(%{
-                     name: "#{Atom.to_string(assistant_type)} Assistant",
-                     assistant_type: assistant_type,
-                     user_id: user.id
-                   }) do
-                {:ok, assistant} ->
-                  # Assistant created successfully
-                  {:ok, assistant}
+        assistant_creation_details = [
+          %{name: "Onboardy", assistant_type: :onboarding},
+          %{name: "Essentia", assistant_type: :essentials},
+          %{name: "Distro", assistant_type: :distribution},
+          %{name: "Lyzer", assistant_type: :contract_analyzer},
+          %{name: "Welly", assistant_type: :mental_wellness}
+        ]
 
-                {:error, reason} ->
-                  # Handle the error case, e.g., log the error, notify the user, etc.
-                  Logger.error("Error creating assistant: #{inspect(reason)}")
-                  {:error, reason}
-              end
+        assistant_creation_results =
+          Enum.map(assistant_creation_details, fn %{name: name, assistant_type: assistant_type} ->
+            case Chat.create_assistant(%{
+                   name: name,
+                   assistant_type: assistant_type,
+                   user_id: user.id
+                 }) do
+              {:ok, assistant} ->
+                # Assistant created successfully
+                {:ok, assistant}
+
+              {:error, reason} ->
+                # Handle the error case, e.g., log the error, notify the user, etc.
+                Logger.error("Error creating assistant: #{inspect(reason)}")
+                {:error, reason}
             end
-          )
+          end)
 
         # Check if any assistant creation failed
         failed_creations =
