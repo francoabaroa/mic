@@ -40,6 +40,14 @@ mediaSource.addEventListener('sourceopen', () => {
 let audio = new Audio();
 audio.src = URL.createObjectURL(mediaSource);
 
+function scrollToLastChatBubble() {
+  let chatBubbles = document.querySelectorAll(".chat");
+  let lastChatBubble = chatBubbles[chatBubbles.length - 1];
+  if (lastChatBubble) {
+    lastChatBubble.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
 function initAndPlayAudio() {
   if (audioContext.state === 'suspended') {
     audioContext.resume().then(() => {
@@ -227,6 +235,11 @@ document.addEventListener('click', function () {
   }
 });
 
+window.addEventListener(`phx:newmessage`, (e) => {
+  console.log("new message");
+  scrollToLastChatBubble();
+});
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
@@ -246,4 +259,3 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
-
