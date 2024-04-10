@@ -239,6 +239,27 @@ defmodule Mic.Chat do
   def get_assistant!(id), do: Repo.get!(Assistant, id)
 
   @doc """
+  Gets a single assistant by user ID and assistant type.
+
+  Raises `Ecto.NoResultsError` if the Assistant does not exist.
+
+  ## Examples
+
+      iex> get_assistant_by_user_id_and_assistant_type!(user_id, "default")
+      %Assistant{}
+
+      iex> get_assistant_by_user_id_and_assistant_type!(user_id, "invalid_type")
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_assistant_by_user_id_and_assistant_type!(user_id, assistant_type) do
+    Repo.one!(
+      from a in Assistant,
+        where: a.user_id == ^user_id and a.assistant_type == ^assistant_type
+    )
+  end
+
+  @doc """
   Creates a assistant.
 
   ## Examples

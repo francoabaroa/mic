@@ -17,9 +17,11 @@ defmodule MicWeb.Scenario do
 
   @spec default_scenarios(String.t() | nil) :: [t()]
   def default_scenarios(instructions_to_append) do
+    # TODO: for assistant types please look at Assistants.assistant_types()
     scenarios = [
       %{
         id: "analyze-contract",
+        assistant_type: :contract_analyzer,
         name: "📗 Analyze a music contract",
         description:
           "Welcome to the Music Contract Analyzer, your expert assistant in navigating the intricacies of music industry contracts. 📝 My role is to demystify these documents, providing you with clear summaries, identifying potential predatory terms, and advising on their implications for your career as an artist.\n\n I'll deliver insights on:\n\n**Contract Summarization** - Translating complex agreements into understandable language.\n\n**Predatory Term Alerts** - Highlighting clauses that could unfairly bind or disadvantage you.\n\n**Implication Insights** - Explaining how specific terms might affect your career and finances.\n\n**Empowerment Tools** - Offering strategies to advocate for fair terms.\n\n**Let's make sure your contracts reflect your value as an artist.** \n\n**How can I assist you today?**",
@@ -35,6 +37,7 @@ defmodule MicWeb.Scenario do
       },
       %{
         id: "mental-wellness",
+        assistant_type: :mental_wellness,
         name: "📗 Provide mental wellness support",
         description:
           "Hello! I am a compassionate assistant devoted to providing mental wellness support specifically for music artists. Mental health is a critical component of creative success, and I'm here to ensure you have a safe space to discuss and cultivate your emotional well-being.\n\nHere are some of the resources and support I can offer:\n\n**Regular Well-being Check-ins**\n\n**Stress-Management Techniques**\n\n**Emotional Support and Reflection**\n\n**Professional Mental Health Resources**\n\n**Mindfulness and Coping Strategies**\n\n**Inspirational and Creative Encouragement**\n\nHow can I support your mental wellness journey today?",
@@ -51,6 +54,7 @@ defmodule MicWeb.Scenario do
       },
       %{
         id: "distribution-guru",
+        assistant_type: :distribution,
         name: "📗 Provide music distribution knowledge",
         description:
           "Hello! I am a knowledgeable assistant who can help you learn more about music distribution to strenghthen your career.\n\nHere are some potential areas I can help with:\n\n**Digital Distribution Platforms**\n\n**Music Video Distribution**\n\n**Social Media Strategies**\n\n**Collaboration Techniques**\n\n**Playlist Inclusion Strategies**\n\n**Live Performance Opportunities**\n\nHow can I assist you with your music distribution needs today?",
@@ -67,6 +71,15 @@ defmodule MicWeb.Scenario do
     ]
 
     Enum.map(scenarios, &append_instructions_to_scenarios(&1, instructions_to_append))
+  end
+
+  def get_assistant_type_for_scenario_id(scenario_id) do
+    default_scenarios()
+    |> Enum.find(fn scenario -> scenario.id == scenario_id end)
+    |> case do
+      nil -> {:error, :not_found}
+      scenario -> {:ok, scenario.assistant_type}
+    end
   end
 
   defp append_instructions_to_scenarios(scenario, nil), do: scenario

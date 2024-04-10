@@ -12,11 +12,18 @@
   rows={@streams.messages}
   row_click={fn {_id, message} -> JS.navigate(~p"/messages/#{message}") end}
 >
+  <:col :let={{_id, message}} label="User"><%= message.user_id %></:col>
   <:col :let={{_id, message}} label="Assistant"><%= message.assistant_id %></:col>
   <:col :let={{_id, message}} label="Thread"><%= message.thread_id %></:col>
-  <:col :let={{_id, message}} label="Content"><%= message.content %></:col>
+  <:col :let={{_id, message}} label="Content">
+    <%= message.content
+    |> Enum.find(fn content -> content["type"] == "text" end)
+    |> Map.get("text")
+    |> Map.get("value") %>
+  </:col>
   <:col :let={{_id, message}} label="Role"><%= message.role %></:col>
-  <:col :let={{_id, message}} label="Metadata"><%= message.metadata %></:col>
+  <:col :let={{_id, message}} label="Model"><%= message.model_id %></:col>
+  <:col :let={{_id, message}} label="Created At"><%= message.inserted_at %></:col>
   <:action :let={{_id, message}}>
     <div class="sr-only">
       <.link navigate={~p"/messages/#{message}"}>Show</.link>

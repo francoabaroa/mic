@@ -10,15 +10,26 @@
 
 <.list>
   <:item title="Assistant"><%= @message.assistant_id %></:item>
+  <:item title="User"><%= @message.user_id %></:item>
   <:item title="Thread"><%= @message.thread_id %></:item>
-  <:item title="Content"><%= @message.content %></:item>
+  <:item title="Content">
+    <%= @message.content
+    |> Enum.find(fn content -> content["type"] == "text" end)
+    |> Map.get("text")
+    |> Map.get("value") %>
+  </:item>
   <:item title="Role"><%= @message.role %></:item>
   <:item title="Metadata"><%= @message.metadata %></:item>
 </.list>
 
 <.back navigate={~p"/messages"}>Back to messages</.back>
 
-<.modal :if={@live_action == :edit} id="message-modal" show on_cancel={JS.patch(~p"/messages/#{@message}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="message-modal"
+  show
+  on_cancel={JS.patch(~p"/messages/#{@message}")}
+>
   <.live_component
     module={MicWeb.MessageLive.FormComponent}
     id={@message.id}

@@ -193,6 +193,7 @@ defmodule Mic.Chat.OpenAI do
         |> Enum.reduce_while(%{msgs: [], tokens: 0}, fn msg, acc ->
           with msg_tokens <- Mic.Chat.Tokenizer.count_tokens!(msg.content) do
             # Depending on model this could be 15_000 or 127_000
+            # TODO: this needs to be dynamic depending on model - fix it
             if msg_tokens + acc.tokens > 15000 do
               {:halt, acc}
             else

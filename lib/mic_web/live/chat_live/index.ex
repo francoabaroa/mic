@@ -87,10 +87,27 @@ defmodule MicWeb.ChatLive.Index do
         pid
       end
 
+    assistant =
+      try do
+        Mic.Chat.get_assistant_by_user_id_and_assistant_type!(
+          socket.assigns.current_user.id,
+          case fetch_scenario_assistant_type(scenario_id) do
+            {:ok, distribution_type} -> distribution_type
+            _ -> nil
+          end
+        )
+      rescue
+        Ecto.NoResultsError ->
+          # This block executes if no assistant is found, returning a default or nil
+          Logger.debug("No assistant found for user.")
+          nil
+      end
+
     {:ok,
      socket
      |> assign(initial_state(scenario_description))
      |> assign(
+       assistant: assistant,
        assistant_type: scenario_id,
        openai_pid: openai_pid,
        model: model,
@@ -103,6 +120,10 @@ defmodule MicWeb.ChatLive.Index do
        current_question: nil,
        profile_data: %{}
      )}
+  end
+
+  defp fetch_scenario_assistant_type(scenario_id) do
+    MicWeb.Scenario.get_assistant_type_for_scenario_id(scenario_id)
   end
 
   # Fetches the scenario based on the scenario_id
@@ -453,7 +474,40 @@ defmodule MicWeb.ChatLive.Index do
     msg = Map.put(msg, :id, new_id)
     prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(socket.assigns.openai_pid)
 
-    # insert into stateful openai container so we have history
+    user_message = socket.assigns.last_user_submission
+    # Save user message to the database
+    case Mic.Chat.create_message(
+           socket.assigns.assistant,
+           socket.assigns.current_user,
+           %{
+             role: :user,
+             content: convert_content_to_array_map(user_message),
+             model_id: Atom.to_string(socket.assigns.model)
+           }
+         ) do
+      {:ok, _} ->
+        # Save assistant response to the database
+        case Mic.Chat.create_message(
+               socket.assigns.assistant,
+               socket.assigns.current_user,
+               %{
+                 role: :assistant,
+                 content: convert_content_to_array_map(msg.content),
+                 model_id: Atom.to_string(socket.assigns.model)
+               }
+             ) do
+          {:ok, _} ->
+            :ok
+
+          {:error, changeset} ->
+            Logger.error("Failed to save assistant response: #{inspect(changeset)}")
+        end
+
+      {:error, changeset} ->
+        Logger.error("Failed to save user message: #{inspect(changeset)}")
+    end
+
+    # Insert into stateful container
     Mic.Chat.OpenAI.insert_message(socket.assigns.openai_pid, msg)
 
     if prefers_voice_chat do
@@ -540,6 +594,7 @@ defmodule MicWeb.ChatLive.Index do
     self = self()
 
     model = Map.get(socket.assigns, :model)
+    updated_socket = assign(socket, :last_user_submission, text)
 
     Process.send(
       self,
@@ -558,11 +613,11 @@ defmodule MicWeb.ChatLive.Index do
       "You will be helping a music artist build their profile by asking them questions I will give you and tell you to ask. Only ask these questions that I give you. Right now, the user is entering what their artist name is. "
 
     # Extract the profile data from the socket assigns
-    profile_data = socket.assigns.profile_data
+    profile_data = updated_socket.assigns.profile_data
 
     # Update the profile data based on the current question
     updated_profile_data =
-      case socket.assigns.current_question do
+      case updated_socket.assigns.current_question do
         :artist_name ->
           Map.put(profile_data, :artist_name, text)
 
@@ -617,7 +672,7 @@ defmodule MicWeb.ChatLive.Index do
     artist_name = Map.get(updated_profile_data, :artist_name)
 
     {appended_question, next_question_to_set} =
-      case socket.assigns.current_question do
+      case updated_socket.assigns.current_question do
         :artist_name ->
           {must_ask <> do_not_acknowledge <> "What's your music genre, #{artist_name}?", :genre}
 
@@ -685,7 +740,7 @@ defmodule MicWeb.ChatLive.Index do
 
     # If it's artist_name, need to give the LLM context about what is going on since its the first one
     text_to_pass =
-      if socket.assigns.current_question == :artist_name do
+      if updated_socket.assigns.current_question == :artist_name do
         artist_llm_intro <> text
       else
         text
@@ -693,16 +748,18 @@ defmodule MicWeb.ChatLive.Index do
 
     # Need to respect user language preference
     language_to_speak =
-      case socket.assigns.language_preference do
+      case updated_socket.assigns.language_preference do
         :spanish -> "Remember to talk to the user in Spanish. "
         :portuguese -> "Remember to talk to the user in Portugese. "
         _ -> "Remember to talk to the user in English. "
       end
 
+    message_to_send = language_to_speak <> text_to_pass <> appended_question
+
     spawn(fn ->
       case Mic.Chat.OpenAI.send(
-             socket.assigns.openai_pid,
-             language_to_speak <> text_to_pass <> appended_question,
+             updated_socket.assigns.openai_pid,
+             message_to_send,
              model,
              self
            ) do
@@ -723,10 +780,23 @@ defmodule MicWeb.ChatLive.Index do
     end)
 
     {:noreply,
-     socket
+     updated_socket
      |> assign(:loading, true)
      |> assign(:current_question, next_question_to_set)
      |> assign(:profile_data, updated_profile_data)
      |> clear_flash()}
+  end
+
+  defp convert_content_to_array_map(content) do
+    # TODO: update this once we accept multi-modal
+    [
+      %{
+        "type" => "text",
+        "text" => %{
+          "value" => content,
+          "annotations" => []
+        }
+      }
+    ]
   end
 end
