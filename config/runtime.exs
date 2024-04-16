@@ -55,6 +55,12 @@ config :ex_openai,
   organization_key: get_or_raise.("OPENAI_ORGANIZATION_KEY"),
   http_options: [recv_timeout: 200_000]
 
+config :mic,
+  access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
+  region: System.get_env("AWS_REGION"),
+  google_cloud_project_id: System.get_env("GOOGLE_CLOUD_PROJECT_ID")
+
 config :elixir_auth_google,
   client_id: System.get_env("GOOGLE_AUTH_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_AUTH_CLIENT_SECRET")

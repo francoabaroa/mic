@@ -12,39 +12,59 @@ config :mic, Oban,
   queues: [default: 10]
 
 config :mic,
+  title: "MIC",
   ecto_repos: [Mic.Repo],
   generators: [timestamp_type: :utc_datetime],
   # TODO: remove, make dynamic
   # or gpt-3.5-turbo
   # gpt-4-turbo-preview
   # gpt-4-turbo
-  model: "gpt-3.5-turbo",
+  # TODO: can remove these 2 lines below
+  model: "gpt-4-turbo",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-3.5-turbo",
+  default_model: :"gpt-4-turbo",
   models: [
     %{
       id: :"gpt-4-turbo",
-      truncate_tokens: 127_000
+      provider: :openai,
+      truncate_tokens: 127_000,
+      name: "GPT4 Turbo (OpenAI)"
     },
     %{
       id: :"gpt-4-turbo-preview",
-      truncate_tokens: 127_000
+      provider: :openai,
+      truncate_tokens: 127_000,
+      name: "GPT4 Turbo Preview (OpenAI)"
     },
     %{
       id: :"gpt-4",
-      truncate_tokens: 8000
+      truncate_tokens: 8000,
+      provider: :openai,
+      name: "GPT4 (OpenAI)"
     },
     %{
       id: :"gpt-3.5-turbo",
-      truncate_tokens: 15000
-    },
-    %{
-      id: :davinci,
-      truncate_tokens: 2200
+      provider: :openai,
+      truncate_tokens: 15000,
+      name: "GPT3.5 Turbo (OpenAI)"
     },
     %{
       id: :"gpt-3.5-turbo-16k",
-      truncate_tokens: 15000
+      provider: :openai,
+      truncate_tokens: 15000,
+      name: "GPT3.5 Turbo 16k (OpenAI)"
+    },
+    %{
+      id: :"anthropic.claude-3-sonnet-20240229-v1:0",
+      provider: :anthropic,
+      truncate_tokens: 100_000,
+      name: "Claude 3 Sonnet (Anthropic)"
+    },
+    %{
+      id: :"gemini-1.0-pro",
+      provider: :google,
+      truncate_tokens: 100_000,
+      name: "Gemini Pro (Google)"
     }
   ],
   # TODO: change to true below

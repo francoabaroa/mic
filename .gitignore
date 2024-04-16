@@ -38,7 +38,8 @@ node_modules/
 
 # Environment variables, if used
 .env
-.env.*
+.env.dev
+.env.prod
 
 # ElixirLS config
 .elixir_ls

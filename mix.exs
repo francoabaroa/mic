@@ -9,14 +9,14 @@ defmodule Mic.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
-      # TODO: do I need?
-      # releases: [
-      #   chatgpt: [
-      #     include_executables_for: [:unix],
-      #     applications: [runtime_tools: :permanent]
-      #   ]
-      # ]
+      deps: deps(),
+      # TODO: do I need to configure?
+      releases: [
+        mic: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -66,8 +66,13 @@ defmodule Mic.MixProject do
       {:cachex, "~> 3.6"},
       {:elixir_uuid, "~> 1.2"},
       {:oban, "~> 2.17"},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:tokenizers, "~> 0.3.0"}
+      {:tokenizers, "~> 0.3.0"},
+      {:aws, git: "https://github.com/aws-beam/aws-elixir.git"},
+      {:hackney, "~> 1.18"},
+      {:tesla, "~> 1.4"},
+      {:goth, "~> 1.3.0"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 

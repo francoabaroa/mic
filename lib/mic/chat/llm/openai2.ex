@@ -1,0 +1,70 @@
+defmodule Mic.Chat.OpenAI2 do
+  @behaviour Mic.Chat.LLM
+
+  @spec convert_message(MicWeb.Message.t()) ::
+          ExOpenAI.Components.ChatCompletionRequestUserMessage.t()
+          | ExOpenAI.Components.ChatCompletionRequestAssistantMessage.t()
+  def convert_message(%MicWeb.Message{sender: :user} = msg) do
+    %ExOpenAI.Components.ChatCompletionRequestUserMessage{
+      content: msg.content,
+      role: :user
+    }
+  end
+
+  def convert_message(%MicWeb.Message{sender: :assistant} = msg) do
+    %ExOpenAI.Components.ChatCompletionRequestAssistantMessage{
+      content: msg.content,
+      role: :assistant
+    }
+  end
+
+  def convert_message(%MicWeb.Message{sender: :system} = msg) do
+    %ExOpenAI.Components.ChatCompletionRequestAssistantMessage{
+      content: msg.content,
+      role: :system
+    }
+  end
+
+  @spec do_complete([MicWeb.Messages], String.t(), Mic.Chat.LLM.chunk()) ::
+          :ok | {:error, String.t()}
+  def do_complete(messages, model, callback) do
+    callback = fn
+      :finish ->
+        IO.puts("Done")
+        callback.(:finish)
+
+      {:data, %ExOpenAI.Components.CreateChatCompletionResponse{choices: choices}} ->
+        chunk_text =
+          choices
+          |> List.first()
+          |> Map.get(:delta)
+          |> Map.get(:content)
+
+        callback.({:data, chunk_text})
+
+      # {:data, data} ->
+      #   IO.puts("Data: #{inspect(data)}")
+
+      {:error, err} ->
+        IO.puts("Error: #{inspect(err)}")
+        callback.({:error, err})
+    end
+
+    converted_msgs = Enum.map(messages, &convert_message/1)
+
+    case ExOpenAI.Chat.create_chat_completion(converted_msgs, model,
+           temperature: 0.8,
+           stream: true,
+           stream_to: callback
+         ) do
+      {:ok, reference} ->
+        {:ok, reference}
+
+      {:error, err} ->
+        IO.puts("Error: #{inspect(err)}")
+        {:error, err}
+    end
+
+    :ok
+  end
+end
