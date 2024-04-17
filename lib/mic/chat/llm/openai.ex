@@ -99,6 +99,18 @@ defmodule Mic.Chat.OpenAI do
   def handle_call({:msg, m, streamer_pid, model} = params, from, state) do
     Logger.info("completing with #{model}")
 
+    model_config =
+      Application.get_env(:mic, :models)
+      |> Enum.find(fn model_config -> model_config.id == model end)
+
+    # Use the truncate_tokens value from the model configuration or a backup value
+    token_limit =
+      if model_config != nil do
+        model_config.truncate_tokens || 8000
+      else
+        8000
+      end
+
     with msgs <- state.messages ++ [new_msg(m)] do
       # strip out things that are over the token limit
       # TODO: need to update this - token limit check
@@ -109,7 +121,7 @@ defmodule Mic.Chat.OpenAI do
           with msg_tokens <- Mic.Chat.Tokenizer.count_tokens!(msg.content) do
             # Depending on model this could be 15_000 or 127_000
             # TODO: this needs to be dynamic depending on model - fix it
-            if msg_tokens + acc.tokens > 15000 do
+            if msg_tokens + acc.tokens > token_limit do
               {:halt, acc}
             else
               {:cont, %{msgs: acc.msgs ++ [msg], tokens: acc.tokens + msg_tokens}}
