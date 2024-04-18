@@ -41,6 +41,29 @@ defmodule Mic.Chat do
   def get_message!(id), do: Repo.get!(Message, id)
 
   @doc """
+  Gets all messages for a given user ID where the assistant associated with the message is of a specific assistant type.
+  The messages are sorted by inserted_at from oldest to newest.
+
+  ## Examples
+
+      iex> get_messages_by_user_id_and_assistant_type(user_id, :general)
+      [%Message{}, ...]
+
+      iex> get_messages_by_user_id_and_assistant_type(user_id, :nonexistent)
+      []
+
+  """
+  def get_messages_by_user_id_and_assistant_type(user_id, assistant_type) do
+    Repo.all(
+      from m in Message,
+        join: a in assoc(m, :assistant),
+        where: m.user_id == ^user_id and a.assistant_type == ^assistant_type,
+        order_by: [asc: m.inserted_at],
+        preload: [:assistant]
+    )
+  end
+
+  @doc """
   Creates a message.
 
   ## Examples

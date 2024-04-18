@@ -14,6 +14,7 @@ defmodule Mic.Chat.Message do
 
     field :metadata, :map
     field :file_ids, {:array, :string}
+    # TODO: created_at is NIL in db
     field :created_at, :integer
     field :openai_message_id, Ecto.UUID
 

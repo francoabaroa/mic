@@ -104,6 +104,7 @@ defmodule Mic.Chat.OpenAI do
       |> Enum.find(fn model_config -> model_config.id == model end)
 
     # Use the truncate_tokens value from the model configuration or a backup value
+    # TODO: handle this better
     token_limit =
       if model_config != nil do
         model_config.truncate_tokens || 8000
@@ -113,14 +114,13 @@ defmodule Mic.Chat.OpenAI do
 
     with msgs <- state.messages ++ [new_msg(m)] do
       # strip out things that are over the token limit
+      # TODO: which things get stripped? oldest or newest?
       # TODO: need to update this - token limit check
       filtered_msgs =
         msgs
         |> Enum.reverse()
         |> Enum.reduce_while(%{msgs: [], tokens: 0}, fn msg, acc ->
           with msg_tokens <- Mic.Chat.Tokenizer.count_tokens!(msg.content) do
-            # Depending on model this could be 15_000 or 127_000
-            # TODO: this needs to be dynamic depending on model - fix it
             if msg_tokens + acc.tokens > token_limit do
               {:halt, acc}
             else

@@ -54,23 +54,81 @@ defmodule MicWeb.ChatLive.Index do
 
     instructions_to_append =
       if artist_ai_description != nil do
-        "Here is a biography of the artist who you will be assisting today: " <>
+        "Here is a biography of the artist who you will be assisting today: <biography> " <>
           artist_ai_description <>
-          " Always use their biography to give them personalized and useful responses tailored to them and their history."
+          " </biography> Always use their biography to give them personalized and useful responses tailored to them and their history."
       else
         ""
       end
 
-    scenarios = MicWeb.Scenario.default_scenarios(instructions_to_append)
-
     # Determine the mode based on the presence of a scenario_id in the params
-    mode = if scenario_id = Map.get(params, "scenario_id"), do: :scenario, else: :chat
+    scenario_id = Map.get(params, "scenario_id")
+    mode = if scenario_id, do: :scenario, else: :chat
+
+    scenario_assistant_type =
+      if scenario_id do
+        case fetch_scenario_assistant_type(scenario_id) do
+          {:ok, assistant_type} ->
+            assistant_type
+
+          {:error, reason} ->
+            Logger.error("Failed to fetch scenario assistant type: #{inspect(reason)}")
+            nil
+        end
+      else
+        nil
+      end
+
+    previous_messages =
+      if mode == :scenario do
+        Mic.Chat.get_messages_by_user_id_and_assistant_type(
+          socket.assigns.current_user.id,
+          scenario_assistant_type
+        )
+      else
+        nil
+      end
+
+    formatted_previous_messages =
+      if previous_messages != nil do
+        Enum.map_join(previous_messages, "\n", fn message ->
+          role = Atom.to_string(message.role)
+          content = message.content |> Enum.map(& &1["text"]["value"]) |> Enum.join(" ")
+          "#{role}: #{content}"
+        end)
+      else
+        ""
+      end
+
+    messages_instruction =
+      if formatted_previous_messages != "" do
+        "\n\nHere is past conversation history between you (assistant) and the music artist (user). It's important that you use the past conversation history to guide your answers and to show the music artist that you are aware about previous conversations and that you are using them to shape the answers you give. For instance, if you revisit a topic we discussed before, I might say: 'As we explored last time, ___' or 'Building on what we discussed previously...'. so the music artist feels special and like you remember talking to them.\n\n<past_conversation_history>\n"
+      else
+        ""
+      end
+
+    scenarios =
+      MicWeb.Scenario.default_scenarios(
+        instructions_to_append <>
+          messages_instruction <>
+          formatted_previous_messages <>
+          " </past_conversation_history>"
+      )
 
     # Fetch the scenario if in scenario mode
     scenario =
-      if mode == :scenario, do: fetch_scenario(scenario_id, instructions_to_append), else: nil
+      if mode == :scenario,
+        do:
+          fetch_scenario(
+            scenario_id,
+            instructions_to_append <>
+              messages_instruction <>
+              formatted_previous_messages <>
+              " </past_conversation_history>"
+          ),
+        else: nil
 
-    scenario_description = if mode == :scenario, do: scenario.description, else: nil
+    scenario_description = if scenario != nil, do: scenario.description, else: nil
 
     openai_pid =
       if mode == :scenario do
