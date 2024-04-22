@@ -85,7 +85,7 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
   end
 
   defp check_subject_resource(current_user_id) do
-    subjects = [:distribution, :finance]
+    subjects = Mic.Types.available_subject_and_assistant_types()
 
     Enum.any?(subjects, fn subject ->
       try do
@@ -99,15 +99,24 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
   end
 
   defp enqueue_generate_resources_job(current_user, description_content) do
-    subjects = [:distribution, :finance]
+    subjects = Mic.Types.available_subject_and_assistant_types()
 
     Enum.each(subjects, fn subject ->
-      Mic.Jobs.GenerateArtistTailoredResourcesJob.new(%{
-        "current_user" => current_user,
-        "description_content" => description_content,
-        "subject" => subject
-      })
-      |> Oban.insert()
+      try do
+        Mic.Jobs.GenerateArtistTailoredResourcesJob.new(%{
+          "current_user" => current_user,
+          "description_content" => description_content,
+          "subject" => subject
+        })
+        |> Oban.insert()
+      rescue
+        exception ->
+          Logger.error(
+            "Failed to enqueue GenerateArtistTailoredResourcesJob: #{inspect(exception)}"
+          )
+
+          # Handle the error, e.g., retry or notify the user
+      end
     end)
   end
 

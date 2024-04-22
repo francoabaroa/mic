@@ -61,22 +61,27 @@ defmodule MicWeb.PageController do
   end
 
   defp get_personalized_resources(user) do
-    subjects = [:distribution, :finance]
+    subjects = Mic.Types.available_subject_and_assistant_types()
 
     personalized_resources =
       Enum.map(subjects, fn subject ->
         case Mic.Artists.get_resource_by_user_id_and_subject!(user.id, subject) do
-          # TODO: Need to define what this map type looks like. For now its column content, with a list of maps title content keypair
           %Mic.Artists.Resource{} = resource ->
             %{
               subject: subject,
               content: resource.content |> List.first() |> Map.get("content")
             }
 
-          _error ->
+          nil ->
             %{
               subject: subject,
               content: "No personalized content available for #{subject}. Check back later."
+            }
+
+          _error ->
+            %{
+              subject: subject,
+              content: "An error occurred while fetching personalized content for #{subject}."
             }
         end
       end)
@@ -92,7 +97,11 @@ defmodule MicWeb.PageController do
 
       """
       <button type="button" class="collapsible-list">
-      <span class="collapsible-button-content">#{String.capitalize(to_string(subject))}
+      <span class="collapsible-button-content">#{if String.contains?(to_string(subject), "_") do
+        String.split(to_string(subject), "_") |> Enum.map(&String.capitalize/1) |> Enum.join(" ")
+      else
+        String.capitalize(to_string(subject))
+      end}
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-unfold-vertical"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg>
       </span>
       </button>

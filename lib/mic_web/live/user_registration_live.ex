@@ -65,14 +65,19 @@ defmodule MicWeb.UserRegistrationLive do
             &url(~p"/users/confirm/#{&1}")
           )
 
-        # Pre-create 5 assistants for the user
+        # Pre-create 7 assistants for the user
         # TODO: need to create any other addtl assistants
+        # Mic.Types.available_subject_and_assistant_types() + :onboarding + :essentials
+        # TODO: once these are in sync, we can just use Mic.Types.available_subject_and_assistant_types()
+        # Assistants.assistant_types()
         assistant_creation_details = [
           %{name: "Onboardy", assistant_type: :onboarding},
           %{name: "Essentia", assistant_type: :essentials},
           %{name: "Distro", assistant_type: :distribution},
           %{name: "Lyzer", assistant_type: :contract_analyzer},
-          %{name: "Welly", assistant_type: :mental_wellness}
+          %{name: "Welly", assistant_type: :mental_wellness},
+          %{name: "Prody", assistant_type: :production},
+          %{name: "Finny", assistant_type: :finance}
         ]
 
         assistant_creation_results =

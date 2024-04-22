@@ -230,6 +230,7 @@ defmodule Mic.Chat.OpenAI do
   end
 
   def generate_artist_profile_description(input_text) do
+    # TODO: The content string in the message object contains placeholder text such as [Artist's Name], [Genre(s)], [Country], etc., which are not dynamically replaced
     msgs = [
       %ExOpenAI.Components.ChatCompletionRequestUserMessage{
         role: :user,
@@ -240,8 +241,9 @@ defmodule Mic.Chat.OpenAI do
     ]
 
     # TODO: Fix timeout happening with gpt-4-turbo-preview
-    # TODO: make this model dependant on env var
-    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
+    model = Application.get_env(:mic, :model) || "gpt-4-turbo"
+
+    case ExOpenAI.Chat.create_chat_completion(msgs, model) do
       {:ok, res} ->
         first = List.first(res.choices)
         {:ok, first.message}
@@ -754,43 +756,697 @@ defmodule Mic.Chat.OpenAI do
           ---
           """
 
-        :health ->
-          "Create a message tailored for health topics."
+        :mental_wellness ->
+          """
+          # Comprehensive Syllabus for Mental Wellness for Music Artists
+          ---
+          ## A. Introduction to Mental Wellness for Music Artists
+          ### 1. Understanding Mental Health in the Music Industry
+          - **The Unique Challenges Faced by Music Artists**
+          - An overview of the specific mental health challenges that music artists encounter, including high stress levels, irregular work schedules, financial instability, and the pressure to maintain a public image.
+          - **The Importance of Mental Wellness for Career Longevity**
+          - Emphasizing the significance of prioritizing mental well-being to ensure a sustainable and fulfilling career in the music industry. Highlighting the impact of mental health on creativity, productivity, and overall success.
+          - **Breaking the Stigma Surrounding Mental Health**
+          - Addressing the stigma associated with mental health issues in the music industry and the importance of creating a supportive and open environment for artists to seek help and share their experiences.
+          ### 2. Stress Management Strategies
+          - **Identifying Sources of Stress**
+          - Helping artists recognize and understand the various sources of stress in their personal and professional lives, such as performance pressure, financial concerns, and interpersonal relationships.
+          - **Developing Coping Mechanisms**
+          - Introducing effective coping strategies for managing stress, including relaxation techniques, time management skills, and healthy outlet activities like exercise, journaling, or engaging in hobbies.
+          - **Creating a Support System**
+          - Encouraging artists to build a strong support network of family, friends, and industry professionals who can offer guidance, encouragement, and a listening ear during challenging times.
+          ### 3. Maintaining Work-Life Balance
+          - **Setting Boundaries**
+          - Guiding artists on establishing clear boundaries between their personal and professional lives to prevent burnout and maintain a healthy work-life balance.
+          - **Prioritizing Self-Care**
+          - Emphasizing the importance of self-care practices, such as getting sufficient sleep, maintaining a balanced diet, and engaging in regular physical activity to promote overall well-being.
+          - **Scheduling Time for Personal Life**
+          - Encouraging artists to intentionally allocate time for personal relationships, hobbies, and relaxation to maintain a sense of balance and perspective outside of their music careers.
+          ## B. Coping with Rejection and Criticism
+          ### 1. Understanding the Nature of Rejection and Criticism
+          - **The Inevitability of Rejection and Criticism**
+          - Preparing artists for the reality of facing rejection and criticism as an inherent part of the music industry, and framing it as an opportunity for growth and learning.
+          - **Separating Personal Worth from Professional Feedback**
+          - Helping artists differentiate between their personal worth and the feedback they receive on their work, emphasizing that criticism of their music does not reflect their value as individuals.
+          ### 2. Developing Resilience and Self-Confidence
+          - **Cultivating a Growth Mindset**
+          - Encouraging artists to adopt a growth mindset, viewing challenges and setbacks as opportunities for learning and improvement rather than personal failures.
+          - **Practicing Self-Compassion**
+          - Guiding artists in practicing self-compassion, being kind and understanding towards themselves in the face of difficulties, and avoiding harsh self-criticism.
+          - **Celebrating Successes and Achievements**
+          - Emphasizing the importance of acknowledging and celebrating personal successes and achievements, no matter how small, to build self-confidence and maintain motivation.
+          ### 3. Constructively Processing Feedback
+          - **Evaluating the Source and Context of Criticism**
+          - Teaching artists to assess the credibility and relevance of the feedback they receive, considering the source's expertise and the context in which the criticism is given.
+          - **Extracting Valuable Insights**
+          - Encouraging artists to approach criticism with an open mind, looking for constructive feedback that can help them improve their craft and grow as professionals.
+          - **Developing an Action Plan for Improvement**
+          - Guiding artists in creating actionable plans based on the valuable insights gleaned from feedback, setting specific goals and strategies for personal and professional development.
+          ## C. Maintaining Healthy Relationships
+          ### 1. Building Supportive Professional Relationships
+          - **Networking with Integrity**
+          - Encouraging artists to build genuine, mutually beneficial relationships within the music industry based on shared values, respect, and support.
+          - **Collaborating with Peers**
+          - Highlighting the importance of collaborating with fellow artists, producers, and industry professionals to foster a sense of community, share knowledge, and create new opportunities.
+          - **Establishing Boundaries in Professional Relationships**
+          - Guiding artists in setting clear boundaries in their professional relationships to maintain a healthy work environment and prevent exploitation or burnout.
+          ### 2. Nurturing Personal Relationships
+          - **Prioritizing Quality Time with Loved Ones**
+          - Encouraging artists to make time for meaningful connections with family and friends, recognizing the importance of these relationships for emotional well-being and support.
+          - **Communicating Effectively**
+          - Providing strategies for open and honest communication with loved ones, sharing the challenges and joys of their music careers, and expressing their needs and boundaries.
+          - **Balancing Personal Relationships with Career Demands**
+          - Offering guidance on navigating the challenges of balancing personal relationships with the demands of a music career, such as long hours, travel, and public scrutiny.
+          ### 3. Navigating Conflict and Resolution
+          - **Identifying the Root Causes of Conflict**
+          - Teaching artists to recognize and understand the underlying factors contributing to conflicts in their personal and professional relationships.
+          - **Practicing Active Listening and Empathy**
+          - Encouraging artists to develop active listening skills and practice empathy when addressing conflicts, seeking to understand others' perspectives and emotions.
+          - **Implementing Effective Conflict Resolution Strategies**
+          - Providing practical strategies for resolving conflicts, such as finding common ground, compromising, and seeking professional mediation when necessary.
+          ## D. Self-Care Practices for Musicians
+          ### 1. Physical Self-Care
+          - **Maintaining a Healthy Diet**
+          - Guiding artists in developing healthy eating habits that support their physical and mental well-being, considering the unique challenges of a musician's lifestyle.
+          - **Incorporating Regular Exercise**
+          - Encouraging artists to engage in regular physical activity to reduce stress, improve mood, and maintain overall health, offering tips for integrating exercise into a busy schedule.
+          - **Prioritizing Sleep and Rest**
+          - Emphasizing the importance of adequate sleep and rest for mental and physical health, providing strategies for improving sleep quality and creating a restful environment.
+          ### 2. Emotional and Mental Self-Care
+          - **Practicing Mindfulness and Meditation**
+          - Introducing artists to mindfulness and meditation techniques to help manage stress, improve focus, and cultivate emotional resilience.
+          - **Engaging in Creative Outlets**
+          - Encouraging artists to explore creative outlets beyond music, such as writing, visual arts, or crafts, as a means of self-expression and emotional processing.
+          - **Seeking Professional Support**
+          - Normalizing the practice of seeking professional mental health support, such as therapy or counseling, to address emotional challenges and maintain mental well-being.
+          ### 3. Social Self-Care
+          - **Building a Supportive Community**
+          - Guiding artists in cultivating a supportive network of friends, family, and industry peers who can offer encouragement, understanding, and a sense of belonging.
+          - **Participating in Peer Support Groups**
+          - Encouraging artists to join or create peer support groups specifically for musicians, providing a safe space to share experiences, challenges, and coping strategies.
+          - **Engaging in Meaningful Social Activities**
+          - Promoting the importance of engaging in social activities outside of the music industry, such as volunteering, attending community events, or pursuing shared interests with friends.
+          ## E. Managing Performance Anxiety
+          ### 1. Understanding Performance Anxiety
+          - **The Physiological and Psychological Components**
+          - Explaining the physiological and psychological aspects of performance anxiety, including the body's stress response and the role of thoughts and beliefs in perpetuating anxiety.
+          - **The Impact on Musical Performance**
+          - Discussing the ways in which performance anxiety can affect musical performance, such as decreased technical accuracy, impaired creativity, and diminished stage presence.
+          ### 2. Developing Coping Strategies
+          - **Cognitive Restructuring Techniques**
+          - Teaching artists to identify and challenge negative thought patterns related to performance, replacing them with more realistic and positive self-talk.
+          - **Relaxation and Breathing Exercises**
+          - Providing practical relaxation and breathing techniques that artists can use before and during performances to reduce physical tension and calm the mind.
+          - **Visualization and Mental Rehearsal**
+          - Guiding artists in using visualization and mental rehearsal techniques to prepare for performances, build confidence, and create a positive mental state.
+          ### 3. Building Confidence and Resilience
+          - **Focusing on Process over Perfection**
+          - Encouraging artists to shift their focus from achieving perfection to engaging in the process of creating and sharing their music, embracing imperfections as part of the artistic journey.
+          - **Celebrating Progress and Accomplishments**
+          - Promoting the practice of acknowledging and celebrating personal progress and accomplishments, no matter how small, to build self-confidence and maintain motivation.
+          - **Learning from Past Experiences**
+          - Guiding artists in reflecting on past performances, both successful and challenging, to identify lessons learned and areas for growth, using these insights to inform future preparation and mindset.
+          ## F. Substance Abuse Prevention and Recovery
+          ### 1. Understanding Substance Abuse in the Music Industry
+          - **The Prevalence and Risk Factors**
+          - Discussing the high prevalence of substance abuse within the music industry, exploring the unique risk factors that contribute to this issue, such as stress, pressure, and easy access to drugs and alcohol.
+          - **The Impact on Mental and Physical Health**
+          - Highlighting the detrimental effects of substance abuse on an artist's mental and physical well-being, including the increased risk of addiction, depression, anxiety, and long-term health complications.
+          ### 2. Prevention Strategies
+          - **Educating on the Risks and Consequences**
+          - Providing comprehensive education on the risks and consequences associated with substance abuse, empowering artists to make informed decisions about their health and well-being.
+          - **Promoting Healthy Coping Mechanisms**
+          - Encouraging artists to develop and utilize healthy coping mechanisms for stress and pressure, such as exercise, meditation, creative outlets, and seeking support from friends, family, or professionals.
+          - **Creating a Supportive Environment**
+          - Fostering a supportive and non-judgmental environment within the music community, promoting open communication and encouraging artists to seek help when needed.
+          ### 3. Seeking Help and Recovery
+          - **Recognizing Signs and Symptoms**
+          - Educating artists on recognizing the signs and symptoms of substance abuse in themselves and others, emphasizing the importance of early intervention and seeking help.
+          - **Accessing Professional Treatment**
+          - Providing information on accessing professional treatment options, such as rehabilitation programs, therapy, and support groups specifically tailored to the needs of musicians.
+          - **Maintaining Sobriety and Preventing Relapse**
+          - Offering strategies for maintaining sobriety and preventing relapse, including building a strong support network, engaging in ongoing therapy or support groups, and developing a personalized recovery plan.
+          ## G. Nurturing Creativity for Mental Well-being
+          ### 1. Understanding the Link between Creativity and Mental Health
+          - **The Therapeutic Benefits of Creative Expression**
+          - Exploring the therapeutic benefits of creative expression, such as reducing stress, processing emotions, and promoting self-awareness and personal growth.
+          - **The Importance of a Healthy Creative Process**
+          - Emphasizing the significance of a healthy creative process that allows for experimentation, risk-taking, and self-expression without undue pressure or self-judgment.
+          ### 2. Cultivating a Creative Mindset
+          - **Embracing Curiosity and Openness**
+          - Encouraging artists to nurture their curiosity and maintain an open mindset, seeking out new experiences, perspectives, and influences to fuel their creativity.
+          - **Overcoming Creative Blocks**
+          - Providing strategies for overcoming creative blocks, such as engaging in free-writing or improvisation, taking breaks, and seeking inspiration from diverse sources.
+          - **Collaborating and Exchanging Ideas**
+          - Promoting the value of collaborating with other artists and exchanging ideas, as this can stimulate creativity, provide fresh perspectives, and foster a sense of community and support.
+          ### 3. Balancing Creativity and Self-Care
+          - **Setting Realistic Goals and Expectations**
+          - Guiding artists in setting realistic goals and expectations for their creative output, taking into account their mental and physical well-being and the need for rest and self-care.
+          - **Prioritizing Self-Expression over External Validation**
+          - Encouraging artists to prioritize self-expression and personal fulfillment in their creative pursuits, rather than solely seeking external validation or commercial success.
+          - **Integrating Self-Care into the Creative Process**
+          - Providing strategies for integrating self-care practices into the creative process, such as taking regular breaks, setting boundaries, and engaging in activities that promote mental and physical well-being.
+          ## H. Mindfulness and Meditation Techniques
+          ### 1. Introduction to Mindfulness and Meditation
+          - **Understanding the Concepts and Benefits**
+          - Explaining the basic concepts of mindfulness and meditation, highlighting their potential benefits for mental well-being, such as reduced stress, increased focus, and improved emotional regulation.
+          - **Debunking Common Myths and Misconceptions**
+          - Addressing common myths and misconceptions about mindfulness and meditation, such as the need for a quiet mind or a specific spiritual belief system, to make these practices more accessible and approachable.
+          ### 2. Practical Mindfulness Exercises
+          - **Breath Awareness and Relaxation Techniques**
+          - Teaching simple breath awareness and relaxation techniques that artists can practice throughout their day to promote calmness, reduce stress, and improve focus.
+          - **Body Scan and Progressive Muscle Relaxation**
+          - Guiding artists through body scan and progressive muscle relaxation exercises, which involve systematically focusing on different parts of the body to release tension and promote relaxation.
+          - **Mindful Movement and Stretching**
+          - Incorporating mindful movement and stretching exercises, such as gentle yoga or tai chi, to help artists connect with their bodies, reduce physical tension, and cultivate a sense of presence.
+          ### 3. Developing a Consistent Meditation Practice
+          - **Exploring Different Meditation Styles**
+          - Introducing various meditation styles, such as mindfulness meditation, loving-kindness meditation, or visualization, to help artists find a practice that resonates with their preferences and needs.
+          - **Creating a Conducive Environment**
+          - Providing guidelines for creating a supportive environment for meditation, including finding a quiet space, using comfortable seating or posture, and minimizing distractions.
+          - **Integrating Meditation into Daily Life**
+          - Offering strategies for integrating meditation into daily life, such as setting aside dedicated time for practice, using reminders or apps, and applying mindfulness principles to everyday activities.
+          ## I. Seeking Professional Help and Support
+          ### 1. Recognizing When to Seek Help
+          - **Signs and Symptoms of Mental Health Challenges**
+          - Educating artists on recognizing the signs and symptoms of common mental health challenges, such as depression, anxiety, or burnout, emphasizing the importance of early intervention.
+          - **Overcoming Stigma and Barriers to Seeking Help**
+          - Addressing the stigma and barriers that may prevent artists from seeking professional help, such as feelings of shame, fear of judgment, or concerns about confidentiality.
+          ### 2. Types of Professional Support
+          - **Therapy and Counseling**
+          - Providing an overview of various therapy and counseling options, such as individual psychotherapy, cognitive-behavioral therapy (CBT), or group therapy, and their potential benefits for addressing mental health concerns.
+          - **Coaching and Mentoring**
+          - Discussing the role of coaching and mentoring in supporting artists' personal and professional development, offering guidance, accountability, and a safe space to explore challenges and goals.
+          - **Support Groups and Peer Networks**
+          - Highlighting the value of joining support groups or peer networks specifically designed for musicians, where artists can share experiences, learn from others, and find a sense of community and understanding.
+          ### 3. Accessing Resources and Services
+          - **Finding Qualified Mental Health Professionals**
+          - Providing guidance on finding qualified mental health professionals who specialize in working with artists or have experience addressing the unique challenges faced by those in the music industry.
+          - **Navigating Insurance and Financial Considerations**
+          - Offering information on navigating insurance coverage for mental health services, as well as exploring affordable or sliding-scale treatment options for artists with limited financial resources.
+          - **Utilizing Online Resources and Helplines**
+          - Compiling a list of reputable online resources, helplines, and crisis support services that artists can access for information, guidance, or immediate assistance when needed.
+          ## J. Mental Health Resources for Music Artists
+          ### 1. Industry-Specific Organizations and Initiatives
+          - **Music Industry Mental Health Organizations**
+          - Providing a comprehensive list of organizations dedicated to supporting the mental health and well-being of music industry professionals, such as Music Minds Matter, Backline, and Tour Support.
+          - **Mental Health Workshops and Training Programs**
+          - Highlighting workshops, webinars, and training programs designed to educate artists and industry professionals on mental health topics, coping strategies, and self-care practices.
+          ### 2. Online Communities and Support Networks
+          - **Social Media Groups and Forums**
+          - Identifying supportive social media groups and forums where artists can connect with peers, share experiences, and find encouragement and advice related to mental health and well-being.
+          - **Artist-Led Initiatives and Campaigns**
+          - Showcasing artist-led initiatives and campaigns that aim to raise awareness about mental health in the music industry, break stigmas, and promote a culture of support and understanding.
+          ### 3. Educational Resources and Self-Help Tools
+          - **Books, Podcasts, and Documentaries**
+          - Curating a list of recommended books, podcasts, and documentaries that address mental health topics relevant to music artists, offering insights, strategies, and personal stories of resilience.
+          - **Mental Health Apps and Online Tools**
+          - Providing a selection of mental health apps and online tools that artists can use to track their moods, practice mindfulness, manage stress, or access professional support remotely.
+          ## K. Case Studies and Success Stories
+          ### 1. Artists Sharing Their Mental Health Journeys
+          - **Personal Narratives and Interviews**
+          - Featuring personal narratives and interviews with artists who have openly discussed their mental health challenges, coping strategies, and paths to recovery, offering inspiration and reassurance to others facing similar struggles.
+          - **Lessons Learned and Advice for Fellow Artists**
+          - Highlighting the key lessons learned and advice shared by artists who have navigated mental health challenges, emphasizing the importance of self-care, seeking support, and maintaining a balanced perspective.
+          ### 2. Successful Interventions and Support Programs
+          - **Music Industry Mental Health Initiatives**
+          - Showcasing successful mental health initiatives and support programs within the music industry, such as peer support networks, mentorship programs, or industry-wide awareness campaigns.
+          - **Positive Outcomes and Impact on Artist Well-being**
+          - Discussing the positive outcomes and impact of these interventions and support programs on artist well-being, creativity, and career sustainability, emphasizing the importance of a proactive and supportive approach to mental health.
+          ### 3. Strategies for Maintaining Mental Wellness
+          - **Insights from Mental Health Professionals**
+          - Sharing insights and recommendations from mental health professionals who specialize in working with music artists, offering evidence-based strategies for maintaining mental wellness throughout one's career.
+          - **Practical Tips and Habits for Long-Term Well-being**
+          - Providing practical tips and habits that artists can incorporate into their daily lives to promote long-term mental well-being, such as regular self-reflection, boundary-setting, and cultivating a balanced lifestyle.
+          ## L. Developing a Personal Mental Wellness Plan
+          ### 1. Assessing Your Mental Health Needs
+          - **Self-Reflection and Identifying Stressors**
+          - Guiding artists through a process of self-reflection to identify their unique mental health needs, stressors, and triggers, establishing a foundation for developing a personalized wellness plan.
+          - **Evaluating Current Coping Strategies**
+          - Encouraging artists to evaluate their current coping strategies, recognizing both effective and ineffective approaches to managing stress and maintaining mental well-being.
+          ### 2. Setting Goals and Priorities
+          - **Defining Short-Term and Long-Term Objectives**
+          - Assisting artists in defining clear, achievable short-term and long-term mental wellness goals, prioritizing areas for improvement and growth.
+          - **Creating a Realistic Action Plan**
+          - Guiding artists in creating a realistic action plan to achieve their mental wellness goals, breaking down larger objectives into smaller, manageable steps and establishing a timeline for implementation.
+          ### 3. Implementing and Monitoring Progress
+          - **Incorporating Wellness Strategies into Daily Life**
+          - Providing guidance on effectively incorporating chosen wellness strategies and self-care practices into daily life, considering the unique demands and challenges of a music career.
+          - **Tracking Progress and Adjusting as Needed**
+          - Encouraging artists to regularly monitor their progress, celebrate successes, and make adjustments to their mental wellness plan as needed, fostering a flexible and adaptable approach to self-care.
+          - **Seeking Accountability and Support**
+          - Emphasizing the importance of seeking accountability and support from trusted friends, family members, or professionals in implementing and maintaining a personal mental wellness plan, creating a network of encouragement and guidance.
+          ---
+          """
 
-        :legal ->
-          "Create a message tailored for legal topics."
+        :contract_analyzer ->
+          """
+          # Comprehensive Syllabus for Contract Analysis
+          ---
+          ## 1. Understanding Contract Fundamentals
+          ### Introduction to Music Contracts
+          - The importance of contracts in the music industry
+          - How contracts define relationships, obligations, and rights
+          ### Types of Music Contracts
+          - Recording contracts
+          - Publishing contracts
+          - Management contracts
+          - Live performance contracts
+          - Sync licensing contracts
+          ### Key Components of a Contract
+          - Parties involved
+          - Term and duration
+          - Scope of rights granted
+          - Compensation and royalties
+          - Termination clauses
+          - Dispute resolution mechanisms
+
+          ## 2. Analyzing Contract Terms
+          ### Deciphering Legal Language
+          - Understanding legal terminology and jargon
+          - Identifying key clauses and their implications
+          ### Interpreting Royalty Clauses
+          - Types of royalties (mechanical, performance, sync, etc.)
+          - Royalty rates and calculations
+          - Deductions and withholdings
+          ### Understanding Advance Payments
+          - Purpose and structure of advances
+          - Recoupment and its impact on royalties
+          ### Examining Option Clauses
+          - Definition and purpose of option clauses
+          - Implications for future works and creative control
+          ### Analyzing Exclusivity Terms
+          - Scope and duration of exclusivity
+          - Limitations on outside projects and collaborations
+          ### Assessing Creative Control Provisions
+          - Approval rights for music, artwork, and branding
+          - Creative decision-making processes
+
+          ## 3. Spotting Problematic Clauses
+          ### Identifying Red Flags
+          - Overly broad or vague language
+          - One-sided terms favoring the company
+          - Unreasonable demands or restrictions
+          ### Unfair Royalty Splits
+          - Disproportionate royalty allocations
+          - Excessive deductions and fees
+          ### Excessive Contract Lengths
+          - Long-term commitments limiting career flexibility
+          - Lack of options for early termination
+          ### Perpetual Rights Clauses
+          - Granting rights in perpetuity
+          - Challenges in regaining control over works
+          ### Broad Recoupment Terms
+          - Expansive definitions of recoupable expenses
+          - Prolonged periods of recoupment
+          ### Restrictive Non-Compete Clauses
+          - Limitations on working with other parties
+          - Constraints on creative output and opportunities
+
+          ## 4. Financial Implications
+          ### Royalty Calculations and Deductions
+          - Understanding royalty statements
+          - Identifying allowable deductions and their impact
+          ### Recoupment and Its Impact on Earnings
+          - How advances are recouped from royalties
+          - The effect of recoupment on cash flow and income
+          ### Hidden Costs and Expenses
+          - Identifying often-overlooked expenses
+          - Strategies for minimizing and managing costs
+          ### Cross-Collateralization Clauses
+          - Definition and implications of cross-collateralization
+          - Potential impact on overall earnings
+          ### Audit Rights and Limitations
+          - The importance of audit rights
+          - Common limitations and restrictions on audits
+
+          ## 5. Legal Considerations
+          ### Intellectual Property Rights
+          - Copyright ownership and control
+          - Trademarks and branding rights
+          ### Copyright Ownership and Transfers
+          - Understanding copyright law basics
+          - Transfer of rights and ownership provisions
+          ### Termination Clauses and Consequences
+          - Grounds for termination
+          - Notice periods and procedures
+          - Impact on rights and obligations post-termination
+          ### Dispute Resolution Mechanisms
+          - Arbitration vs. litigation
+          - Choice of law and jurisdiction clauses
+          ### Force Majeure Provisions
+          - Definition and scope of force majeure events
+          - Implications for performance obligations
+
+          ## 6. Negotiation Strategies
+          ### Preparing for Contract Negotiations
+          - Setting clear goals and priorities
+          - Researching industry standards and benchmarks
+          ### Identifying Negotiable Terms
+          - Recognizing which terms are open to negotiation
+          - Prioritizing key issues for negotiation
+          ### Proposing Alternative Clauses
+          - Crafting language that balances interests
+          - Presenting alternative solutions to problematic terms
+          ### Leveraging Industry Standards
+          - Using industry norms to support negotiation positions
+          - Comparing terms to successful deals in the market
+          ### Seeking Professional Advice
+          - Knowing when to involve legal counsel or other experts
+          - Benefits of having experienced advisors in negotiations
+
+          ## 7. Protection Measures
+          ### Importance of Legal Representation
+          - The role of music attorneys in contract review
+          - Ensuring comprehensive legal protection
+          ### Conducting Due Diligence
+          - Researching the reputation and track record of companies
+          - Identifying potential risks and red flags
+          ### Maintaining Accurate Records
+          - Keeping thorough documentation of agreements and communications
+          - Organizing and safeguarding important contracts and documents
+          ### Exercising Audit Rights
+          - Regularly reviewing royalty statements and payments
+          - Conducting audits to ensure accurate accounting
+          ### Staying Informed on Industry Practices
+          - Keeping abreast of changes in industry standards and deal terms
+          - Networking with peers and industry associations for knowledge sharing
+          ---
+          """
+
+        :production ->
+          """
+          # Comprehensive Syllabus for Music Production
+          ---
+          ## A. Recording
+          ### 1. Studio Recording Basics
+          - Understanding the recording process and signal flow
+          - Types of recording studios and their components
+          - Introduction to microphones, preamps, and audio interfaces
+          - Basic studio etiquette and communication
+
+          ### 2. Home Studio Recording
+          - Essential equipment for a home studio setup
+          - Optimizing your recording space for best results
+          - Budget-friendly solutions for recording at home
+          - Tips for achieving professional-sounding recordings in a home studio
+
+          ### 3. Microphone Techniques
+          - Types of microphones and their applications
+          - Microphone placement techniques for various instruments and vocals
+          - Stereo recording techniques (XY, ORTF, MS)
+          - Using room microphones for capturing ambience and natural reverb
+
+          ### 4. Recording Vocals
+          - Preparing for a vocal recording session
+          - Microphone selection and placement for vocals
+          - Creating the right environment for vocal recording
+          - Coaching and directing vocal performances
+
+          ### 5. Recording Instruments
+          - Microphone techniques for specific instruments (guitars, drums, piano, etc.)
+          - Direct Input (DI) recording for electric instruments
+          - Recording acoustic instruments in various settings
+          - Experimenting with creative recording techniques
+
+          ### 6. Live Recording
+          - Capturing live performances in the studio
+          - Recording live concerts and events
+          - Dealing with challenges in live recording situations
+          - Post-production techniques for live recordings
+
+          ## B. Studio Setup
+          ### 1. Home Studio Essentials
+          - Computer and Digital Audio Workstation (DAW) requirements
+          - Essential hardware components (audio interface, monitors, headphones)
+          - Acoustic treatment considerations for home studios
+          - Cable management and organization tips
+
+          ### 2. Professional Studio Equipment
+          - High-end microphones, preamps, and outboard gear
+          - Mixing consoles and control surfaces
+          - Professional monitoring systems and room acoustics
+          - Patchbays and signal routing in professional studios
+
+          ### 3. Acoustic Treatment
+          - Understanding room acoustics and their impact on recordings
+          - Types of acoustic treatment materials (absorbers, diffusers, bass traps)
+          - DIY acoustic treatment solutions
+          - Placement and optimization of acoustic treatment
+
+          ### 4. Studio Monitoring
+          - Choosing the right studio monitors for your setup
+          - Monitor placement and positioning for optimal listening
+          - Calibrating your monitoring system
+          - Headphone monitoring and mixing
+
+          ### 5. Signal Flow and Routing
+          - Understanding signal flow in a recording studio
+          - Setting up proper gain staging and levels
+          - Routing signals through hardware and software
+          - Using patchbays and virtual routing in DAWs
+
+          ## C. Production Techniques
+          ### 1. Editing and Arranging
+          - Basic editing techniques (cutting, copying, pasting)
+          - Arranging and structuring songs in a DAW
+          - Comping and consolidating multiple takes
+          - Creative editing techniques for unique sounds
+
+          ### 2. MIDI Programming
+          - Introduction to MIDI and its applications in music production
+          - Programming realistic MIDI instruments
+          - Quantization and groove techniques
+          - MIDI automation and parameter control
+
+          ### 3. Sampling and Synthesis
+          - Understanding sampling and its creative possibilities
+          - Designing sounds using synthesis techniques
+          - Layering and manipulating samples
+          - Legal considerations and clearing samples
+
+          ### 4. Creating Beats
+          - Drum programming techniques
+          - Using drum loops and one-shots
+          - Creating unique rhythms and grooves
+          - Layering and processing drum sounds
+
+          ### 5. Sound Design
+          - Crafting unique sounds using synthesis and processing
+          - Creating soundscapes and textures
+          - Designing sound effects for music production
+          - Resampling and manipulating audio for sound design
+
+          ### 6. Automation
+          - Using automation to add movement and interest to productions
+          - Volume, panning, and effect automation techniques
+          - Automating MIDI parameters and plugin settings
+          - Creative uses of automation for transitions and build-ups
+
+          ## D. Software and Technology
+          ### 1. Digital Audio Workstations (DAWs)
+          - Overview of popular DAWs (Pro Tools, Ableton Live, Logic Pro, etc.)
+          - Choosing the right DAW for your needs
+          - Navigating and customizing your DAW
+          - Workflow tips and tricks for efficient production
+
+          ### 2. Virtual Instruments and Plugins
+          - Types of virtual instruments (samplers, synthesizers, drum machines)
+          - Working with effect plugins (EQ, compression, reverb, delay)
+          - Plugin management and organization
+          - Creative use of plugins for sound design and processing
+
+          ### 3. Hardware Controllers and Interfaces
+          - Using MIDI controllers for hands-on control
+          - Integrating hardware synths and drum machines
+          - Audio interfaces and their features
+          - Control surfaces for mixing and production
+
+          ### 4. Music Production Apps
+          - Mobile apps for music production and idea generation
+          - Integrating mobile devices into your production workflow
+          - Cloud-based collaboration and production tools
+          - Using apps for live performance and DJing
+
+          ### 5. File Management and Organization
+          - Effective file management strategies for music projects
+          - Naming conventions and folder structures
+          - Backing up and archiving projects
+          - Collaborating and sharing files with other producers
+
+          ## E. Mixing
+          ### 1. Mixing Basics
+          - Understanding the role of mixing in music production
+          - Balancing levels and panning
+          - Using EQ to shape and sculpt sounds
+          - Applying compression for dynamic control
+
+          ### 2. Mixing Vocals
+          - EQ techniques for vocals
+          - Compression and de-essing for vocal control
+          - Using reverb and delay effects on vocals
+          - Automation techniques for vocal mixing
+
+          ### 3. Mixing Instruments
+          - EQ and compression techniques for specific instruments
+          - Balancing and placing instruments in the stereo field
+          - Creating space and depth with reverb and delay
+          - Mixing drums and bass for impact and low-end control
+
+          ### 4. Mixing Techniques (EQ, Compression, etc.)
+          - Advanced EQ techniques (filters, shelving, notching)
+          - Multiband and sidechain compression techniques
+          - Parallel processing and New York compression
+          - Creative mixing techniques (distortion, saturation, modulation effects)
+
+          ### 5. Mixing for Different Genres
+          - Genre-specific mixing approaches (rock, hip-hop, electronic, etc.)
+          - Adapting your mixing style to suit different genres
+          - Referencing commercial tracks for mix balance and sound
+          - Catering to genre-specific expectations and trends
+
+          ### 6. Mixing for Stereo and Surround Sound
+          - Understanding stereo imaging and width
+          - Mixing techniques for immersive stereo experiences
+          - Introduction to surround sound formats
+          - Considerations for mixing in surround sound
+
+          ## F. Mastering
+          ### 1. Mastering Basics
+          - Understanding the role of mastering in music production
+          - Signal flow and equipment used in mastering
+          - Preparing your mix for mastering
+          - Listening critically and identifying areas for improvement
+
+          ### 2. Mastering Techniques
+          - EQ and compression techniques for mastering
+          - Stereo enhancement and imaging
+          - Limiting and maximizing for loudness
+          - Dithering and bit depth reduction
+
+          ### 3. Mastering for Different Media (Streaming, CD, Vinyl)
+          - Optimizing masters for streaming platforms
+          - Preparing masters for CD replication
+          - Vinyl mastering considerations and techniques
+          - Loudness normalization and metering standards
+
+          ### 4. Online Mastering Services
+          - Overview of online mastering services
+          - Advantages and limitations of online mastering
+          - Preparing your files for online mastering
+          - Choosing the right online mastering service for your needs
+
+          ### 5. DIY Mastering
+          - In-the-box mastering techniques using plugins
+          - Mastering with analog emulation plugins
+          - DIY mastering vs. professional mastering services
+          - Common pitfalls and mistakes to avoid in DIY mastering
+
+          ## G. Collaboration
+          ### 1. Remote Collaboration Tools
+          - Cloud-based collaboration platforms for music production
+          - File sharing and version control for collaborative projects
+          - Video conferencing and screen sharing for remote sessions
+          - Real-time collaboration tools and plugins
+
+          ### 2. File Sharing and Project Management
+          - Strategies for effective file sharing and organization
+          - Project management tools for collaborative productions
+          - Version control and backup solutions
+          - Establishing file naming conventions and folder structures
+
+          ### 3. Communication Strategies
+          - Effective communication techniques for remote collaboration
+          - Setting clear goals, deadlines, and expectations
+          - Providing constructive feedback and critique
+          - Resolving creative differences and conflicts
+
+          ### 4. Working with Other Musicians and Producers
+          - Collaborating with musicians remotely
+          - Producing and arranging for other artists
+          - Collaborating with co-producers and beatmakers
+          - Navigating creative partnerships and agreements
+
+          ### 5. Collaborating with Mixing and Mastering Engineers
+          - Preparing files and sessions for mixing and mastering
+          - Communicating mix notes and revisions
+          - Understanding the role of mixing and mastering engineers
+          - Building long-term relationships with mixing and mastering professionals
+
+          ## H. Additional Topics
+          ### 1. Music Theory for Producers
+          - Basic music theory concepts (scales, chords, intervals)
+          - Harmonic progression and chord substitution
+          - Rhythm and meter in music production
+          - Applying music theory to composition and arranging
+
+          ### 2. Creative Workflows and Inspiration
+          - Developing a creative mindset and overcoming writer's block
+          - Techniques for generating ideas and starting projects
+          - Workflow optimization and time management strategies
+          - Staying inspired and motivated throughout the production process
+
+          ### 3. Sound Synthesis Techniques
+          - Subtractive, additive, and FM synthesis
+          - Wavetable and granular synthesis
+          - Modulation and automation techniques for synthesis
+          - Creating unique synth patches and sounds
+
+          ### 4. Remixing and Bootlegs
+          - Approaches to remixing and bootleg production
+          - Obtaining stems and acapellas for remixing
+          - Creative reinterpretation and rearrangement techniques
+          - Legal considerations and obtaining permissions for remixes
+
+          ### 5. Producing for Film, TV, and Games
+          - Understanding the role of music in visual media
+          - Composing and producing for specific scenes and moods
+          - Working with directors and audio supervisors
+          - Delivery formats and technical requirements for media projects
+
+          ### 6. Live Performance and DJing with Production Software
+          - Integrating live instruments and vocals with electronic production
+          - Performing and DJing with Ableton Live and other software
+          - Designing live sets and performances
+          - Synchronizing visuals and lighting with music production software
+          ---
+          """
 
         _ ->
-          "Default message for subjects not explicitly handled."
+          "General recommendations for a well-rounded music artist"
       end
 
+    content = """
+    Given:
+    1. A detailed subject syllabus (<syllabus>) concerning a specific subject of the music industry, things a well-rounded music artist should know (and advice regarding that subject).
+    2. A comprehensive music artist biography (<artist_biography>).
+
+    Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations. The insights sheet should be tailored to the artist based on their biography.
+
+    Please follow these guidelines for the output:
+    - Output must be in a easy-to-read HTML object string organized properly. Need to include ```html and DOCTYPE, plus the other common tags in html needed (head, body, etc). Make sure to bold any headings.
+    - Focus solely on including recommendations.
+    - Provide the recommendations in a concise format, ideally fitting within two pages of text.
+    - Employ step-by-step thinking using chain of thought reasoning to ensure the recommendations are highly personalized and actionable for the artist according to their biography.
+
+    Here are the details you'll base your recommendations on:
+
+    <artist_biography>\n#{artist_description}\n</artist_biography>
+
+    <syllabus>\n#{syllabus}\n</syllabus>
+    """
+
+    # TODO: log content to make sure string is formatted correctly
     msgs = [
       %ExOpenAI.Components.ChatCompletionRequestUserMessage{
         role: :user,
-        content: """
-                Given:
-        1. A detailed subject syllabus concerning a specific facet of the music industry (and advice regarding it).
-        2. A comprehensive music artist biography.
-
-        Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations. The insights sheet should be tailored to the artist based on their biography.
-
-        Please follow these guidelines for the output:
-        - Output must be in a easy-to-read HTML object string organized properly. Need to include ```html and DOCTYPE, plus the other common tags in html needed (head, body, etc). Make sure to bold any headings.
-        - Focus solely on including recommendations.
-        - Provide the recommendations in a concise format, ideally fitting within two pages of text.
-        - Employ step-by-step thinking using chain of thought reasoning to ensure the recommendations are highly personalized and actionable for the artist according to their biography.
-
-        Here are the details you'll base your recommendations on:
-
-        Artist Biography: #{artist_description}
-
-        Syllabus: #{syllabus}
-        """
+        content: content
       }
     ]
 
-    # TODO: make this model dependant on env var
-    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-4-turbo-preview") do
+    model = Application.get_env(:mic, :model) || "gpt-4-turbo"
+
+    case ExOpenAI.Chat.create_chat_completion(msgs, model) do
       {:ok, res} ->
         first = List.first(res.choices)
         {:ok, first.message}

@@ -63,24 +63,33 @@ defmodule MicWeb.ChatLive.Index do
 
     # Determine the mode based on the presence of a scenario_id in the params
     scenario_id = Map.get(params, "scenario_id")
-    mode = if scenario_id, do: :scenario, else: :chat
+    # TODO: eventually when we have a general chat, we can just set this to :chat for else
+    # : The code treats an empty string scenario_id the same as a nil scenario_id, both leading to the :onboarding
+    mode =
+      case scenario_id do
+        nil -> :onboarding
+        "" -> :onboarding
+        _ -> :scenario
+      end
 
     scenario_assistant_type =
-      if scenario_id do
-        case fetch_scenario_assistant_type(scenario_id) do
-          {:ok, assistant_type} ->
-            assistant_type
+      case scenario_id do
+        nil ->
+          :onboarding
 
-          {:error, reason} ->
-            Logger.error("Failed to fetch scenario assistant type: #{inspect(reason)}")
-            nil
-        end
-      else
-        nil
+        _ ->
+          case fetch_scenario_assistant_type(scenario_id) do
+            {:ok, assistant_type} ->
+              assistant_type
+
+            {:error, reason} ->
+              Logger.error("Failed to fetch scenario assistant type: #{inspect(reason)}")
+              :onboarding
+          end
       end
 
     previous_messages =
-      if mode == :scenario do
+      if mode == :scenario and scenario_assistant_type not in [nil, :onboarding] do
         Mic.Chat.get_messages_by_user_id_and_assistant_type(
           socket.assigns.current_user.id,
           scenario_assistant_type
@@ -147,17 +156,23 @@ defmodule MicWeb.ChatLive.Index do
 
     assistant =
       try do
-        Mic.Chat.get_assistant_by_user_id_and_assistant_type!(
-          socket.assigns.current_user.id,
-          case fetch_scenario_assistant_type(scenario_id) do
-            {:ok, distribution_type} -> distribution_type
-            _ -> nil
-          end
-        )
+        if scenario_assistant_type != nil do
+          Mic.Chat.get_assistant_by_user_id_and_assistant_type!(
+            socket.assigns.current_user.id,
+            scenario_assistant_type
+          )
+        else
+          nil
+        end
       rescue
         Ecto.NoResultsError ->
           # This block executes if no assistant is found, returning a default or nil
           Logger.debug("No assistant found for user.")
+          nil
+
+        _error ->
+          # This block executes for any other errors, logging the error and returning nil
+          Logger.error("An error occurred while fetching the assistant.")
           nil
       end
 
@@ -166,7 +181,7 @@ defmodule MicWeb.ChatLive.Index do
      |> assign(initial_state(scenario_description))
      |> assign(
        assistant: assistant,
-       assistant_type: scenario_id,
+       assistant_scenario_id: scenario_id,
        openai_pid: openai_pid,
        model: model,
        models: models,
@@ -528,41 +543,50 @@ defmodule MicWeb.ChatLive.Index do
   end
 
   def handle_info({:commit_streaming_message, msg}, socket) do
+    # TODO:  This approach can lead to duplicate IDs if messages are added concurrently or if messages are not always added through this function. A more robust approach would be to use a unique identifier generator or a database sequence to ensure uniqueness.
     new_id = Enum.count(socket.assigns.messages) + 1
     msg = Map.put(msg, :id, new_id)
     prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(socket.assigns.openai_pid)
 
     user_message = socket.assigns.last_user_submission
     # Save user message to the database
-    case Mic.Chat.create_message(
-           socket.assigns.assistant,
-           socket.assigns.current_user,
-           %{
-             role: :user,
-             content: convert_content_to_array_map(user_message),
-             model_id: Atom.to_string(socket.assigns.model)
-           }
-         ) do
+
+    # TODO: decide if we do want to save onboarding messages or not
+    result =
+      Ecto.Multi.new()
+      |> Ecto.Multi.run(:user_message, fn _repo, _ ->
+        Mic.Chat.create_message(
+          socket.assigns.assistant,
+          socket.assigns.current_user,
+          %{
+            role: :user,
+            content: convert_content_to_array_map(user_message),
+            model_id: Atom.to_string(socket.assigns.model)
+          }
+        )
+      end)
+      |> Ecto.Multi.run(:assistant_message, fn _repo, %{user_message: _} ->
+        Mic.Chat.create_message(
+          socket.assigns.assistant,
+          socket.assigns.current_user,
+          %{
+            role: :assistant,
+            content: convert_content_to_array_map(msg.content),
+            model_id: Atom.to_string(socket.assigns.model)
+          }
+        )
+      end)
+      |> Mic.Repo.transaction()
+
+    case result do
       {:ok, _} ->
-        # Save assistant response to the database
-        case Mic.Chat.create_message(
-               socket.assigns.assistant,
-               socket.assigns.current_user,
-               %{
-                 role: :assistant,
-                 content: convert_content_to_array_map(msg.content),
-                 model_id: Atom.to_string(socket.assigns.model)
-               }
-             ) do
-          {:ok, _} ->
-            :ok
+        :ok
 
-          {:error, changeset} ->
-            Logger.error("Failed to save assistant response: #{inspect(changeset)}")
-        end
-
-      {:error, changeset} ->
+      {:error, :user_message, changeset, _} ->
         Logger.error("Failed to save user message: #{inspect(changeset)}")
+
+      {:error, :assistant_message, changeset, _} ->
+        Logger.error("Failed to save assistant response: #{inspect(changeset)}")
     end
 
     # Insert into stateful container
@@ -618,11 +642,17 @@ defmodule MicWeb.ChatLive.Index do
         end
 
       if has_profile == nil do
-        Mic.Jobs.GenerateArtistProfileJob.new(%{
-          "current_user" => socket.assigns.current_user,
-          "profile_data" => socket.assigns.profile_data
-        })
-        |> Oban.insert()
+        try do
+          Mic.Jobs.GenerateArtistProfileJob.new(%{
+            "current_user" => socket.assigns.current_user,
+            "profile_data" => socket.assigns.profile_data
+          })
+          |> Oban.insert()
+        rescue
+          exception ->
+            Logger.error("Failed to enqueue GenerateArtistProfileJob: #{inspect(exception)}")
+            # Handle the error, e.g., retry or notify the user
+        end
 
         {:noreply, push_redirect(socket, to: "/")}
       end

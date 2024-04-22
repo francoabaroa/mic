@@ -54,104 +54,131 @@ defmodule MicWeb.MessageComponent do
     """
   end
 
-  defp render_assistant_avatar(%{sender: :assistant} = assigns) do
+  defp render_assistant_avatar(
+         %{sender: :assistant, assistant_scenario_id: assistant_scenario_id} = assigns
+       ) do
+    assigns = assign(assigns, :assistant_scenario_id, assistant_scenario_id)
+
+    # TODO: to make the addition of a new assistant type/scenario id, need to make a system that automated it usign the type available_subject_and_assistant_types
+
     ~H"""
     <div class="w-[30px] flex flex-col relative items-end">
       <div
         style="background-color: rgb(16, 163, 127);"
         class="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center"
       >
-        <svg
-          :if={@assistant_type == "analyze-contract"}
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          class="h-6 w-6"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-scroll-text"
-          >
-            <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M15 8h-5" /><path d="M15 12h-5" />
+        <%= if @assistant_scenario_id == "analyze-contract" do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-scroll-text"
+            >
+              <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M15 8h-5" /><path d="M15 12h-5" />
+            </svg>
           </svg>
-        </svg>
-        <svg
-          :if={@assistant_type == "mental-wellness"}
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          class="h-6 w-6"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-message-circle-heart"
-          >
-            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /><path d="M15.8 9.2a2.5 2.5 0 0 0-3.5 0l-.3.4-.35-.3a2.42 2.42 0 1 0-3.2 3.6l3.6 3.5 3.6-3.5c1.2-1.2 1.1-2.7.2-3.7" />
+        <% end %>
+        <%= if @assistant_scenario_id == "mental-wellness" do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-message-circle-heart"
+            >
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /><path d="M15.8 9.2a2.5 2.5 0 0 0-3.5 0l-.3.4-.35-.3a2.42 2.42 0 1 0-3.2 3.6l3.6 3.5 3.6-3.5c1.2-1.2 1.1-2.7.2-3.7" />
+            </svg>
           </svg>
-        </svg>
-        <svg
-          :if={@assistant_type == "distribution-guru"}
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          class="h-6 w-6"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-radio"
-          >
-            <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" /><circle
-              cx="12"
-              cy="12"
-              r="2"
-            /><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
+        <% end %>
+        <%= if @assistant_scenario_id == "distribution-guru" do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-radio"
+            >
+              <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" /><circle
+                cx="12"
+                cy="12"
+                r="2"
+              /><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
+            </svg>
           </svg>
-        </svg>
-        <svg
-          :if={
-            @assistant_type != "analyze-contract" and @assistant_type != "mental-wellness" and
-              @assistant_type != "distribution-guru"
-          }
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          class="h-6 w-6"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-sparkle"
-          >
-            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z" />
+        <% end %>
+        <%= if @assistant_scenario_id == "production-expert" do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-keyboard-music"
+            >
+              <rect width="20" height="16" x="2" y="4" rx="2" /><path d="M6 8h4" /><path d="M14 8h.01" /><path d="M18 8h.01" /><path d="M2 12h20" /><path d="M6 12v4" /><path d="M10 12v4" /><path d="M14 12v4" /><path d="M18 12v4" />
+            </svg>
           </svg>
-        </svg>
+        <% end %>
+        <%= if @assistant_scenario_id == "finance-tips" do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-wallet"
+            >
+              <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+            </svg>
+          </svg>
+        <% end %>
+        <%= if @assistant_scenario_id not in ["analyze-contract", "mental-wellness", "distribution-guru", "production-expert", "finance-tips"] do %>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-sparkle"
+            >
+              <path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z" />
+            </svg>
+          </svg>
+        <% end %>
       </div>
     </div>
     """
@@ -165,7 +192,10 @@ defmodule MicWeb.MessageComponent do
 
   def render(assigns) do
     # TODO: fix this to use @ eventually
-    %{language_preference: language_preference, message: message_to_check} = assigns
+    language_preference = Map.get(assigns, :language_preference, :english)
+    message_to_check = Map.get(assigns, :message, "")
+    assistant_scenario_id = Map.get(assigns, :assistant_scenario_id, nil)
+    id = Map.get(assigns, :id, nil)
 
     {text_button, voice_button} =
       case language_preference do
@@ -204,7 +234,7 @@ defmodule MicWeb.MessageComponent do
       </div>
       <div class={"chat-bubble shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] space-y-4 p-4 mb-4 rounded  w-full #{bubble_style(@sender)}"}>
         <%= raw(@parsed_content) %>
-        <%= if @id === 0 && @assistant_type === nil do %>
+        <%= if id === 0 && (assistant_scenario_id in [nil, false, ""]) do %>
           <button
             phx-click="english_interaction"
             class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
@@ -224,7 +254,7 @@ defmodule MicWeb.MessageComponent do
             Portuguese
           </button>
         <% end %>
-        <%= if @should_show_text_voice_buttons && @assistant_type === nil do %>
+        <%= if @should_show_text_voice_buttons && (assistant_scenario_id in [nil, false, ""]) do %>
           <button
             phx-click="text_interaction"
             class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700"
