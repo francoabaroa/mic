@@ -41,6 +41,10 @@ node_modules/
 .env.dev
 .env.prod
 
+# Ignore generated certificates
+priv/cert/selfsigned_key.pem
+priv/cert/selfsigned.pem
+
 # ElixirLS config
 .elixir_ls
 
