@@ -23,22 +23,47 @@ import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 let audioContext = new AudioContext();
-let mediaSource = new MediaSource();
-let sourceBuffer;
-let queue = [];
-let audioInitialized = false;
+let sourceNode = null;
+let bufferQueue = [];
 
-mediaSource.addEventListener('sourceopen', () => {
-  sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
-  sourceBuffer.addEventListener('updateend', () => {
-    if (queue.length > 0 && !sourceBuffer.updating) {
-      sourceBuffer.appendBuffer(queue.shift());
-    }
-  });
-});
+function fetchAndDecodeAudio(base64Data) {
+  let byteCharacters = atob(base64Data);
+  let byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  let byteArray = new Uint8Array(byteNumbers);
+  let blob = new Blob([byteArray], { type: 'audio/mpeg' });
+  let url = URL.createObjectURL(blob);
 
-let audio = new Audio();
-audio.src = URL.createObjectURL(mediaSource);
+  fetch(url)
+    .then(response => {
+      return response.arrayBuffer();
+    })
+    .then(arrayBuffer => {
+      return audioContext.decodeAudioData(arrayBuffer);
+    })
+    .then(audioBuffer => {
+      bufferQueue.push(audioBuffer);
+      if (!sourceNode || sourceNode.buffer === null) {
+        playBuffer();
+      }
+    })
+    .catch(err => console.error('Error with decoding audio:', err));
+}
+
+function playBuffer() {
+  if (bufferQueue.length > 0 && (sourceNode == null || sourceNode.buffer == null)) {
+    sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = bufferQueue.shift();
+    sourceNode.connect(audioContext.destination);
+    sourceNode.start();
+    sourceNode.onended = function () {
+      sourceNode = null; // Reset the sourceNode to null after playback
+      playBuffer(); // Try to play the next buffer in the queue
+    };
+  }
+}
 
 function scrollToLastChatBubble() {
   let chatBubbles = document.querySelectorAll(".chat");
@@ -48,15 +73,9 @@ function scrollToLastChatBubble() {
   }
 }
 
-function initAndPlayAudio() {
+function initAudio() {
   if (audioContext.state === 'suspended') {
-    audioContext.resume().then(() => {
-      // TODO: remove
-      console.log('Playback resumed successfully');
-      audio.play();
-    });
-  } else {
-    audio.play();
+    audioContext.resume();
   }
 }
 
@@ -154,31 +173,10 @@ Hooks.VoiceAudioHandlers = {
       // Object to keep track of processed chunks
       const processedChunks = {};
 
-      // Decode the base64 chunk and play the audio
-      function base64ToBlob(base64, mimeType) {
-        let byteCharacters = atob(base64);
-        let byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        let byteArray = new Uint8Array(byteNumbers);
-        return new Blob([byteArray], { type: mimeType });
-      }
-
       // Check if the chunk has already been processed
       if (!processedChunks[chunk]) {
-        let audioBlob = base64ToBlob(chunk, 'audio/mpeg');
         processedChunks[chunk] = true;
-        let reader = new FileReader();
-        reader.onload = function () {
-          let arrayBuffer = this.result;
-          if (!sourceBuffer.updating && queue.length === 0) {
-            sourceBuffer.appendBuffer(arrayBuffer);
-          } else {
-            queue.push(arrayBuffer);
-          }
-        };
-        reader.readAsArrayBuffer(audioBlob);
+        fetchAndDecodeAudio(chunk);
       }
     });
 
@@ -227,13 +225,7 @@ for (let i = 0; i < collapsibleList.length; i++) {
   });
 }
 
-// TODO: What is the correct fix for this?
-document.addEventListener('click', function () {
-  if (!audioInitialized) {
-    initAndPlayAudio();
-    audioInitialized = true;
-  }
-});
+document.addEventListener('click', initAudio);
 
 window.addEventListener(`phx:newmessage`, (e) => {
   console.log("new message");
