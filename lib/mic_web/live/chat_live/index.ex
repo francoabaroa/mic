@@ -35,7 +35,6 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def mount(params, session, socket) do
-    Phoenix.PubSub.subscribe(Mic.PubSub, "audio:topic")
     default_model = Application.get_env(:mic, :default_model, :"gpt-3.5-turbo")
     session_model = session |> Map.get("model", default_model)
     model = Map.get(params, "model", session_model)
@@ -167,7 +166,7 @@ defmodule MicWeb.ChatLive.Index do
       rescue
         Ecto.NoResultsError ->
           # This block executes if no assistant is found, returning a default or nil
-          Logger.debug("No assistant found for user.")
+          Logger.error("No assistant found for user.")
           nil
 
         _error ->
@@ -269,11 +268,7 @@ defmodule MicWeb.ChatLive.Index do
 
     case Mic.Chat.OpenAI.generate_speech(message_content) do
       {:ok, speech} when is_binary(speech) ->
-        Phoenix.PubSub.broadcast(
-          Mic.PubSub,
-          "audio:topic",
-          {:audio_chunk, %{chunk: speech}}
-        )
+        send(self(), {:audio_chunk, %{chunk: speech, socket_id: socket.id}})
 
       {:error, reason} ->
         Logger.error("TTS Error: #{inspect(reason)}")
@@ -595,11 +590,7 @@ defmodule MicWeb.ChatLive.Index do
     if prefers_voice_chat do
       case Mic.Chat.OpenAI.generate_speech(msg.content) do
         {:ok, speech} when is_binary(speech) ->
-          Phoenix.PubSub.broadcast(
-            Mic.PubSub,
-            "audio:topic",
-            {:audio_chunk, %{chunk: speech}}
-          )
+          send(self(), {:audio_chunk, %{chunk: speech, socket_id: socket.id}})
 
         {:error, reason} ->
           Logger.error("TTS Error: #{inspect(reason)}")
@@ -617,9 +608,9 @@ defmodule MicWeb.ChatLive.Index do
      |> push_event("newmessage", %{})}
   end
 
-  def handle_info({:audio_chunk, %{chunk: base64_audio}}, socket) do
-    # Push the audio_chunk event to the client
-    {:noreply, push_event(socket, "audio_chunk", %{chunk: base64_audio})}
+  def handle_info({:audio_chunk, %{chunk: base64_audio, socket_id: socket_id}}, socket) do
+    # Push the audio_chunk event to the specific client
+    {:noreply, push_event(socket, "audio_chunk", %{chunk: base64_audio, to: socket_id})}
   end
 
   def handle_info({:update_messages, msgs}, socket) do
