@@ -73,6 +73,7 @@ config :mic,
   allowed_email_domains: ["google.com"]
 
 # Configures the endpoint
+# TODO: remove pubsub use in app
 config :mic, MicWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
