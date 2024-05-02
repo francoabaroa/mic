@@ -30,6 +30,13 @@ if System.get_env("CHARTMETRIC_ENV_SET") do
   config :mic, :chartmetric, access_token: System.get_env("CHARTMETRIC_ACCESS_TOKEN")
 end
 
+if System.get_env("WHATSAPP_ENV_SET") do
+  config :mic, :whatsapp,
+    whatsapp_messages_api_url: System.get_env("WHATSAPP_MESSAGES_API_URL"),
+    whatsapp_temporary_access_token: System.get_env("WHATSAPP_TEMPORARY_ACCESS_TOKEN"),
+    whatsapp_verify_token: System.get_env("WHATSAPP_VERIFY_TOKEN")
+end
+
 if System.get_env("SPOTIFY_ENV_SET") do
   config :mic, :spotify,
     client_id: System.get_env("SPOTIFY_CLIENT_ID"),

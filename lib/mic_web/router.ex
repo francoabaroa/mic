@@ -20,12 +20,21 @@ defmodule MicWeb.Router do
   scope "/", MicWeb do
     pipe_through :browser
 
+    # TODO: does this belong here or below?
     get "/", PageController, :home
+  end
+
+  scope "/api", MicWeb do
+    pipe_through :api
 
     # TODO: remove or leave
+    # TODO: update spotify/instagram config to correct api endpoint
     get "/auth/google/callback", PageController, :oauth_callback
     get "/auth/spotify/callback", AuthController, :spotify_callback
     get "/auth/instagram/callback", AuthController, :instagram_callback
+
+    post "/whatsapp/webhook", WhatsAppController, :receive_message
+    get "/whatsapp/webhook", WhatsAppController, :receive_verification
   end
 
   # Other scopes may use custom stacks.
