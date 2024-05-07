@@ -175,6 +175,41 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
+  def transcribe_voice_using_written_file_name(file_name) do
+    # TODO: combine this function and transcribe_voice
+    # TODO: TEMP: Temporary filename
+    file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/#{file_name}"
+
+    # Read the content back from the file
+    case File.read(file_path) do
+      {:ok, file_content} ->
+        case ExOpenAI.Audio.create_transcription(
+               {"temp_audio.mp3", file_content},
+               "whisper-1"
+             ) do
+          {:ok, %ExOpenAI.Components.CreateTranscriptionResponse{text: transcription_text}} ->
+            # If the transcription is successful, you get the transcribed text here
+            # TODO: delete written file
+            File.rm(file_path)
+            {:ok, transcription_text}
+
+          {:error, reason} ->
+            Logger.error("Error in create_transcription request: #{inspect(reason)}")
+            {:error, reason}
+
+          _ ->
+            Logger.error("Unexpected return value from ExOpenAI.Audio.create_transcription")
+            {:error, :unexpected_return_value}
+        end
+
+      {:error, read_error} ->
+        # Clean up and error handling
+        File.rm(file_path)
+        Logger.error("Error reading file: #{inspect(read_error)}")
+        {:error, read_error}
+    end
+  end
+
   def transcribe_voice(audio_content) do
     # TODO: TEMP: Temporary filename
     file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/temp_audio.mp3"
@@ -218,6 +253,21 @@ defmodule Mic.Chat.OpenAI do
         base64_audio = Base.encode64(audio_data)
 
         {:ok, base64_audio}
+
+      {:error, reason} ->
+        Logger.error("Error in create_speech request: #{inspect(reason)}")
+        {:error, reason}
+
+      _ ->
+        Logger.error("Unexpected return value from ExOpenAI.Audio.create_speech")
+        {:error, :unexpected_return_value}
+    end
+  end
+
+  def generate_speech_no_streaming_no_encoding(input_text) do
+    case ExOpenAI.Audio.create_speech(input_text, :"tts-1", :nova) do
+      {:ok, audio_data} when is_binary(audio_data) ->
+        {:ok, audio_data}
 
       {:error, reason} ->
         Logger.error("Error in create_speech request: #{inspect(reason)}")

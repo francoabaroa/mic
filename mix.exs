@@ -72,7 +72,8 @@ defmodule Mic.MixProject do
       {:tesla, "~> 1.4"},
       {:goth, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:temp, "~> 0.4"}
     ]
   end
 

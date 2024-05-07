@@ -33,6 +33,7 @@ end
 if System.get_env("WHATSAPP_ENV_SET") do
   config :mic, :whatsapp,
     whatsapp_messages_api_url: System.get_env("WHATSAPP_MESSAGES_API_URL"),
+    whatsapp_media_upload_api_url: System.get_env("WHATSAPP_MEDIA_UPLOAD_API_URL"),
     whatsapp_temporary_access_token: System.get_env("WHATSAPP_TEMPORARY_ACCESS_TOKEN"),
     whatsapp_verify_token: System.get_env("WHATSAPP_VERIFY_TOKEN")
 end
