@@ -20,10 +20,16 @@ config :mic,
   # gpt-4-turbo-preview
   # gpt-4-turbo
   # TODO: can remove these 2 lines below
-  model: "gpt-4-turbo",
+  model: "gpt-4o",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4-turbo",
+  default_model: :"gpt-4o",
   models: [
+    %{
+      id: :"gpt-4o",
+      provider: :openai,
+      truncate_tokens: 127_000,
+      name: "GPT4 Omini (OpenAI)"
+    },
     %{
       id: :"gpt-4-turbo",
       provider: :openai,
