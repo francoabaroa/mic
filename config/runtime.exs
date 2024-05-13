@@ -61,7 +61,10 @@ end
 config :ex_openai,
   api_key: get_or_raise.("OPENAI_API_KEY"),
   organization_key: get_or_raise.("OPENAI_ORGANIZATION_KEY"),
-  http_options: [recv_timeout: 200_000]
+  http_options: [recv_timeout: 200_000],
+  http_headers: [
+    {"OpenAI-Beta", "assistants=v2"}
+  ]
 
 config :mic,
   access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
