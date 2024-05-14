@@ -35,7 +35,7 @@ defmodule MicWeb.ChatLive.Index do
 
   @impl Phoenix.LiveView
   def mount(params, session, socket) do
-    default_model = Application.get_env(:mic, :default_model, :"gpt-3.5-turbo")
+    default_model = Application.get_env(:mic, :default_model, :"gpt-4o")
     session_model = session |> Map.get("model", default_model)
     model = Map.get(params, "model", session_model)
     models = Application.get_env(:mic, :models, [model])

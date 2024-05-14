@@ -19,7 +19,9 @@ defmodule Mic.Application do
       # {Mic.Worker, arg},
       # Start to serve requests, typically the last entry
       MicWeb.Endpoint,
-      Mic.Chat.Tokenizer
+      Mic.Chat.Tokenizer,
+      # Create ETS table
+      Mic.MediaTableManager
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

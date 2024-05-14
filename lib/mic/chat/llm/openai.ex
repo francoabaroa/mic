@@ -291,7 +291,7 @@ defmodule Mic.Chat.OpenAI do
     ]
 
     # TODO: Fix timeout happening with gpt-4-turbo-preview
-    model = Application.get_env(:mic, :model) || "gpt-4-turbo"
+    model = Application.get_env(:mic, :model) || "gpt-4o"
 
     case ExOpenAI.Chat.create_chat_completion(msgs, model) do
       {:ok, res} ->
@@ -1494,7 +1494,7 @@ defmodule Mic.Chat.OpenAI do
       }
     ]
 
-    model = Application.get_env(:mic, :model) || "gpt-4-turbo"
+    model = Application.get_env(:mic, :model) || "gpt-4o"
 
     case ExOpenAI.Chat.create_chat_completion(msgs, model) do
       {:ok, res} ->
@@ -1521,7 +1521,9 @@ defmodule Mic.Chat.OpenAI do
       }
     ]
 
-    case ExOpenAI.Chat.create_chat_completion(msgs, "gpt-3.5-turbo") do
+    model = Application.get_env(:mic, :model) || "gpt-4o"
+
+    case ExOpenAI.Chat.create_chat_completion(msgs, model) do
       {:ok, res} ->
         first = List.first(res.choices)
         {:ok, first.message}
