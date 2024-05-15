@@ -7,7 +7,6 @@ defmodule Mic.Jobs.DeleteDocumentMetadataJob do
   def perform(%Oban.Job{
         args: %{
           "assistant_id" => assistant_id,
-          "vector_store_id" => vector_store_id,
           "file_id" => file_id,
           "thread_id" => thread_id
         }
@@ -24,62 +23,42 @@ defmodule Mic.Jobs.DeleteDocumentMetadataJob do
         Logger.info("Assistant deleted successfully")
 
         case HTTPoison.delete(
-               "https://api.openai.com/v1/vector_stores/#{vector_store_id}",
+               "https://api.openai.com/v1/files/#{file_id}",
                [
                  {"Authorization", "Bearer #{System.get_env("OPENAI_API_KEY")}"},
-                 {"Content-Type", "application/json"},
-                 {"OpenAI-Beta", "assistants=v2"}
+                 {"Content-Type", "application/json"}
                ]
              ) do
           {:ok, %HTTPoison.Response{status_code: 200}} ->
-            Logger.info("Vector store deleted successfully")
+            Logger.info("File deleted successfully")
 
             case HTTPoison.delete(
-                   "https://api.openai.com/v1/files/#{file_id}",
+                   "https://api.openai.com/v1/threads/#{thread_id}",
                    [
                      {"Authorization", "Bearer #{System.get_env("OPENAI_API_KEY")}"},
-                     {"Content-Type", "application/json"}
+                     {"Content-Type", "application/json"},
+                     {"OpenAI-Beta", "assistants=v2"}
                    ]
                  ) do
               {:ok, %HTTPoison.Response{status_code: 200}} ->
-                Logger.info("File deleted successfully")
-
-                case HTTPoison.delete(
-                       "https://api.openai.com/v1/threads/#{thread_id}",
-                       [
-                         {"Authorization", "Bearer #{System.get_env("OPENAI_API_KEY")}"},
-                         {"Content-Type", "application/json"},
-                         {"OpenAI-Beta", "assistants=v2"}
-                       ]
-                     ) do
-                  {:ok, %HTTPoison.Response{status_code: 200}} ->
-                    Logger.info("Thread deleted successfully")
-                    {:ok, "All metadata deleted successfully"}
-
-                  {:ok, %HTTPoison.Response{status_code: status_code}} ->
-                    Logger.error("Failed to delete thread. Status code: #{status_code}")
-                    {:error, "Failed to delete thread"}
-
-                  {:error, %HTTPoison.Error{reason: reason}} ->
-                    Logger.error("HTTPoison error while deleting thread: #{inspect(reason)}")
-                    {:error, reason}
-                end
+                Logger.info("Thread deleted successfully")
+                {:ok, "All metadata deleted successfully"}
 
               {:ok, %HTTPoison.Response{status_code: status_code}} ->
-                Logger.error("Failed to delete file. Status code: #{status_code}")
-                {:error, "Failed to delete file"}
+                Logger.error("Failed to delete thread. Status code: #{status_code}")
+                {:error, "Failed to delete thread"}
 
               {:error, %HTTPoison.Error{reason: reason}} ->
-                Logger.error("HTTPoison error while deleting file: #{inspect(reason)}")
+                Logger.error("HTTPoison error while deleting thread: #{inspect(reason)}")
                 {:error, reason}
             end
 
           {:ok, %HTTPoison.Response{status_code: status_code}} ->
-            Logger.error("Failed to delete vector store. Status code: #{status_code}")
-            {:error, "Failed to delete vector store"}
+            Logger.error("Failed to delete file. Status code: #{status_code}")
+            {:error, "Failed to delete file"}
 
           {:error, %HTTPoison.Error{reason: reason}} ->
-            Logger.error("HTTPoison error while deleting vector store: #{inspect(reason)}")
+            Logger.error("HTTPoison error while deleting file: #{inspect(reason)}")
             {:error, reason}
         end
 

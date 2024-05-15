@@ -3,11 +3,11 @@ defmodule Mic.Chat.TextExtractorV1 do
 
   def extract_text_from_document(file_path, original_file_name) do
     with {:ok, binary} <- File.read(file_path),
-         {:ok, _file_type} <- supported_file_type(file_path),
          {:ok, file_id} <- upload_file(binary, original_file_name),
          # TODO: create one assistant per user (to avoid leaking), same for vector stores,
          # TODO: eventually save the users asssitants so we dont have to re-create them elsewhere (for longer context, etc)
          # TODO: what is the policy on max number of created assistants? do they charge for assistants active?
+         # TODO: if there is some sort of error, the file and assistant and thread will stay on openai. need a daily cron job that removes these
          {:ok, assistant_response} =
            HTTPoison.post(
              "https://api.openai.com/v1/assistants",
@@ -17,26 +17,11 @@ defmodule Mic.Chat.TextExtractorV1 do
                "instructions" =>
                  "You are a helpful assistant who extracts the full text from documents or files provided to you and returns it to the user. Extract the full text from the attached file. Only reply with the full text of the file and nothing else.",
                "model" => Application.get_env(:mic, :model) || "gpt-4o",
-               "tools" => [%{"type" => "file_search"}]
-             }),
-             [
-               {"Authorization", "Bearer #{System.get_env("OPENAI_API_KEY")}"},
-               {"Content-Type", "application/json"},
-               {"OpenAI-Beta", "assistants=v2"}
-             ]
-           ),
-         assistant_id <- Jason.decode!(assistant_response.body)["id"],
-         # TODO: maybe lets not create a vector store each time? Thoughts? Definitely not. For now add expiration
-         # TODO: https://platform.openai.com/docs/assistants/tools/file-search/ensuring-vector-store-readiness-before-creating-runs
-         vector_store_response =
-           HTTPoison.post!(
-             "https://api.openai.com/v1/vector_stores",
-             Jason.encode!(%{
-               "name" => "Test",
-               "file_ids" => [file_id],
-               "expires_after" => %{
-                 "anchor" => "last_active_at",
-                 "days" => 1
+               "tools" => [%{"type" => "code_interpreter"}],
+               "tool_resources" => %{
+                 "code_interpreter" => %{
+                   "file_ids" => [file_id]
+                 }
                }
              }),
              [
@@ -45,24 +30,7 @@ defmodule Mic.Chat.TextExtractorV1 do
                {"OpenAI-Beta", "assistants=v2"}
              ]
            ),
-         Logger.info("Vector store creation response: #{inspect(vector_store_response.body)}"),
-         vector_store_id <- Jason.decode!(vector_store_response.body)["id"],
-         modify_assistant_opts <- %{
-           tool_resources: %{"file_search" => %{"vector_store_ids" => [vector_store_id]}}
-         },
-         modify_assistant_response <-
-           HTTPoison.post!(
-             "https://api.openai.com/v1/assistants/#{assistant_id}",
-             Jason.encode!(modify_assistant_opts),
-             [
-               {"Content-Type", "application/json"},
-               {"Authorization", "Bearer #{System.get_env("OPENAI_API_KEY")}"},
-               {"OpenAI-Beta", "assistants=v2"}
-             ]
-           ),
-         Logger.info("Modify assistant response: #{inspect(modify_assistant_response.body)}"),
-         # TODO: assistants API now supports vision https://twitter.com/OpenAIDevs/status/1788693943544135864
-         # https://x.com/OpenAIDevs/status/1780640119890047475
+         assistant_id <- Jason.decode!(assistant_response.body)["id"],
          {:ok, thread} <-
            ExOpenAI.Threads.create_thread(
              messages: [
@@ -73,27 +41,24 @@ defmodule Mic.Chat.TextExtractorV1 do
                  attachments: [
                    %{
                      file_id: file_id,
-                     tools: [%{type: "file_search"}]
+                     tools: [%{type: "code_interpreter"}]
                    }
                  ]
                }
-             ],
-             tool_resources: [
-               %{"file_search" => %{"vector_store_ids" => [vector_store_id]}}
              ]
            ),
+         thread_id <- thread.id,
          {:ok, run} <-
-           ExOpenAI.Threads.create_run(thread.id, assistant_id,
+           ExOpenAI.Threads.create_run(thread_id, assistant_id,
              instructions:
                "Extract the full text from file ID: #{file_id}. Only reply with the full text of the file and nothing else."
            ),
+         run_id <- run.id,
          extracted_text <-
            wait_for_run_completion(
-             thread.id,
-             run.id,
+             thread_id,
+             run_id,
              assistant_id,
-             vector_store_id,
-             thread.id,
              file_id
            ) do
       extracted_text
@@ -102,25 +67,11 @@ defmodule Mic.Chat.TextExtractorV1 do
     end
   end
 
-  defp supported_file_type(file_path) do
-    Logger.info("File path in TextExtractor: #{file_path}")
-
-    case Path.extname(file_path) do
-      ".txt" -> {:ok, "text/plain"}
-      ".pdf" -> {:ok, "application/pdf"}
-      ".doc" -> {:ok, "application/msword"}
-      ".docx" -> {:ok, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
-      _ -> {:error, "Unsupported document type"}
-    end
-  end
-
   defp retrieve_file(file_id) do
     ExOpenAI.Files.retrieve_file(file_id)
   end
 
   defp upload_file(binary, original_file_name) do
-    Logger.info("Uploading file to OpenAI")
-
     ExOpenAI.Files.create_file(
       {original_file_name, binary},
       "assistants"
@@ -178,8 +129,6 @@ defmodule Mic.Chat.TextExtractorV1 do
          retry_delay \\ 3000,
          attempt \\ 0,
          assistant_id,
-         vector_store_id,
-         thread_id,
          file_id
        ) do
     Logger.info("Waiting for run completion: #{run_id}")
@@ -193,7 +142,6 @@ defmodule Mic.Chat.TextExtractorV1 do
             try do
               case Mic.Jobs.DeleteDocumentMetadataJob.new(%{
                      "assistant_id" => assistant_id,
-                     "vector_store_id" => vector_store_id,
                      "file_id" => file_id,
                      "thread_id" => thread_id
                    })
@@ -226,8 +174,6 @@ defmodule Mic.Chat.TextExtractorV1 do
             retry_delay,
             attempt + 1,
             assistant_id,
-            vector_store_id,
-            thread_id,
             file_id
           )
         else
@@ -251,8 +197,6 @@ defmodule Mic.Chat.TextExtractorV1 do
             retry_delay,
             attempt + 1,
             assistant_id,
-            vector_store_id,
-            thread_id,
             file_id
           )
         else
