@@ -12,7 +12,7 @@ defmodule Mic.Jobs.GenerateDocumentExtractionAndResponseJob do
           "from_number" => from_number
         }
       }) do
-    case Mic.Chat.TextExtractorV1.extract_text_from_document(file_path, original_file_name) do
+    case Mic.Chat.TextExtractorV2.extract_text_from_document(file_path, original_file_name) do
       {:ok, text} ->
         # TODO: delete file from openai after extracting text
         Logger.info("Extracted text: #{inspect(text)}")

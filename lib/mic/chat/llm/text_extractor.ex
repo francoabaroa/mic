@@ -1,4 +1,4 @@
-defmodule Mic.Chat.TextExtractorV1 do
+defmodule Mic.Chat.TextExtractorV2 do
   require Logger
 
   def extract_text_from_document(file_path, original_file_name) do
