@@ -141,6 +141,9 @@ defmodule MicWeb.WhatsAppController do
             Logger.info("Identified aspect: #{inspect(aspect)}")
             Logger.info("Identified language: #{inspect(language)}")
 
+            brief_answers =
+              "\n\nKeep your answers extremely brief, extremely personalized and to the point. Your user is a music artist who is trying to navigate the intricacies of music industry contracts. Your answers should be focused on music contract topics and should not engage in discussions outside of this domain.Keep your answers extremely brief and to the point unless they ask for more detail."
+
             artist_info =
               "You are giving a music artist advice on specific aspects of the music industry."
 
@@ -173,7 +176,7 @@ defmodule MicWeb.WhatsAppController do
                 "\n\n This is who you are and what you'll do:#{response_text}.\n\nThis is the artist's message:" <>
                 msg <>
                 "\n\n Keep it as brief and to the point. If any parts of your answer require bullet points (when giving a list of things), please format it as so." <>
-                "\n\nYour response MUST be in #{language} language."
+                "\n\nYour response MUST be in #{language} language." <> brief_answers
 
             Logger.info("Message content: #{message_content}")
 
