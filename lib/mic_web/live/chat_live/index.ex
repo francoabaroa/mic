@@ -191,6 +191,12 @@ defmodule MicWeb.ChatLive.Index do
        language_preference: :english,
        current_question: nil,
        profile_data: %{}
+     )
+     |> allow_upload(:file,
+       # TODO: make this an enum to share with textbox_component
+       accept: ~w(.pdf .md .html .doc .docx .txt .pptx),
+       max_entries: 1,
+       max_file_size: 2_000_000_000
      )}
   end
 

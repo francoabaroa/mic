@@ -32,6 +32,8 @@
     <.live_component
       on_submit={fn val -> Process.send(self(), {:msg_submit, val}, []) end}
       module={MicWeb.TextboxComponent}
+      assistant_scenario_id={@assistant_scenario_id}
+      uploads={@uploads}
       text={@text}
       disabled={@loading}
       id="textbox"

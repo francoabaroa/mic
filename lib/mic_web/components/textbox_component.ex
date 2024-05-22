@@ -1,18 +1,61 @@
 defmodule MicWeb.TextboxComponent do
+  require Logger
   use MicWeb, :live_component
 
   defp new_form(), do: to_form(%{"text" => "", "rand" => UUID.uuid4()}, as: :main)
 
+  @impl true
   def mount(socket) do
     {:ok,
      socket
-     |> assign(form: new_form(), text: "")}
+     |> assign(form: new_form(), text: "", uploaded_files: [])
+     |> allow_upload(:file,
+       accept: ~w(.pdf .md .html .doc .docx .txt .pptx),
+       max_entries: 1,
+       max_file_size: 2_000_000_000
+     )}
   end
 
-  # def update(assigns, new_text) do
-  #   updated_assigns = assign(assigns, :text, new_text)
-  #   {:ok, updated_assigns}
-  # end
+  @impl true
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :avatar, ref)}
+  end
+
+  @impl true
+  def handle_event("save", %{"main" => %{"text" => text}}, socket) do
+    uploaded_files =
+      consume_uploaded_entries(socket, :file, fn %{path: path}, %{client_name: client_name} ->
+        case Mic.Chat.TextExtractorV2.extract_text_from_document(path, client_name) do
+          {:ok, extracted_text} ->
+            File.rm!(path)
+
+            {:ok, extracted_text}
+
+          {:error, reason} ->
+            File.rm!(path)
+            Logger.error("Error extracting text: #{inspect(reason)}")
+
+            {:postpone, reason}
+        end
+      end)
+
+    combined_extracted_text = Enum.join(uploaded_files, "")
+    combined_text = text <> combined_extracted_text
+
+    if String.length(combined_text) >= 1 and !socket.assigns.disabled do
+      socket.assigns.on_submit.(combined_text)
+
+      {:noreply,
+       socket |> assign(form: new_form()) |> update(:uploaded_files, &(&1 ++ uploaded_files))}
+    else
+      {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
+    end
+  end
 
   @spec handle_event(<<_::64>>, map(), any()) :: {:noreply, any()}
   def handle_event("onsubmit", %{"main" => %{"text" => text}}, socket) do
@@ -55,36 +98,45 @@ defmodule MicWeb.TextboxComponent do
   attr :disabled, :boolean, required: true
 
   def render(assigns) do
+    %{assistant_scenario_id: assistant_scenario_id, uploads: uploads} = assigns
+
     ~H"""
     <div id="textbox" class="">
       <.form
         class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         phx-target={@myself}
-        phx-submit="onsubmit"
+        phx-submit="save"
+        phx-change="validate"
         for={@form}
       >
         <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
           <.textarea disabled={@disabled} field={@form[:text]} myself={@myself} text={@text} />
           <div class="absolute bottom-1.5 right-1.5 flex space-x-1 md:bottom-2.5 md:right-2.5">
-            <button
-              id="submitbtn"
-              class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-send-horizontal"
+            <%= if @assistant_scenario_id == "analyze-contract" do %>
+              <.live_file_input upload={@uploads.file} />
+
+              <button
+                type="button"
+                id="upload-button"
+                onclick={"document.getElementById('#{@uploads.file.ref}').click()"}
+                class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
               >
-                <path d="m3 3 3 9-3 9 19-9Z" /><path d="M6 12h16" />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-file-up"
+                >
+                  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M12 12v6" /><path d="m15 15-3-3-3 3" />
+                </svg>
+              </button>
+            <% end %>
             <button
               id="transcriptionbtn"
               class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
@@ -133,6 +185,25 @@ defmodule MicWeb.TextboxComponent do
                   y1="19"
                   y2="22"
                 />
+              </svg>
+            </button>
+            <button
+              id="submitbtn"
+              class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-send-horizontal"
+              >
+                <path d="m3 3 3 9-3 9 19-9Z" /><path d="M6 12h16" />
               </svg>
             </button>
           </div>
