@@ -10,6 +10,7 @@ defmodule Mic.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      compilers: [:rustler] ++ Mix.compilers(),
       # TODO: do I need to configure?
       releases: [
         mic: [
@@ -73,7 +74,8 @@ defmodule Mic.MixProject do
       {:goth, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:temp, "~> 0.4"}
+      {:temp, "~> 0.4"},
+      {:rustler, "~> 0.32"}
     ]
   end
 

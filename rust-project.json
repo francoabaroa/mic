@@ -1,0 +1,17 @@
+{
+  "roots": [
+    {
+      "path": "native/documentparser_native"
+    }
+  ],
+  "crates": [
+    {
+      "root_module": "native/documentparser_native/src/lib.rs",
+      "edition": "2021",
+      "deps": [],
+      "cfg": [],
+      "target": "x86_64-unknown-linux-gnu",
+      "atom_cfgs": []
+    }
+  ]
+}

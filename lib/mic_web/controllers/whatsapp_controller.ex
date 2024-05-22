@@ -371,7 +371,7 @@ defmodule MicWeb.WhatsAppController do
                 try do
                   send_message(from_number, "Processing your document. This may take a moment.")
 
-                  Mic.Jobs.GenerateDocumentExtractionAndResponseJob.new(%{
+                  Mic.Jobs.RustGenerateDocumentExtractionAndResponseJob.new(%{
                     "file_path" => file_path,
                     "original_file_name" => original_file_name,
                     "from_number" => from_number
@@ -380,7 +380,7 @@ defmodule MicWeb.WhatsAppController do
                 rescue
                   exception ->
                     Logger.error(
-                      "Failed to enqueue GenerateDocumentExtractionAndResponseJob: #{inspect(exception)}"
+                      "Failed to enqueue RustGenerateDocumentExtractionAndResponseJob: #{inspect(exception)}"
                     )
 
                     {:error, exception}

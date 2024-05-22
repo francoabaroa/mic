@@ -27,19 +27,29 @@ defmodule MicWeb.TextboxComponent do
   end
 
   @impl true
+  # TODO: i think this call needs to happen in parent chat_live/index. that way we can pass down loading state to here and keep all that func there.
+  # TODO: note down instructions for rustler (compile crate cargo build --release, compile project elixir mix compile)
+  # TODO: add in rustler for .doc, .docx, .pptx, .md, .html
   def handle_event("save", %{"main" => %{"text" => text}}, socket) do
     uploaded_files =
-      consume_uploaded_entries(socket, :file, fn %{path: path}, %{client_name: client_name} ->
-        case Mic.Chat.TextExtractorV2.extract_text_from_document(path, client_name) do
-          {:ok, extracted_text} ->
-            File.rm!(path)
+      consume_uploaded_entries(socket, :file, fn %{path: path}, %{client_name: client_name, client_type: client_type} ->
+        extension = Path.extname(client_name)
 
-            {:ok, extracted_text}
+        text =
+          case extension do
+            ".pdf" -> Mic.Chat.DocumentParser.parse_pdf(path)
+            ".txt" -> Mic.Chat.DocumentParser.parse_txt(path)
+            _ -> {:error, "Unsupported file format"}
+          end
+
+        case text do
+          {:ok, content} ->
+            File.rm!(path)
+            {:ok, content}
 
           {:error, reason} ->
             File.rm!(path)
             Logger.error("Error extracting text: #{inspect(reason)}")
-
             {:postpone, reason}
         end
       end)
@@ -54,16 +64,6 @@ defmodule MicWeb.TextboxComponent do
        socket |> assign(form: new_form()) |> update(:uploaded_files, &(&1 ++ uploaded_files))}
     else
       {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
-    end
-  end
-
-  @spec handle_event(<<_::64>>, map(), any()) :: {:noreply, any()}
-  def handle_event("onsubmit", %{"main" => %{"text" => text}}, socket) do
-    if String.length(text) >= 1 and socket.assigns.disabled == false do
-      socket.assigns.on_submit.(text)
-      {:noreply, socket |> assign(form: new_form())}
-    else
-      {:noreply, socket}
     end
   end
 

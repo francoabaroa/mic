@@ -1,0 +1,19 @@
+[workspace]
+members = [
+    "."
+]
+
+[package]
+name = "documentparser_native"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[lib]
+name = "documentparser_native"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.32.1"
+lopdf = "0.26.0"
