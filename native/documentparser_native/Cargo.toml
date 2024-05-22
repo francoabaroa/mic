@@ -16,4 +16,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rustler = "0.32.1"
-lopdf = "0.26.0"
+pdf-extract = "0.7.7"

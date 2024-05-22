@@ -1,4 +1,4 @@
-use lopdf::Document;
+use pdf_extract::extract_text;
 use rustler::{Atom, NifResult};
 use std::fs::File;
 use std::io::Read;
@@ -14,17 +14,8 @@ mod atoms {
 
 #[rustler::nif]
 fn parse_pdf(file_path: String) -> NifResult<(Atom, String)> {
-    let doc =
-        Document::load(&file_path).map_err(|e| rustler::Error::Term(Box::new(e.to_string())))?;
-    let mut text = String::new();
-
-    for (page_number, _) in doc.get_pages() {
-        let content = doc
-            .extract_text(&[page_number])
-            .map_err(|e| rustler::Error::Term(Box::new(e.to_string())))?;
-        text.push_str(&content);
-    }
-
+    let text =
+        extract_text(&file_path).map_err(|e| rustler::Error::Term(Box::new(e.to_string())))?;
     Ok((atoms::ok(), text))
 }
 

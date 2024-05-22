@@ -10,7 +10,6 @@ defmodule Mic.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:rustler] ++ Mix.compilers(),
       # TODO: do I need to configure?
       releases: [
         mic: [
