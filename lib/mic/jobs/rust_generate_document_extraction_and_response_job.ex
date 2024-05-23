@@ -16,6 +16,7 @@ defmodule Mic.Jobs.RustGenerateDocumentExtractionAndResponseJob do
 
     text =
       case extension do
+        ".docx" -> Mic.Chat.DocumentParser.parse_docx(file_path)
         ".pdf" -> Mic.Chat.DocumentParser.parse_pdf(file_path)
         ".txt" -> Mic.Chat.DocumentParser.parse_txt(file_path)
         _ -> {:error, "Unsupported file format"}

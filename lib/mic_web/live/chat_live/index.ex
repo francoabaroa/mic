@@ -194,7 +194,7 @@ defmodule MicWeb.ChatLive.Index do
      )
      |> allow_upload(:file,
        # TODO: make this an enum to share with textbox_component
-       accept: ~w(.pdf .md .html .doc .docx .txt .pptx),
+       accept: ~w(.pdf .md .html .doc .docx .txt),
        max_entries: 1,
        max_file_size: 2_000_000_000,
        auto_upload: true,
@@ -205,19 +205,19 @@ defmodule MicWeb.ChatLive.Index do
   defp handle_progress(:file, entry, socket) do
     # TODO: i think this call needs to happen in parent chat_live/index. that way we can pass down loading state to here and keep all that func there.
     # TODO: note down instructions for rustler (compile crate cargo build --release, compile project elixir mix compile)
-    # TODO: add in rustler for .doc, .docx, .pptx, .md, .html
+    # TODO: add in rustler for .doc, .docx, .md, .html
 
     if entry.done? do
       {uploaded_files, client_names} =
         consume_uploaded_entries(socket, :file, fn %{path: path},
                                                    %{
-                                                     client_name: client_name,
-                                                     client_type: client_type
+                                                     client_name: client_name
                                                    } ->
           extension = Path.extname(client_name)
 
           text =
             case extension do
+              ".docx" -> Mic.Chat.DocumentParser.parse_docx(path)
               ".pdf" -> Mic.Chat.DocumentParser.parse_pdf(path)
               ".txt" -> Mic.Chat.DocumentParser.parse_txt(path)
               _ -> {:error, "Unsupported file format"}
@@ -795,9 +795,6 @@ defmodule MicWeb.ChatLive.Index do
 
         :significant_milestones ->
           Map.put(profile_data, :significant_milestones, text)
-
-        :spotify_bio ->
-          Map.put(profile_data, :spotify_bio, text)
 
         :live_performances ->
           Map.put(profile_data, :live_performances, text)
