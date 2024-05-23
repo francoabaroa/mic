@@ -16,7 +16,7 @@ module.exports = {
           primary: "oklch(37.45% 0.189 325.02)",
           secondary: "oklch(53.92% 0.162 241.36)",
           accent: "oklch(75.98% 0.204 56.72)",
-          neutral: "#3D4451",
+          neutral: "#1d4289",
           "base-100": "#ffffff",
           "base-content": "#1f2937",
         },
