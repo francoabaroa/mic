@@ -8,12 +8,7 @@ defmodule MicWeb.TextboxComponent do
   def mount(socket) do
     {:ok,
      socket
-     |> assign(form: new_form(), text: "", uploaded_files: [])
-     |> allow_upload(:file,
-       accept: ~w(.pdf .md .html .doc .docx .txt .pptx),
-       max_entries: 1,
-       max_file_size: 2_000_000_000
-     )}
+     |> assign(form: new_form(), text: "", uploaded_files: [])}
   end
 
   @impl true
@@ -23,47 +18,16 @@ defmodule MicWeb.TextboxComponent do
 
   @impl true
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
-    {:noreply, cancel_upload(socket, :avatar, ref)}
+    {:noreply, cancel_upload(socket, :file, ref)}
   end
 
-  @impl true
-  # TODO: i think this call needs to happen in parent chat_live/index. that way we can pass down loading state to here and keep all that func there.
-  # TODO: note down instructions for rustler (compile crate cargo build --release, compile project elixir mix compile)
-  # TODO: add in rustler for .doc, .docx, .pptx, .md, .html
-  def handle_event("save", %{"main" => %{"text" => text}}, socket) do
-    uploaded_files =
-      consume_uploaded_entries(socket, :file, fn %{path: path}, %{client_name: client_name, client_type: client_type} ->
-        extension = Path.extname(client_name)
-
-        text =
-          case extension do
-            ".pdf" -> Mic.Chat.DocumentParser.parse_pdf(path)
-            ".txt" -> Mic.Chat.DocumentParser.parse_txt(path)
-            _ -> {:error, "Unsupported file format"}
-          end
-
-        case text do
-          {:ok, content} ->
-            File.rm!(path)
-            {:ok, content}
-
-          {:error, reason} ->
-            File.rm!(path)
-            Logger.error("Error extracting text: #{inspect(reason)}")
-            {:postpone, reason}
-        end
-      end)
-
-    combined_extracted_text = Enum.join(uploaded_files, "")
-    combined_text = text <> combined_extracted_text
-
-    if String.length(combined_text) >= 1 and !socket.assigns.disabled do
-      socket.assigns.on_submit.(combined_text)
-
-      {:noreply,
-       socket |> assign(form: new_form()) |> update(:uploaded_files, &(&1 ++ uploaded_files))}
+  @spec handle_event(<<_::64>>, map(), any()) :: {:noreply, any()}
+  def handle_event("onsubmit", %{"main" => %{"text" => text}}, socket) do
+    if String.length(text) >= 1 and socket.assigns.disabled == false do
+      socket.assigns.on_submit.(text)
+      {:noreply, socket |> assign(form: new_form())}
     else
-      {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
+      {:noreply, socket}
     end
   end
 
@@ -105,7 +69,7 @@ defmodule MicWeb.TextboxComponent do
       <.form
         class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-3xl"
         phx-target={@myself}
-        phx-submit="save"
+        phx-submit="onsubmit"
         phx-change="validate"
         for={@form}
       >

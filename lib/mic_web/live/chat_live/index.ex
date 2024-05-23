@@ -196,8 +196,60 @@ defmodule MicWeb.ChatLive.Index do
        # TODO: make this an enum to share with textbox_component
        accept: ~w(.pdf .md .html .doc .docx .txt .pptx),
        max_entries: 1,
-       max_file_size: 2_000_000_000
+       max_file_size: 2_000_000_000,
+       auto_upload: true,
+       progress: &handle_progress/3
      )}
+  end
+
+  defp handle_progress(:file, entry, socket) do
+    # TODO: i think this call needs to happen in parent chat_live/index. that way we can pass down loading state to here and keep all that func there.
+    # TODO: note down instructions for rustler (compile crate cargo build --release, compile project elixir mix compile)
+    # TODO: add in rustler for .doc, .docx, .pptx, .md, .html
+
+    if entry.done? do
+      {uploaded_files, client_names} =
+        consume_uploaded_entries(socket, :file, fn %{path: path},
+                                                   %{
+                                                     client_name: client_name,
+                                                     client_type: client_type
+                                                   } ->
+          extension = Path.extname(client_name)
+
+          text =
+            case extension do
+              ".pdf" -> Mic.Chat.DocumentParser.parse_pdf(path)
+              ".txt" -> Mic.Chat.DocumentParser.parse_txt(path)
+              _ -> {:error, "Unsupported file format"}
+            end
+
+          case text do
+            {:ok, content} ->
+              File.rm!(path)
+              {:ok, {content, client_name}}
+
+            {:error, reason} ->
+              File.rm!(path)
+              Logger.error("Error extracting text: #{inspect(reason)}")
+              {:postpone, reason}
+          end
+        end)
+        |> Enum.unzip()
+
+      document_extracted_text = Enum.join(uploaded_files, "")
+
+      if String.length(document_extracted_text) >= 1 and !socket.assigns.disabled do
+        # Assuming only one file is uploaded at a time, so we take the first client_name
+        client_name = List.first(client_names)
+        self() |> send({:msg_submit, document_extracted_text, true, client_name})
+
+        {:noreply, socket |> update(:uploaded_files, &(&1 ++ uploaded_files))}
+      else
+        {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
+      end
+    else
+      {:noreply, socket}
+    end
   end
 
   defp fetch_scenario_assistant_type(scenario_id) do
@@ -406,7 +458,7 @@ defmodule MicWeb.ChatLive.Index do
     # Check if text is not empty and the socket is not disabled before submitting
     if String.length(text) >= 1 do
       # Send the message to the LiveView process to be handled in handle_info/2
-      Process.send(self(), {:msg_submit, text}, [])
+      Process.send(self(), {:msg_submit, text, false, nil}, [])
     end
 
     # Return just the socket, not {:noreply, socket}
@@ -675,15 +727,22 @@ defmodule MicWeb.ChatLive.Index do
     {:noreply, assign(socket, :language_preference, language_preference)}
   end
 
-  def handle_info({:msg_submit, text}, socket) do
+  def handle_info({:msg_submit, text, is_contract, contract_name}, socket) do
     self = self()
 
+    message_to_display_and_save =
+      if is_contract do
+        "Contract Analysis for #{contract_name}"
+      else
+        text
+      end
+
     model = Map.get(socket.assigns, :model)
-    updated_socket = assign(socket, :last_user_submission, text)
+    updated_socket = assign(socket, :last_user_submission, message_to_display_and_save)
 
     Process.send(
       self,
-      {:add_message, %Message{content: text, sender: :user, id: 0}},
+      {:add_message, %Message{content: message_to_display_and_save, sender: :user, id: 0}},
       []
     )
 
@@ -832,14 +891,28 @@ defmodule MicWeb.ChatLive.Index do
       end
 
     # Need to respect user language preference
+    # TODO: don't pass this in every single message, just at the beginning of a session
     language_to_speak =
       case updated_socket.assigns.language_preference do
-        :spanish -> "Remember to talk to the user in Spanish. "
-        :portuguese -> "Remember to talk to the user in Portugese. "
-        _ -> "Remember to talk to the user in English. "
+        :spanish -> "Remember to talk to the user in Spanish.\n\n"
+        :portuguese -> "Remember to talk to the user in Portugese.\n\n"
+        _ -> "Remember to talk to the user in English.\n\n"
       end
 
-    message_to_send = language_to_speak <> text_to_pass <> appended_question
+    personalization_message =
+      case updated_socket.assigns.language_preference do
+        :spanish ->
+          "Acuerdate de siempre personalizar tu respuesta para el usuario y todo lo que sabes del usuario para que se sienta como un amigo y no como un asistente.\n\n"
+
+        :portuguese ->
+          "Lembre-se de sempre personalizar sua resposta para o usuário e tudo o que você sabe sobre o usuário para que ele se sinta como um amigo e não como um assistente.\n\n"
+
+        _ ->
+          "Remember to always personalize your response for the user and everything you know about the user so that they feel like a friend and not an assistant.\n\n"
+      end
+
+    message_to_send =
+      personalization_message <> language_to_speak <> text_to_pass <> appended_question
 
     spawn(fn ->
       case Mic.Chat.OpenAI.send(

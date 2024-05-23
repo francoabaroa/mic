@@ -74,7 +74,7 @@ defmodule Mic.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:temp, "~> 0.4"},
-      {:rustler, "~> 0.32"}
+      {:rustler, "~> 0.32.1"}
     ]
   end
 
