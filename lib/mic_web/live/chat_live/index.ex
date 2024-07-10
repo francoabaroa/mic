@@ -709,7 +709,7 @@ defmodule MicWeb.ChatLive.Index do
 
         settings_attrs = %{
           response_language: language_preference,
-          response_answer_detail: :normal,
+          response_answer_detail: :super_brief,
           response_answer_style: :normal,
           response_medium: if(prefers_voice_chat, do: :voice, else: :text),
           user_id: socket.assigns.current_user.id
