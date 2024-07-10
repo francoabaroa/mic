@@ -6,7 +6,7 @@ defmodule Mic.Accounts do
   import Ecto.Query, warn: false
   alias Mic.Repo
 
-  alias Mic.Accounts.{User, UserToken, UserNotifier}
+  alias Mic.Accounts.{User, UserToken, UserNotifier, Settings}
 
   ## Database getters
 
@@ -349,5 +349,74 @@ defmodule Mic.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  ## Settings
+
+  @doc """
+  Gets the settings for a user.
+
+  ## Examples
+
+      iex> get_settings_by_user(user)
+      %Settings{}
+
+      iex> get_settings_by_user(nil)
+      nil
+
+  """
+  def get_settings_by_user(%User{} = user) do
+    Repo.get_by(Settings, user_id: user.id)
+  end
+
+  @doc """
+  Creates the settings for a user.
+
+  ## Examples
+
+      iex> create_settings(user, %{response_language: :spanish, response_answer_detail: :detailed, response_answer_style: :normal, response_medium: :text})
+      {:ok, %Settings{}}
+
+      iex> create_settings(user, %{response_language: nil})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_settings(%User{} = user, attrs) do
+    %Settings{user_id: user.id}
+    |> Settings.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates the settings for a user.
+
+  ## Examples
+
+      iex> update_settings(user, %{response_language: :spanish})
+      {:ok, %Settings{}}
+
+      iex> update_settings(user, %{response_language: nil})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_settings(%User{} = user, attrs) do
+    settings = get_settings_by_user(user) || %Settings{user_id: user.id}
+
+    settings
+    |> Settings.changeset(attrs)
+    |> Repo.insert_or_update()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing the settings.
+
+  ## Examples
+
+      iex> change_settings(settings)
+      %Ecto.Changeset{data: %Settings{}}
+
+  """
+  def change_settings(%Settings{} = settings, attrs \\ %{}) do
+    Settings.changeset(settings, attrs)
   end
 end
