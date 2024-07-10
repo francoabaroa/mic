@@ -703,6 +703,26 @@ defmodule MicWeb.ChatLive.Index do
             # Handle the error, e.g., retry or notify the user
         end
 
+        # Create settings for the user
+        language_preference = Mic.Chat.OpenAI.get_language_preference(socket.assigns.openai_pid)
+        prefers_voice_chat = Mic.Chat.OpenAI.get_prefers_voice_chat(socket.assigns.openai_pid)
+
+        settings_attrs = %{
+          response_language: language_preference,
+          response_answer_detail: :normal,
+          response_answer_style: :normal,
+          response_medium: if(prefers_voice_chat, do: :voice, else: :text),
+          user_id: socket.assigns.current_user.id
+        }
+
+        case Mic.Accounts.create_settings(socket.assigns.current_user, settings_attrs) do
+          {:ok, _settings} ->
+            Logger.info("User settings created successfully.")
+
+          {:error, changeset} ->
+            Logger.error("Failed to create user settings: #{inspect(changeset)}")
+        end
+
         {:noreply, push_redirect(socket, to: "/")}
       end
     else
