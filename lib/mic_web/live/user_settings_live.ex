@@ -161,9 +161,11 @@ defmodule MicWeb.UserSettingsLive do
     {:ok, socket}
   end
 
-  def handle_event("validate_email", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
-
+  def handle_event(
+        "validate_email",
+        %{"current_password" => password, "user" => user_params},
+        socket
+      ) do
     email_form =
       socket.assigns.current_user
       |> Accounts.change_user_email(user_params)
@@ -173,8 +175,11 @@ defmodule MicWeb.UserSettingsLive do
     {:noreply, assign(socket, email_form: email_form, email_form_current_password: password)}
   end
 
-  def handle_event("update_email", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
+  def handle_event(
+        "update_email",
+        %{"current_password" => password, "user" => user_params},
+        socket
+      ) do
     user = socket.assigns.current_user
 
     case Accounts.apply_user_email(user, password, user_params) do
@@ -193,9 +198,11 @@ defmodule MicWeb.UserSettingsLive do
     end
   end
 
-  def handle_event("validate_password", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
-
+  def handle_event(
+        "validate_password",
+        %{"current_password" => password, "user" => user_params},
+        socket
+      ) do
     password_form =
       socket.assigns.current_user
       |> Accounts.change_user_password(user_params)
@@ -205,8 +212,11 @@ defmodule MicWeb.UserSettingsLive do
     {:noreply, assign(socket, password_form: password_form, current_password: password)}
   end
 
-  def handle_event("update_password", params, socket) do
-    %{"current_password" => password, "user" => user_params} = params
+  def handle_event(
+        "update_password",
+        %{"current_password" => password, "user" => user_params},
+        socket
+      ) do
     user = socket.assigns.current_user
 
     case Accounts.update_user_password(user, password, user_params) do
@@ -223,23 +233,22 @@ defmodule MicWeb.UserSettingsLive do
     end
   end
 
-  def handle_event("validate_settings", params, socket) do
-    %{"user" => user_params} = params
+  def handle_event("validate_settings", %{"settings" => user_params}, socket) do
+    settings = Accounts.get_settings_by_user(socket.assigns.current_user)
 
     settings_form =
-      socket.assigns.current_user
-      |> Accounts.change_user_settings(user_params)
+      settings
+      |> Accounts.change_settings(user_params)
       |> Map.put(:action, :validate)
       |> to_form()
 
     {:noreply, assign(socket, settings_form: settings_form)}
   end
 
-  def handle_event("update_settings", params, socket) do
-    %{"user" => user_params} = params
+  def handle_event("update_settings", %{"settings" => user_params}, socket) do
     user = socket.assigns.current_user
 
-    case Accounts.update_user_settings(user, user_params) do
+    case Accounts.update_settings(user, user_params) do
       {:ok, _user} ->
         {:noreply, put_flash(socket, :info, "Settings updated successfully.")}
 
