@@ -7,7 +7,7 @@ defmodule MicWeb.UserSettingsLive do
     ~H"""
     <.header class="text-center">
       Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
+      <:subtitle>Manage your account email address, password, and response settings</:subtitle>
     </.header>
 
     <div class="space-y-12 divide-y">
@@ -69,6 +69,55 @@ defmodule MicWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+      <div>
+        <.simple_form
+          for={@settings_form}
+          id="settings_form"
+          phx-submit="update_settings"
+          phx-change="validate_settings"
+        >
+          <.input
+            field={@settings_form[:response_language]}
+            type="select"
+            label="Response language"
+            options={[{"English", :english}, {"Spanish", :spanish}, {"Portuguese", :portuguese}]}
+            value={@current_settings.response_language}
+            required
+          />
+          <%!-- <.input
+            field={@settings_form[:response_answer_detail]}
+            type="select"
+            label="Response answer detail"
+            options={[
+              {"Brief", :brief},
+              {"Super Brief", :super_brief},
+              {"Detailed", :detailed},
+              {"Normal", :normal}
+            ]}
+            value={@current_settings.response_answer_detail}
+            required
+          />
+          <.input
+            field={@settings_form[:response_answer_style]}
+            type="select"
+            label="Response answer style"
+            options={[{"Bullet Points", :bullet_points}, {"Normal", :normal}]}
+            value={@current_settings.response_answer_style}
+            required
+          /> --%>
+          <.input
+            field={@settings_form[:response_medium]}
+            type="select"
+            label="Response medium"
+            options={[{"Text", :text}, {"Voice", :voice}, {"Mixed", :mixed}]}
+            value={@current_settings.response_medium}
+            required
+          />
+          <:actions>
+            <.button phx-disable-with="Saving...">Save Settings</.button>
+          </:actions>
+        </.simple_form>
+      </div>
     </div>
     """
   end
@@ -91,6 +140,13 @@ defmodule MicWeb.UserSettingsLive do
     email_changeset = Accounts.change_user_email(user)
     password_changeset = Accounts.change_user_password(user)
 
+    settings_changeset =
+      Accounts.change_settings(%Mic.Accounts.Settings{}, %{"user_id" => user.id})
+
+    # Fetch current settings from the database
+    current_settings = Accounts.get_settings_by_user(user)
+    IO.inspect(current_settings, label: "Current User Settings")
+
     socket =
       socket
       |> assign(:current_password, nil)
@@ -98,6 +154,8 @@ defmodule MicWeb.UserSettingsLive do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
+      |> assign(:settings_form, to_form(settings_changeset))
+      |> assign(:current_settings, current_settings)
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
@@ -162,6 +220,31 @@ defmodule MicWeb.UserSettingsLive do
 
       {:error, changeset} ->
         {:noreply, assign(socket, password_form: to_form(changeset))}
+    end
+  end
+
+  def handle_event("validate_settings", params, socket) do
+    %{"user" => user_params} = params
+
+    settings_form =
+      socket.assigns.current_user
+      |> Accounts.change_user_settings(user_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, settings_form: settings_form)}
+  end
+
+  def handle_event("update_settings", params, socket) do
+    %{"user" => user_params} = params
+    user = socket.assigns.current_user
+
+    case Accounts.update_user_settings(user, user_params) do
+      {:ok, _user} ->
+        {:noreply, put_flash(socket, :info, "Settings updated successfully.")}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, settings_form: to_form(changeset))}
     end
   end
 end
