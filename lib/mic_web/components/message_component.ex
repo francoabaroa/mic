@@ -4,8 +4,13 @@ defmodule MicWeb.MessageComponent do
   defp style(:assistant), do: "chat-start "
   defp style(_), do: "chat-end"
 
-  defp bubble_style(:assistant), do: "text-[white]"
-  defp bubble_style(_), do: "bg-[#FFF] text-[#333] dark:text-slate-400 dark:bg-gray-700"
+  defp bubble_style(:assistant),
+    do:
+      "shadow-[0_0_10px_rgba(0,0,0,1)] dark:shadow-[0_0_15px_rgba(0,0,0,1)] bg-[#FFF] text-[#333] dark:text-slate-400 dark:bg-gray-700"
+
+  defp bubble_style(_),
+    do:
+      "shadow-[0_0_10px_rgb(232,93,117)] dark:shadow-[0_0_15px_rgb(232,93,117)] bg-[#FFF] text-[#333] dark:text-slate-400 dark:bg-gray-700"
 
   defp process_markdown(markdown) do
     # add list style
@@ -232,7 +237,7 @@ defmodule MicWeb.MessageComponent do
           <% end %>
         </div>
       </div>
-      <div class={"chat-bubble shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] space-y-4 p-4 mb-4 rounded  w-full #{bubble_style(@sender)}"}>
+      <div class={"chat-bubble space-y-4 p-4 mb-4 rounded  w-full #{bubble_style(@sender)}"}>
         <%= raw(@parsed_content) %>
         <%= if id === 0 && (assistant_scenario_id in [nil, false, ""]) do %>
           <button
