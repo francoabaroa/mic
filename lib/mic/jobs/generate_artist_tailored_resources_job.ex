@@ -10,10 +10,11 @@ defmodule Mic.Jobs.GenerateArtistTailoredResourcesJob do
         args: %{
           "current_user" => current_user,
           "description_content" => description_content,
-          "subject" => subject
+          "subject" => subject,
+          "response_language" => response_language
         }
       }) do
-    resource = generate_tailored_content(description_content, subject)
+    resource = generate_tailored_content(description_content, subject, response_language)
     create_or_update_resource(current_user["id"], resource)
     :ok
   end
@@ -42,10 +43,14 @@ defmodule Mic.Jobs.GenerateArtistTailoredResourcesJob do
     end
   end
 
-  defp generate_tailored_content(artist_description, resource_subject) do
+  defp generate_tailored_content(artist_description, resource_subject, response_language) do
     resource_subject = String.to_existing_atom(resource_subject)
 
-    case Mic.Chat.OpenAI.generate_artist_tailored_content(artist_description, resource_subject) do
+    case Mic.Chat.OpenAI.generate_artist_tailored_content(
+           artist_description,
+           resource_subject,
+           response_language
+         ) do
       {:ok, response} ->
         build_resource(resource_subject, response.content)
 

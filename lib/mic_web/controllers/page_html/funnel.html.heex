@@ -3,90 +3,355 @@
   <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
     <div class="mx-auto max-w-4xl lg:mx-0">
       <h1 class="mt-2 text-lg font-semibold leading-8">
-        Music Funnel: An alternative artist development path
+        <%= if @user_settings.response_language == :spanish do %>
+          Embudo Musical: Un camino alternativo para el desarrollo de artistas
+        <% else %>
+          <%= if @user_settings.response_language == :portuguese do %>
+            Funil Musical: Um caminho alternativo para o desenvolvimento de artistas
+          <% else %>
+            Music Funnel: An alternative artist development path
+          <% end %>
+        <% end %>
       </h1>
       <p class="mt-4 text-base leading-7 text-zinc-600">
-        Get another opportunity to be heard and helped by industry experts.
+        <%= if @user_settings.response_language == :spanish do %>
+          Obtén otra oportunidad de ser escuchado y ayudado por expertos de la industria.
+        <% else %>
+          <%= if @user_settings.response_language == :portuguese do %>
+            Obtenha outra oportunidade de ser ouvido e ajudado por especialistas da indústria.
+          <% else %>
+            Get another opportunity to be heard and helped by industry experts.
+          <% end %>
+        <% end %>
       </p>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Introduction to Music Funnel</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Introducción al Embudo Musical
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Introdução ao Funil Musical
+            <% else %>
+              Introduction to Music Funnel
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
           <li>
-            A platform that merges AI and music industry expertise, offering a structured seven-step process to foster musician development.
+            <%= if @user_settings.response_language == :spanish do %>
+              Una plataforma que fusiona IA y experiencia en la industria musical, ofreciendo un proceso estructurado de siete pasos para fomentar el desarrollo de músicos.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Uma plataforma que combina IA e experiência na indústria musical, oferecendo um processo estruturado de sete etapas para promover o desenvolvimento de músicos.
+              <% else %>
+                A platform that merges AI and music industry expertise, offering a structured seven-step process to foster musician development.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            Empowers artists with personalized feedback, insightful marketing strategies, and professional production guidance for enhanced market entry and success.
+            <%= if @user_settings.response_language == :spanish do %>
+              Empodera a los artistas con retroalimentación personalizada, estrategias de marketing perspicaces y orientación profesional en la producción para una mejor entrada y éxito en el mercado.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Capacita os artistas com feedback personalizado, estratégias de marketing perspicazes e orientação profissional na produção para uma melhor entrada e sucesso no mercado.
+              <% else %>
+                Empowers artists with personalized feedback, insightful marketing strategies, and professional production guidance for enhanced market entry and success.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            Aligns with artists’ ambitions using a future earnings model, ensuring mutual success with no high upfront fees.
+            <%= if @user_settings.response_language == :spanish do %>
+              Se alinea con las ambiciones de los artistas utilizando un modelo de ganancias futuras, asegurando el éxito mutuo sin tarifas iniciales altas.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Alinha-se com as ambições dos artistas usando um modelo de ganhos futuros, garantindo sucesso mútuo sem altas taxas iniciais.
+              <% else %>
+                Aligns with artists’ ambitions using a future earnings model, ensuring mutual success with no high upfront fees.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            If you make it through the Music Funnel, you'll get access to strategic industry connections and tools for sustainable monetization and career growth.
+            <%= if @user_settings.response_language == :spanish do %>
+              Si pasas por el Embudo Musical, obtendrás acceso a conexiones estratégicas en la industria y herramientas para la monetización sostenible y el crecimiento de tu carrera.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Se você passar pelo Funil Musical, terá acesso a conexões estratégicas na indústria e ferramentas para monetização sustentável e crescimento de carreira.
+              <% else %>
+                If you make it through the Music Funnel, you'll get access to strategic industry connections and tools for sustainable monetization and career growth.
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
 
       <div class="mt-8">
         <h2 class="text-brand text-md font-semibold leading-6">
-          The Steps of Music Funnel
+          <%= if @user_settings.response_language == :spanish do %>
+            Los Pasos del Embudo Musical
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              As Etapas do Funil Musical
+            <% else %>
+              The Steps of Music Funnel
+            <% end %>
+          <% end %>
         </h2>
         <ul class="list-decimal pl-6 mt-4 text-sm leading-5 text-zinc-600">
           <li>
-            <strong>Entry Submission</strong>: Registration, profile creation with social media, and work submission with a $10 fee for copyright agreement and expert review access.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Envío de Entrada
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Envio de Entrada
+              <% else %>
+                Entry Submission
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Registro, creación de perfil con redes sociales y envío de trabajo con una tarifa de $_ para el acuerdo de derechos de autor y acceso a la revisión de expertos.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Registro, criação de perfil com redes sociais e envio de trabalho com uma taxa de $_ para o acordo de direitos autorais e acesso à revisão de especialistas.
+              <% else %>
+                Registration, profile creation with social media, and work submission with a $_ fee for copyright agreement and expert review access.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>Screening & Reclassification</strong>: AI and human experts evaluate market potential and suggest improvements or reclassification.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Evaluación y Reclasificación
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Avaliação e Reclassificação
+              <% else %>
+                Screening & Reclassification
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              IA y expertos humanos evalúan el potencial de mercado y sugieren mejoras o reclasificación.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                IA e especialistas humanos avaliam o potencial de mercado e sugerem melhorias ou reclassificação.
+              <% else %>
+                AI and human experts evaluate market potential and suggest improvements or reclassification.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>First Airing & Evaluation</strong>: Production review for talented artists and feedback for others to adjust submissions.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Primera Emisión y Evaluación
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Primeira Transmissão e Avaliação
+              <% else %>
+                First Airing & Evaluation
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Revisión de producción para artistas talentosos y retroalimentación para otros para ajustar sus envíos.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Revisão de produção para artistas talentosos e feedback para outros ajustarem suas submissões.
+              <% else %>
+                Production review for talented artists and feedback for others to adjust submissions.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>Production Review</strong>: Feedback on music production's mix, mastering, and overall sound quality, along with AI-driven insights for improvement.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Revisión de Producción
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Revisão de Produção
+              <% else %>
+                Production Review
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Retroalimentación sobre la mezcla, masterización y calidad general del sonido de la producción musical, junto con ideas impulsadas por IA para mejorar.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Feedback sobre a mixagem, masterização e qualidade geral do som da produção musical, juntamente com insights impulsionados por IA para melhoria.
+              <% else %>
+                Feedback on music production's mix, mastering, and overall sound quality, along with AI-driven insights for improvement.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>Launch Analysis or Strategic Repositioning</strong>: Monitoring post-launch performance to inform release timing and promotional efforts.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Análisis de Lanzamiento o Reposicionamiento Estratégico
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Análise de Lançamento ou Reposicionamento Estratégico
+              <% else %>
+                Launch Analysis or Strategic Repositioning
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Monitoreo del rendimiento posterior al lanzamiento para informar el momento del lanzamiento y los esfuerzos promocionales.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Monitoramento do desempenho pós-lançamento para informar o momento do lançamento e os esforços promocionais.
+              <% else %>
+                Monitoring post-launch performance to inform release timing and promotional efforts.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>Market Reaction: Rejection, Reposition, or Sign</strong>: Strategizing based on market response and AI analysis to guide artists through rejection, adjustments, or promotion phases.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Reacción del Mercado: Rechazo, Reposicionamiento o Firma
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Reação do Mercado: Rejeição, Reposicionamento ou Assinatura
+              <% else %>
+                Market Reaction: Rejection, Reposition, or Sign
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Estrategia basada en la respuesta del mercado y el análisis de IA para guiar a los artistas a través de fases de rechazo, ajustes o promoción.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Estratégia baseada na resposta do mercado e na análise de IA para guiar os artistas através das fases de rejeição, ajustes ou promoção.
+              <% else %>
+                Strategizing based on market response and AI analysis to guide artists through rejection, adjustments, or promotion phases.
+              <% end %>
+            <% end %>
           </li>
           <li>
-            <strong>Final Evaluation</strong>: Consideration of artists for signing, connecting them to an industry network, and planning for career acceleration.
+            <strong><%= if @user_settings.response_language == :spanish do %>
+              Evaluación Final
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Avaliação Final
+              <% else %>
+                Final Evaluation
+              <% end %>
+            <% end %></strong>:
+            <%= if @user_settings.response_language == :spanish do %>
+              Consideración de artistas para firma, conectándolos a una red de la industria y planificando la aceleración de su carrera.
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Consideração de artistas para assinatura, conectando-os a uma rede da indústria e planejando a aceleração da carreira.
+              <% else %>
+                Consideration of artists for signing, connecting them to an industry network, and planning for career acceleration.
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Music Funnel: Beyond the App</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Embudo Musical: Más allá de la Aplicación
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Funil Musical: Além do Aplicativo
+            <% else %>
+              Music Funnel: Beyond the App
+            <% end %>
+          <% end %>
+        </h2>
         <p class="mt-4 text-sm leading-5 text-zinc-600">
-          Offering a holistic experience tailored to each artist while balancing technology and personal attention to foster an environment conducive to creativity.
+          <%= if @user_settings.response_language == :spanish do %>
+            Ofreciendo una experiencia holística adaptada a cada artista mientras se equilibra la tecnología y la atención personal para fomentar un entorno propicio para la creatividad.
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Oferecendo uma experiência holística adaptada a cada artista enquanto equilibra a tecnologia e a atenção pessoal para promover um ambiente propício à criatividade.
+            <% else %>
+              Offering a holistic experience tailored to each artist while balancing technology and personal attention to foster an environment conducive to creativity.
+            <% end %>
+          <% end %>
         </p>
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Qualification for Music Funnel</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Calificación para el Embudo Musical
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Qualificação para o Funil Musical
+            <% else %>
+              Qualification for Music Funnel
+            <% end %>
+          <% end %>
+        </h2>
         <p class="mt-4 text-sm leading-5 text-zinc-600">
-          Qualification by merit through observable spikes in streaming counts, followers, or music scouts’ recognition. Access to guided processes is financed through a percentage of future earnings.
+          <%= if @user_settings.response_language == :spanish do %>
+            Calificación por mérito a través de picos observables en conteos de streaming, seguidores o reconocimiento de cazatalentos musicales. El acceso a procesos guiados se financia a través de un porcentaje de ganancias futuras.
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Qualificação por mérito através de picos observáveis em contagens de streaming, seguidores ou reconhecimento de caçadores de talentos musicais. O acesso a processos guiados é financiado através de uma porcentagem dos ganhos futuros.
+            <% else %>
+              Qualification by merit through observable spikes in streaming counts, followers, or music scouts’ recognition. Access to guided processes is financed through a percentage of future earnings.
+            <% end %>
+          <% end %>
         </p>
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Affordability and Monetization</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Asequibilidad y Monetización
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Acessibilidade e Monetização
+            <% else %>
+              Affordability and Monetization
+            <% end %>
+          <% end %>
+        </h2>
         <p class="mt-4 text-sm leading-5 text-zinc-600">
-          The royalties-share model that aligns with artist success, providing a cost-effective approach with mutual benefits.
+          <%= if @user_settings.response_language == :spanish do %>
+            El modelo de participación en regalías que se alinea con el éxito del artista, proporcionando un enfoque rentable con beneficios mutuos.
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              O modelo de participação em royalties que se alinha com o sucesso do artista, proporcionando uma abordagem econômica com benefícios mútuos.
+            <% else %>
+              The royalties-share model that aligns with artist success, providing a cost-effective approach with mutual benefits.
+            <% end %>
+          <% end %>
         </p>
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Conclusion</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Conclusión
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Conclusão
+            <% else %>
+              Conclusion
+            <% end %>
+          <% end %>
+        </h2>
         <p class="mt-4 text-sm leading-5 text-zinc-600">
-          Music Funnel provides an alternative to traditional record label signings with an AI-supported, expert human-led process to refine and promote artists' careers.
+          <%= if @user_settings.response_language == :spanish do %>
+            Embudo Musical proporciona una alternativa a las firmas de sellos discográficos tradicionales con un proceso apoyado por IA y liderado por expertos humanos para refinar y promover las carreras de los artistas.
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Funil Musical oferece uma alternativa às assinaturas de gravadoras tradicionais com um processo apoiado por IA e liderado por especialistas humanos para refinar e promover as carreiras dos artistas.
+            <% else %>
+              Music Funnel provides an alternative to traditional record label signings with an AI-supported, expert human-led process to refine and promote artists' careers.
+            <% end %>
+          <% end %>
         </p>
       </div>
 
       <div class="mt-8 flex justify-center">
         <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700">
-          Sign up for waitlist
+          <%= if @user_settings.response_language == :spanish do %>
+            Inscríbete en la lista de espera
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Inscreva-se na lista de espera
+            <% else %>
+              Sign up for waitlist
+            <% end %>
+          <% end %>
         </button>
       </div>
     </div>

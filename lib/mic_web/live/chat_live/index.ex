@@ -40,6 +40,13 @@ defmodule MicWeb.ChatLive.Index do
     model = Map.get(params, "model", session_model)
     models = Application.get_env(:mic, :models, [model])
 
+    user_settings =
+      Mic.Accounts.get_settings_by_user(socket.assigns.current_user)
+      |> case do
+        nil -> %Mic.Accounts.Settings{response_language: :english}
+        settings -> settings
+      end
+
     artist_ai_description =
       try do
         profile = Mic.Artists.get_profile_by_user_id!(socket.assigns.current_user.id)
@@ -120,7 +127,9 @@ defmodule MicWeb.ChatLive.Index do
         instructions_to_append <>
           messages_instruction <>
           formatted_previous_messages <>
-          " </past_conversation_history>"
+          " </past_conversation_history>",
+        user_settings.response_language,
+        user_settings.response_answer_detail
       )
 
     # Fetch the scenario if in scenario mode
@@ -132,7 +141,9 @@ defmodule MicWeb.ChatLive.Index do
             instructions_to_append <>
               messages_instruction <>
               formatted_previous_messages <>
-              " </past_conversation_history>"
+              " </past_conversation_history>",
+            user_settings.response_language,
+            user_settings.response_answer_detail
           ),
         else: nil
 
@@ -188,7 +199,9 @@ defmodule MicWeb.ChatLive.Index do
        mode: mode,
        scenario: scenario,
        text: "",
-       language_preference: :english,
+       language_preference: nil,
+       saved_language_preference: user_settings.response_language,
+       response_answer_detail: user_settings.response_answer_detail,
        current_question: nil,
        profile_data: %{}
      )
@@ -257,8 +270,17 @@ defmodule MicWeb.ChatLive.Index do
   end
 
   # Fetches the scenario based on the scenario_id
-  defp fetch_scenario(scenario_id, instructions_to_append) do
-    MicWeb.Scenario.default_scenarios(instructions_to_append)
+  defp fetch_scenario(
+         scenario_id,
+         instructions_to_append,
+         response_language,
+         response_answer_detail
+       ) do
+    MicWeb.Scenario.default_scenarios(
+      instructions_to_append,
+      response_language,
+      response_answer_detail
+    )
     |> Enum.find(fn sc -> sc.id == scenario_id end)
   end
 
@@ -694,7 +716,8 @@ defmodule MicWeb.ChatLive.Index do
         try do
           Mic.Jobs.GenerateArtistProfileJob.new(%{
             "current_user" => socket.assigns.current_user,
-            "profile_data" => socket.assigns.profile_data
+            "profile_data" => socket.assigns.profile_data,
+            "language_preference" => socket.assigns.language_preference
           })
           |> Oban.insert()
         rescue
@@ -709,7 +732,7 @@ defmodule MicWeb.ChatLive.Index do
 
         settings_attrs = %{
           response_language: language_preference,
-          response_answer_detail: :super_brief,
+          response_answer_detail: :brief,
           response_answer_style: :normal,
           response_medium: if(prefers_voice_chat, do: :voice, else: :text),
           user_id: socket.assigns.current_user.id
@@ -907,15 +930,6 @@ defmodule MicWeb.ChatLive.Index do
         text
       end
 
-    # Need to respect user language preference
-    # TODO: don't pass this in every single message, just at the beginning of a session
-    language_to_speak =
-      case updated_socket.assigns.language_preference do
-        :spanish -> "Remember to talk to the user in Spanish.\n\n"
-        :portuguese -> "Remember to talk to the user in Portugese.\n\n"
-        _ -> "Remember to talk to the user in English.\n\n"
-      end
-
     personalization_message =
       case updated_socket.assigns.language_preference do
         :spanish ->
@@ -928,8 +942,24 @@ defmodule MicWeb.ChatLive.Index do
           "Remember to always personalize your response for the user and everything you know about the user so that they feel like a friend and not an assistant.\n\n"
       end
 
-    message_to_send =
-      personalization_message <> language_to_speak <> text_to_pass <> appended_question
+    response_detail =
+      case updated_socket.assigns.response_answer_detail do
+        :super_brief -> "KEEP YOUR ANSWER EXTREMELY BRIEF AND DIRECT."
+        :brief -> "KEEP YOUR ANSWER BRIEF AND DIRECT."
+        :detailed -> "MAKE SURE YOUR ANSWER IS DETAILED."
+        _ -> ""
+      end
+
+    # TODO: don't pass this in every single message, just at the beginning of a session
+    message_end =
+      ". \n\nALWAYS ANSWER IN " <>
+        Atom.to_string(
+          updated_socket.assigns.language_preference ||
+            updated_socket.assigns.saved_language_preference
+        ) <>
+        ". " <> response_detail
+
+    message_to_send = personalization_message <> text_to_pass <> appended_question <> message_end
 
     spawn(fn ->
       case Mic.Chat.OpenAI.send(

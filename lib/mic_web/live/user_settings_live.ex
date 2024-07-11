@@ -84,7 +84,7 @@ defmodule MicWeb.UserSettingsLive do
             value={@current_settings.response_language}
             required
           />
-          <%!-- <.input
+          <.input
             field={@settings_form[:response_answer_detail]}
             type="select"
             label="Response answer detail"
@@ -97,7 +97,7 @@ defmodule MicWeb.UserSettingsLive do
             value={@current_settings.response_answer_detail}
             required
           />
-          <.input
+          <%!-- <.input
             field={@settings_form[:response_answer_style]}
             type="select"
             label="Response answer style"
@@ -109,7 +109,7 @@ defmodule MicWeb.UserSettingsLive do
             field={@settings_form[:response_medium]}
             type="select"
             label="Response medium"
-            options={[{"Text", :text}, {"Voice", :voice}, {"Mixed", :mixed}]}
+            options={[{"Text", :text}, {"Voice", :voice}]}
             value={@current_settings.response_medium}
             required
           />

@@ -87,7 +87,8 @@ defmodule MicWeb.UserAuth do
 
   @doc """
   Authenticates the user by looking into the session
-  and remember me token. Also checks if user has a completed profile.
+  and remember me token. Also checks if user has a completed profile
+  and assigns user settings.
   """
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
@@ -111,9 +112,25 @@ defmodule MicWeb.UserAuth do
         {false, nil}
       end
 
-    # Assign the result to the connection
-    conn = assign(conn, :user_has_profile, user_has_profile)
-    assign(conn, :profile_artist_name, profile_artist_name)
+    # Fetch user settings
+    user_settings =
+      if user do
+        try do
+          Mic.Accounts.get_settings_by_user(user)
+        rescue
+          Ecto.NoResultsError ->
+            # This block executes if no settings are found
+            nil
+        end
+      else
+        nil
+      end
+
+    # Assign the results to the connection
+    conn
+    |> assign(:user_has_profile, user_has_profile)
+    |> assign(:profile_artist_name, profile_artist_name)
+    |> assign(:user_settings, user_settings)
   end
 
   defp ensure_user_token(conn) do

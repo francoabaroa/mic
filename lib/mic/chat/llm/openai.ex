@@ -279,14 +279,16 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
-  def generate_artist_profile_description(input_text) do
+  def generate_artist_profile_description(input_text, response_language) do
     # TODO: The content string in the message object contains placeholder text such as [Artist's Name], [Genre(s)], [Country], etc., which are not dynamically replaced
+
     msgs = [
       %ExOpenAI.Components.ChatCompletionRequestUserMessage{
         role: :user,
         content:
           "Context: Pretend you are an expert, detailed, wise biography writer. You are able to ask some key questions to a music artist about them and their career and gather enough information to write a detailed, descriptive biography about that music artist.\n\nInstruction: Create a detailed biography of [Artist's Name], a [Genre(s)] artist with a rich background and diverse influences in the music industry. [Artist's Name], hailing from [Country] and born on [Date of Birth], discovered their passion for music [Musical Beginnings], marking the beginning of their musical journey. Their style has been profoundly shaped by artists such as [Influences]. [Artist's Name]'s aspirations include [Aspirations], aiming to leave their own significant mark on the music world. They have achieved notable milestones including [Significant Milestones].\n\nWith [Music Education], [Artist's Name] plays [Instruments Played]. Their experiences performing live, such as [Live Performances], have enriched their connection with audiences, enhancing their stage presence and musical depth. This is their [Spotify Bio], reflecting their achievements, their character and how they view their artistry. Future goals for [Artist's Name] include [Aspirations], with a vision to innovate and inspire within the [Genre(s)] genre. This biography captures the essence of [Artist's Name]'s musical identity, from their roots to their aspirations, instruments mastery, and the impact of their work. Think step by step using chain of thought reasoning to give the best, most detailed biography based on the above information.\n\nInput: " <>
-            input_text
+            input_text <>
+            "\n\nMake sure to write the biography in: #{response_language}"
       }
     ]
 
@@ -308,7 +310,7 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
-  def generate_artist_tailored_content(artist_description, resource_subject) do
+  def generate_artist_tailored_content(artist_description, resource_subject, response_language) do
     syllabus =
       case resource_subject do
         :distribution ->
@@ -1471,7 +1473,7 @@ defmodule Mic.Chat.OpenAI do
     1. A detailed subject syllabus (<syllabus>) concerning a specific subject of the music industry, things a well-rounded music artist should know (and advice regarding that subject).
     2. A comprehensive music artist biography (<artist_biography>).
 
-    Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations. The insights sheet should be tailored to the artist based on their biography.
+    Your task is to create a personalized insights sheet for the music artist for the given subject with personalized recommendations to improve in that area. Use the syllabus and the artist biography to create a set of personalized, actionable, and useful recommendations. The insights sheet should be tailored to the artist based on their biography. IT MUST BE IN #{response_language}.
 
     Please follow these guidelines for the output:
     - Output must be in a easy-to-read HTML object string organized properly. Need to include ```html and DOCTYPE, plus the other common tags in html needed (head, body, etc). Make sure to bold any headings.

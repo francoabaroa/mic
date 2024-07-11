@@ -6,14 +6,20 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
   use Oban.Worker, queue: :default, max_attempts: 3
 
   @impl Oban.Worker
-  def perform(%Oban.Job{args: %{"current_user" => current_user, "profile_data" => profile_data}}) do
+  def perform(%Oban.Job{
+        args: %{
+          "current_user" => current_user,
+          "profile_data" => profile_data,
+          "language_preference" => language_preference
+        }
+      }) do
     query_string = build_query_string(profile_data)
 
-    case Mic.Chat.OpenAI.generate_artist_profile_description(query_string) do
+    case Mic.Chat.OpenAI.generate_artist_profile_description(query_string, language_preference) do
       {:ok, response} ->
         description_content = response.content
         updated_profile_data = Map.put(profile_data, :artist_ai_description, description_content)
-        process_updated_profile_data(updated_profile_data, current_user)
+        process_updated_profile_data(updated_profile_data, current_user, language_preference)
         :ok
 
       {:error, reason} ->
@@ -37,7 +43,7 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
     |> Enum.join(". ")
   end
 
-  defp process_updated_profile_data(updated_profile_data, current_user) do
+  defp process_updated_profile_data(updated_profile_data, current_user, response_language) do
     case Date.from_iso8601(updated_profile_data["dob"]) do
       {:ok, date_struct} ->
         current_user_id = current_user["id"]
@@ -52,7 +58,8 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
               model,
               updated_profile_data_with_atom_keys,
               current_user_id,
-              current_user
+              current_user,
+              response_language
             )
           else
             Logger.error("User struct failed: not equal to Mic.Accounts.User")
@@ -70,11 +77,21 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
     end
   end
 
-  defp create_profile(model, updated_profile_data_with_atom_keys, current_user_id, current_user) do
+  defp create_profile(
+         model,
+         updated_profile_data_with_atom_keys,
+         current_user_id,
+         current_user,
+         response_language
+       ) do
     case Mic.Artists.create_profile(model, updated_profile_data_with_atom_keys) do
       {:ok, profile} ->
         unless check_subject_resource(current_user_id) do
-          enqueue_generate_resources_job(current_user, profile.artist_ai_description)
+          enqueue_generate_resources_job(
+            current_user,
+            profile.artist_ai_description,
+            response_language
+          )
         end
 
         {:ok, profile}
@@ -98,7 +115,7 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
     end)
   end
 
-  defp enqueue_generate_resources_job(current_user, description_content) do
+  defp enqueue_generate_resources_job(current_user, description_content, response_language) do
     subjects = Mic.Types.available_subject_and_assistant_types()
 
     Enum.each(subjects, fn subject ->
@@ -106,7 +123,8 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
         Mic.Jobs.GenerateArtistTailoredResourcesJob.new(%{
           "current_user" => current_user,
           "description_content" => description_content,
-          "subject" => subject
+          "subject" => subject,
+          "response_language" => response_language
         })
         |> Oban.insert()
       rescue

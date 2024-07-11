@@ -3,139 +3,571 @@
   <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
     <div class="mx-auto max-w-4xl lg:mx-0">
       <h1 class="mt-2 text-lg font-semibold leading-8">
-        Must-Have Career Checklist
+        <%= if @user_settings.response_language == :spanish do %>
+          Lista de Verificación de Carrera Imprescindible
+        <% else %>
+          <%= if @user_settings.response_language == :portuguese do %>
+            Lista de Verificação de Carreira Indispensável
+          <% else %>
+            Must-Have Career Checklist
+          <% end %>
+        <% end %>
       </h1>
       <!-- High-Quality Music Production -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">High-Quality Music Production</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Producción Musical de Alta Calidad
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Produção Musical de Alta Qualidade
+            <% else %>
+              High-Quality Music Production
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Are your tracks well-produced and mixed?</li>
-          <li>Are your songs mastered for streaming platforms?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Están bien producidas y mezcladas tus pistas?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                As suas faixas estão bem produzidas e mixadas?
+              <% else %>
+                Are your tracks well-produced and mixed?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Están tus canciones masterizadas para plataformas de streaming?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                As suas músicas estão masterizadas para plataformas de streaming?
+              <% else %>
+                Are your songs mastered for streaming platforms?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Artwork and Branding -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Artwork and Branding</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Arte y Marca
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Arte e Marca
+            <% else %>
+              Artwork and Branding
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you have professional cover art for your releases?</li>
-          <li>Is your branding consistent and recognizable, including a logo?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes arte de portada profesional para tus lanzamientos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem arte de capa profissional para seus lançamentos?
+              <% else %>
+                Do you have professional cover art for your releases?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Es tu marca consistente y reconocible, incluyendo un logo?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                A sua marca é consistente e reconhecível, incluindo um logotipo?
+              <% else %>
+                Is your branding consistent and recognizable, including a logo?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Distribution -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Distribution</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Distribución
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Distribuição
+            <% else %>
+              Distribution
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Have you used a digital distribution service like DistroKid or TuneCore?</li>
           <li>
-            If there is demand, have you considered producing physical copies like CDs or vinyl?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has utilizado un servicio de distribución digital como DistroKid o TuneCore?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você usou um serviço de distribuição digital como DistroKid ou TuneCore?
+              <% else %>
+                Have you used a digital distribution service like DistroKid or TuneCore?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              Si hay demanda, ¿has considerado producir copias físicas como CDs o vinilos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Se houver demanda, você considerou produzir cópias físicas como CDs ou vinil?
+              <% else %>
+                If there is demand, have you considered producing physical copies like CDs or vinyl?
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
       <!-- Rights and Royalties -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Rights and Royalties</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Derechos y Regalías
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Direitos e Royalties
+            <% else %>
+              Rights and Royalties
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Are you registered with a performance rights organization (PRO) like ASCAP?</li>
-          <li>Have you secured copyrights and UPC, ISRC codes for your releases?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Estás registrado en una organización de derechos de ejecución (PRO) como ASCAP?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você está registrado em uma organização de direitos de execução (PRO) como a ASCAP?
+              <% else %>
+                Are you registered with a performance rights organization (PRO) like ASCAP?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has asegurado derechos de autor y códigos UPC, ISRC para tus lanzamientos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você garantiu direitos autorais e códigos UPC, ISRC para seus lançamentos?
+              <% else %>
+                Have you secured copyrights and UPC, ISRC codes for your releases?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Online Presence -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Online Presence</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Presencia en Línea
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Presença Online
+            <% else %>
+              Online Presence
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
           <li>
-            Do you have an official website with your bio, news, show dates, and direct sales options?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes un sitio web oficial con tu biografía, noticias, fechas de espectáculos y opciones de venta directa?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem um site oficial com sua biografia, notícias, datas de shows e opções de vendas diretas?
+              <% else %>
+                Do you have an official website with your bio, news, show dates, and direct sales options?
+              <% end %>
+            <% end %>
           </li>
-          <li>Are your social media profiles (Instagram, Twitter, etc.) regularly updated?</li>
-          <li>Do you maintain a presence on platforms like SoundCloud, Bandcamp, and YouTube?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Están tus perfiles de redes sociales (Instagram, Twitter, etc.) actualizados regularmente?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Seus perfis de mídia social (Instagram, Twitter, etc.) são atualizados regularmente?
+              <% else %>
+                Are your social media profiles (Instagram, Twitter, etc.) regularly updated?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Mantienes una presencia en plataformas como SoundCloud, Bandcamp y YouTube?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você mantém uma presença em plataformas como SoundCloud, Bandcamp e YouTube?
+              <% else %>
+                Do you maintain a presence on platforms like SoundCloud, Bandcamp, and YouTube?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Marketing and Promotion -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Marketing and Promotion</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Marketing y Promoción
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Marketing e Promoção
+            <% else %>
+              Marketing and Promotion
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you have a basic marketing plan for your releases?</li>
           <li>
-            Have you prepared a press kit (EPK) with your bio, photos, music, and contact info?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes un plan de marketing básico para tus lanzamientos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem um plano de marketing básico para seus lançamentos?
+              <% else %>
+                Do you have a basic marketing plan for your releases?
+              <% end %>
+            <% end %>
           </li>
-          <li>Do you actively reach out to blogs, playlists, and local media?</li>
           <li>
-            Are you engaging with fans on social media, through mailing lists, and at shows?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has preparado un kit de prensa (EPK) con tu biografía, fotos, música e información de contacto?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você preparou um kit de imprensa (EPK) com sua biografia, fotos, música e informações de contato?
+              <% else %>
+                Have you prepared a press kit (EPK) with your bio, photos, music, and contact info?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Te comunicas activamente con blogs, listas de reproducción y medios locales?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você se comunica ativamente com blogs, playlists e mídia local?
+              <% else %>
+                Do you actively reach out to blogs, playlists, and local media?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Estás interactuando con los fans en las redes sociales, a través de listas de correo y en los shows?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você está interagindo com os fãs nas redes sociais, através de listas de e-mails e nos shows?
+              <% else %>
+                Are you engaging with fans on social media, through mailing lists, and at shows?
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
       <!-- Performance and Networking -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Performance and Networking</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Actuaciones y Networking
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Performances e Networking
+            <% else %>
+              Performance and Networking
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Have you prepared a setlist for live performances?</li>
-          <li>Are you networking with industry professionals?</li>
           <li>
-            Do you have a schedule for performances and open mics?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has preparado una lista de canciones para presentaciones en vivo?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você preparou uma lista de músicas para apresentações ao vivo?
+              <% else %>
+                Have you prepared a setlist for live performances?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Estás haciendo networking con profesionales de la industria?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você está fazendo networking com profissionais da indústria?
+              <% else %>
+                Are you networking with industry professionals?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes un calendario para presentaciones y micrófonos abiertos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem um cronograma para apresentações e microfones abertos?
+              <% else %>
+                Do you have a schedule for performances and open mics?
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
       <!-- Merchandise -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Merchandise</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Mercancía
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Mercadoria
+            <% else %>
+              Merchandise
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you offer basic merchandise like t-shirts, stickers, and posters?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Ofreces mercancía básica como camisetas, pegatinas y carteles?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você oferece mercadorias básicas como camisetas, adesivos e pôsteres?
+              <% else %>
+                Do you offer basic merchandise like t-shirts, stickers, and posters?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Fan Engagement -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Fan Engagement</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Compromiso con los Fans
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Engajamento com os Fãs
+            <% else %>
+              Fan Engagement
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you have a mailing list for keeping your fans updated?</li>
           <li>
-            Are you releasing regular content like behind-the-scenes footage, blogs, or vlogs?
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes una lista de correo para mantener a tus fans actualizados?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem uma lista de e-mails para manter seus fãs atualizados?
+              <% else %>
+                Do you have a mailing list for keeping your fans updated?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Estás lanzando contenido regular como material detrás de cámaras, blogs o vlogs?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você está lançando conteúdo regular como material de bastidores, blogs ou vlogs?
+              <% else %>
+                Are you releasing regular content like behind-the-scenes footage, blogs, or vlogs?
+              <% end %>
+            <% end %>
           </li>
         </ul>
       </div>
       <!-- Music Videos -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Music Videos</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Videos Musicales
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Videoclipes
+            <% else %>
+              Music Videos
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Have you created music videos or visualizers, budget permitting?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has creado videos musicales o visualizadores, si el presupuesto lo permite?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você criou videoclipes ou visualizadores, se o orçamento permitir?
+              <% else %>
+                Have you created music videos or visualizers, budget permitting?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Analytics and Feedback -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Analytics and Feedback</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Análisis y Retroalimentación
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Análise e Feedback
+            <% else %>
+              Analytics and Feedback
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you monitor analytics through your distributors or streaming services?</li>
-          <li>Are you open to constructive feedback on your music and marketing strategies?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Monitorea los análisis a través de tus distribuidores o servicios de streaming?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você monitora análises através de seus distribuidores ou serviços de streaming?
+              <% else %>
+                Do you monitor analytics through your distributors or streaming services?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Estás abierto a recibir comentarios constructivos sobre tu música y estrategias de marketing?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você está aberto a receber feedback construtivo sobre sua música e estratégias de marketing?
+              <% else %>
+                Are you open to constructive feedback on your music and marketing strategies?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Budgeting and Finance -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Budgeting and Finance</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Presupuesto y Finanzas
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Orçamento e Finanças
+            <% else %>
+              Budgeting and Finance
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Have you established a clear budget for your projects?</li>
-          <li>Do you have a business account or method for managing music-related finances?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Has establecido un presupuesto claro para tus proyectos?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você estabeleceu um orçamento claro para seus projetos?
+              <% else %>
+                Have you established a clear budget for your projects?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes una cuenta comercial o un método para gestionar las finanzas relacionadas con la música?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem uma conta comercial ou um método para gerenciar finanças relacionadas à música?
+              <% else %>
+                Do you have a business account or method for managing music-related finances?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Legal Considerations -->
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">Legal Considerations</h2>
+        <h2 class="text-brand text-md font-semibold leading-6">
+          <%= if @user_settings.response_language == :spanish do %>
+            Consideraciones Legales
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Considerações Legais
+            <% else %>
+              Legal Considerations
+            <% end %>
+          <% end %>
+        </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Do you have a basic understanding of contracts for collaborations?</li>
-          <li>Are you knowledgeable about music licensing for media use?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes un conocimiento básico de los contratos para colaboraciones?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem um conhecimento básico de contratos para colaborações?
+              <% else %>
+                Do you have a basic understanding of contracts for collaborations?
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Tienes conocimientos sobre licencias de música para uso en medios?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você tem conhecimento sobre licenciamento de música para uso em mídia?
+              <% else %>
+                Are you knowledgeable about music licensing for media use?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
       <!-- Mental Preparedness and Resilience -->
       <div class="mt-8">
         <h2 class="text-brand text-md font-semibold leading-6">
-          Mental Preparedness and Resilience
+          <%= if @user_settings.response_language == :spanish do %>
+            Preparación Mental y Resiliencia
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Preparação Mental e Resiliência
+            <% else %>
+              Mental Preparedness and Resilience
+            <% end %>
+          <% end %>
         </h2>
         <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>Are you patient and persistent in your growth and development as an artist?</li>
+          <li>
+            <%= if @user_settings.response_language == :spanish do %>
+              ¿Eres paciente y persistente en tu crecimiento y desarrollo como artista?
+            <% else %>
+              <%= if @user_settings.response_language == :portuguese do %>
+                Você é paciente e persistente em seu crescimento e desenvolvimento como artista?
+              <% else %>
+                Are you patient and persistent in your growth and development as an artist?
+              <% end %>
+            <% end %>
+          </li>
         </ul>
       </div>
 
       <div class="mt-8 flex justify-center">
         <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700">
-          Explore More
+          <%= if @user_settings.response_language == :spanish do %>
+            Explorar Más
+          <% else %>
+            <%= if @user_settings.response_language == :portuguese do %>
+              Explorar Mais
+            <% else %>
+              Explore More
+            <% end %>
+          <% end %>
         </button>
       </div>
     </div>
