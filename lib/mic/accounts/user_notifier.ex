@@ -8,13 +8,27 @@ defmodule Mic.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"MIC", "contact@example.com"})
+      |> from({"Incurator", "franco.abaroa@sincero.tech"})
       |> subject(subject)
       |> text_body(body)
 
     with {:ok, _metadata} <- Mailer.deliver(email) do
       {:ok, email}
     end
+  end
+
+  @doc """
+  Deliver welcome email to user.
+  """
+  def deliver_welcome_email(user) do
+    deliver(user.email, "Welcome to Incurator!", """
+    Hi #{user.email},
+
+    Welcome to Incurator! We're excited to have you on board.
+
+    Best,
+    The Incurator Team
+    """)
   end
 
   @doc """
@@ -34,6 +48,9 @@ defmodule Mic.Accounts.UserNotifier do
     If you didn't create an account with us, please ignore this.
 
     ==============================
+
+    Best,
+    The Incurator Team
     """)
   end
 
@@ -54,6 +71,9 @@ defmodule Mic.Accounts.UserNotifier do
     If you didn't request this change, please ignore this.
 
     ==============================
+
+    Best,
+    The Incurator Team
     """)
   end
 
@@ -74,6 +94,9 @@ defmodule Mic.Accounts.UserNotifier do
     If you didn't request this change, please ignore this.
 
     ==============================
+
+    Best,
+    The Incurator Team
     """)
   end
 end
