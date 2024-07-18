@@ -59,6 +59,25 @@ defmodule MicWeb.UserRegistrationLive do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.register_user(user_params) do
       {:ok, user} ->
+        # Create user settings
+        settings_attrs = %{
+          # Default to English
+          response_language: :english,
+          response_answer_detail: :brief,
+          response_answer_style: :normal,
+          # Default to text
+          response_medium: :text,
+          user_id: user.id
+        }
+
+        case Mic.Accounts.create_settings(user, settings_attrs) do
+          {:ok, _settings} ->
+            Logger.info("User settings created successfully.")
+
+          {:error, changeset} ->
+            Logger.error("Failed to create user settings: #{inspect(changeset)}")
+        end
+
         {:ok, _} =
           Accounts.deliver_user_confirmation_instructions(
             user,

@@ -734,16 +734,15 @@ defmodule MicWeb.ChatLive.Index do
           response_language: language_preference,
           response_answer_detail: :brief,
           response_answer_style: :normal,
-          response_medium: if(prefers_voice_chat, do: :voice, else: :text),
-          user_id: socket.assigns.current_user.id
+          response_medium: if(prefers_voice_chat, do: :voice, else: :text)
         }
 
-        case Mic.Accounts.create_settings(socket.assigns.current_user, settings_attrs) do
+        case Mic.Accounts.update_settings(socket.assigns.current_user, settings_attrs) do
           {:ok, _settings} ->
-            Logger.info("User settings created successfully.")
+            Logger.info("User settings updated successfully.")
 
           {:error, changeset} ->
-            Logger.error("Failed to create user settings: #{inspect(changeset)}")
+            Logger.error("Failed to update user settings: #{inspect(changeset)}")
         end
 
         {:noreply, push_redirect(socket, to: "/")}
