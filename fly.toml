@@ -15,6 +15,7 @@ kill_signal = 'SIGTERM'
 [env]
   PHX_HOST = 'mic.fly.dev'
   PORT = '8080'
+  TOKENIZER_CACHE_DIR = '/tmp/.cache/tokenizers_elixir'
 
 [http_service]
   internal_port = 8080
