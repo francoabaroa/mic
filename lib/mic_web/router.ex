@@ -94,20 +94,20 @@ defmodule MicWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       # TODO: remove the view for profiles
-      live "/profiles", ProfileLive.Index, :index
-      live "/profiles/new", ProfileLive.Index, :new
-      live "/profiles/:id/edit", ProfileLive.Index, :edit
+      # live "/profiles", ProfileLive.Index, :index
+      # live "/profiles/new", ProfileLive.Index, :new
+      # live "/profiles/:id/edit", ProfileLive.Index, :edit
 
-      live "/profiles/:id", ProfileLive.Show, :show
-      live "/profiles/:id/show/edit", ProfileLive.Show, :edit
+      # live "/profiles/:id", ProfileLive.Show, :show
+      # live "/profiles/:id/show/edit", ProfileLive.Show, :edit
 
-      # TODO: remove the view
-      live "/messages", MessageLive.Index, :index
-      live "/messages/new", MessageLive.Index, :new
-      live "/messages/:id/edit", MessageLive.Index, :edit
+      # # TODO: remove the view
+      # live "/messages", MessageLive.Index, :index
+      # live "/messages/new", MessageLive.Index, :new
+      # live "/messages/:id/edit", MessageLive.Index, :edit
 
-      live "/messages/:id", MessageLive.Show, :show
-      live "/messages/:id/show/edit", MessageLive.Show, :edit
+      # live "/messages/:id", MessageLive.Show, :show
+      # live "/messages/:id/show/edit", MessageLive.Show, :edit
 
       # TODO: merge chat and messages
       live "/chat/:scenario_id", ChatLive.Index, :index
