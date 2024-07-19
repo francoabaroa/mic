@@ -20,15 +20,22 @@ config :mic,
   # gpt-4-turbo-preview
   # gpt-4-turbo
   # TODO: can remove these 2 lines below
-  model: "gpt-4o",
+  # TODO: implement mechanism for free vs paid plan
+  model: "gpt-4o-mini",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4o",
+  default_model: :"gpt-4o-mini",
   models: [
+    %{
+      id: :"gpt-4o-mini",
+      provider: :openai,
+      truncate_tokens: 127_000,
+      name: "GPT4 Omni Mini (OpenAI)"
+    },
     %{
       id: :"gpt-4o",
       provider: :openai,
       truncate_tokens: 127_000,
-      name: "GPT4 Omini (OpenAI)"
+      name: "GPT4 Omni (OpenAI)"
     },
     %{
       id: :"gpt-4-turbo",
@@ -59,6 +66,18 @@ config :mic,
       provider: :openai,
       truncate_tokens: 15000,
       name: "GPT3.5 Turbo 16k (OpenAI)"
+    },
+    %{
+      id: :"anthropic.claude-3-5-sonnet-20240620-v1:0",
+      provider: :anthropic,
+      truncate_tokens: 100_000,
+      name: "Claude 3.5 Sonnet (Anthropic)"
+    },
+    %{
+      id: :"anthropic.claude-3-opus-20240229-v1:0",
+      provider: :anthropic,
+      truncate_tokens: 100_000,
+      name: "Claude 3 Opus (Anthropic)"
     },
     %{
       id: :"anthropic.claude-3-sonnet-20240229-v1:0",
