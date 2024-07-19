@@ -178,6 +178,7 @@ defmodule Mic.Chat.OpenAI do
   def transcribe_voice_using_written_file_name(file_name) do
     # TODO: combine this function and transcribe_voice
     # TODO: TEMP: Temporary filename
+    # TODO: remove
     file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/#{file_name}"
 
     # Read the content back from the file
@@ -212,7 +213,8 @@ defmodule Mic.Chat.OpenAI do
 
   def transcribe_voice(audio_content) do
     # TODO: TEMP: Temporary filename
-    file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/temp_audio.mp3"
+    timestamp = :os.system_time(:millisecond)
+    {:ok, file_path} = Temp.path(%{prefix: "tmp_#{timestamp}", suffix: ".mp3"})
 
     # Write audio content to a file
     File.write!(file_path, audio_content)
