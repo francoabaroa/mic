@@ -513,9 +513,10 @@ defmodule MicWeb.WhatsAppController do
         # Save the downloaded media file
         # TODO: ALL OF THE INSTANCES WHERE I WRITE A FILE, NED TO MAKE SURE I DELETE IT IN CASE OF ERROR. IS THERE A BETTER WAY TO DO THIS?
         # TODO: will it always be .ogg? mae sure to save this and mp3 to enum or vars.
-        File.write!("#{media_id}.ogg", body)
+        {:ok, file_path} = Temp.path(%{prefix: "#{media_id}", suffix: ".ogg"})
+        File.write!(file_path, body)
         Logger.info("Audio downloaded successfully: #{media_id}.ogg")
-        "#{media_id}.ogg"
+        file_path
 
       {:ok, %HTTPoison.Response{status_code: status_code}} ->
         Logger.error("Failed to download media. Status code: #{status_code}")
@@ -541,7 +542,7 @@ defmodule MicWeb.WhatsAppController do
         extension = get_file_extension(mime_type)
 
         if extension do
-          file_path = "#{media_id}.#{extension}"
+          {:ok, file_path} = Temp.path(%{prefix: "#{media_id}", suffix: ".#{extension}"})
           File.write!(file_path, body)
           Logger.info("Document downloaded successfully: #{file_path}")
           file_path
