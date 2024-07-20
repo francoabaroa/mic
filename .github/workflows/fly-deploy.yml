@@ -9,58 +9,14 @@ jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
-    concurrency: deploy-group
+    concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Deploy to fly.io
-        run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Wait for app to be ready
-        run: |
-          echo "Waiting for app to be ready..."
-          for i in {1..30}; do
-            status=$(flyctl status)
-            echo "$status"
-            if echo "$status" | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
-              echo "App is ready!"
-              exit 0
-            fi
-            echo "Attempt $i: App not ready yet. Waiting 10 seconds..."
-            sleep 10
-          done
-          echo "App failed to become ready after 5 minutes"
-          flyctl logs
-          exit 1
+      - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Run migrations
-        run: |
-          echo "Running migrations..."
-          flyctl ssh console -C "/app/bin/migrate"
-          echo "Migrations completed."
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Restart app
-        run: |
-          echo "Restarting app..."
-          flyctl scale count 1 --yes
-          echo "Waiting for app to be ready..."
-          for i in {1..30}; do
-            status=$(flyctl status)
-            echo "$status"
-            if echo "$status" | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
-              echo "App is ready!"
-              exit 0
-            fi
-            echo "Attempt $i: App not ready yet. Waiting 10 seconds..."
-            sleep 10
-          done
-          if ! echo "$status" | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
-            echo "App failed to become ready after scaling"
-            flyctl logs
-            exit 1
-          fi
+        run: flyctl ssh console -C "/app/bin/migrate"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
