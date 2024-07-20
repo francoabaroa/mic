@@ -433,12 +433,11 @@ defmodule MicWeb.WhatsAppController do
 
     # Retrieve the media URL from the WhatsApp API
     media_url = get_media_url(media_id)
-    extension = get_audio_extension(mime_type)
 
     case media_url do
       {:ok, url} ->
         # Download the media file
-        file_path = download_audio_media(url, media_id, extension)
+        file_path = download_audio_media(url, media_id)
 
         if file_path != nil do
           Logger.info("File path: #{file_path}")
@@ -502,7 +501,7 @@ defmodule MicWeb.WhatsAppController do
     end
   end
 
-  defp download_audio_media(url, media_id, extension) do
+  defp download_audio_media(url, media_id) do
     config = Application.get_env(:mic, :whatsapp)
     access_token = config[:whatsapp_temporary_access_token]
 
@@ -515,9 +514,9 @@ defmodule MicWeb.WhatsAppController do
         # Save the downloaded media file
         # TODO: ALL OF THE INSTANCES WHERE I WRITE A FILE, NED TO MAKE SURE I DELETE IT IN CASE OF ERROR. IS THERE A BETTER WAY TO DO THIS?
         # TODO: will it always be .ogg? mae sure to save this and mp3 to enum or vars.
-        {:ok, file_path} = Temp.path(%{prefix: "#{media_id}", suffix: ".#{extension}"})
+        {:ok, file_path} = Temp.path(%{prefix: "#{media_id}", suffix: ".ogg"})
         File.write!(file_path, body)
-        Logger.info("Audio downloaded successfully: #{media_id}.#{extension}")
+        Logger.info("Audio downloaded successfully: #{media_id}.ogg")
         file_path
 
       {:ok, %HTTPoison.Response{status_code: status_code}} ->
@@ -560,15 +559,6 @@ defmodule MicWeb.WhatsAppController do
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error("Failed to download media: #{inspect(reason)}")
         nil
-    end
-  end
-
-  defp get_audio_extension(mime_type) do
-    case mime_type do
-      "audio/ogg" -> "ogg"
-      "audio/mpeg" -> "mp3"
-      "audio/wav" -> "wav"
-      _ -> nil
     end
   end
 
