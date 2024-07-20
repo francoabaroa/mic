@@ -31,12 +31,20 @@ jobs:
             sleep 10
           done
           echo "App failed to become ready after 5 minutes"
+          flyctl logs
           exit 1
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Scale app and run migrations
+      - name: Run migrations
         run: |
-          echo "Scaling app and running migrations..."
+          echo "Running migrations..."
+          flyctl ssh console -C "/app/bin/migrate"
+          echo "Migrations completed."
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Restart app
+        run: |
+          echo "Restarting app..."
           flyctl scale count 1 --yes
           echo "Waiting for app to be ready..."
           for i in {1..30}; do
@@ -44,17 +52,15 @@ jobs:
             echo "$status"
             if echo "$status" | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
               echo "App is ready!"
-              break
+              exit 0
             fi
             echo "Attempt $i: App not ready yet. Waiting 10 seconds..."
             sleep 10
           done
           if ! echo "$status" | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
             echo "App failed to become ready after scaling"
+            flyctl logs
             exit 1
           fi
-          echo "Running migrations..."
-          flyctl ssh console -C "/app/bin/migrate"
-          echo "Migrations completed."
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
