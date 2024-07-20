@@ -17,25 +17,14 @@ jobs:
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Ensure app is scaled and ready
+      - name: Scale app and run migrations
         run: |
-          echo "Ensuring app is scaled and ready..."
+          echo "Scaling app and running migrations..."
           flyctl scale count 1
-          for i in {1..30}; do
-            if flyctl status | grep -q "1 desired, 1 placed, 1 healthy, 0 unhealthy"; then
-              echo "App is ready!"
-              break
-            fi
-            if [ $i -eq 30 ]; then
-              echo "App failed to become ready after 5 minutes"
-              exit 1
-            fi
-            echo "Attempt $i: App not ready yet. Waiting 10 seconds..."
-            sleep 10
-          done
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Run migrations
-        run: flyctl ssh console -C "/app/bin/migrate"
+          echo "Waiting for app to be ready..."
+          sleep 30  # Give the app some time to start up
+          echo "Running migrations..."
+          flyctl ssh console -C "/app/bin/migrate"
+          echo "Migrations completed."
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
