@@ -175,17 +175,16 @@ defmodule Mic.Chat.OpenAI do
     end
   end
 
-  def transcribe_voice_using_written_file_name(file_name) do
+  def transcribe_voice_using_written_file_name(file_path) do
     # TODO: combine this function and transcribe_voice
     # TODO: TEMP: Temporary filename
     # TODO: remove
-    file_path = "/Users/francoabaroa/Desktop/Hack_Reactor/Repos/career/mic/#{file_name}"
 
     # Read the content back from the file
     case File.read(file_path) do
       {:ok, file_content} ->
         case ExOpenAI.Audio.create_transcription(
-               {"temp_audio.mp3", file_content},
+               {file_path, file_content},
                "whisper-1"
              ) do
           {:ok, %ExOpenAI.Components.CreateTranscriptionResponse{text: transcription_text}} ->
