@@ -429,7 +429,6 @@ defmodule MicWeb.WhatsAppController do
 
     # Extract the media ID from the audio message
     media_id = audio["id"]
-    mime_type = audio["mime_type"]
 
     # Retrieve the media URL from the WhatsApp API
     media_url = get_media_url(media_id)
