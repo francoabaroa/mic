@@ -184,7 +184,7 @@ defmodule Mic.Chat.OpenAI do
     case File.read(file_path) do
       {:ok, file_content} ->
         case ExOpenAI.Audio.create_transcription(
-               {file_path, file_content},
+               {"temp_audio.mp3", file_content},
                "whisper-1"
              ) do
           {:ok, %ExOpenAI.Components.CreateTranscriptionResponse{text: transcription_text}} ->
