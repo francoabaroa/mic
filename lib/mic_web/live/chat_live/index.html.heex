@@ -33,6 +33,7 @@
       on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
       module={MicWeb.TextboxComponent}
       assistant_scenario_id={@assistant_scenario_id}
+      current_question={@current_question}
       uploads={@uploads}
       text={@text}
       disabled={@loading}

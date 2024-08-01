@@ -35,6 +35,7 @@ defmodule MicWeb.TextboxComponent do
   attr :text, :string
   attr :myself, :any
   attr :disabled, :boolean
+  attr :current_question, :atom
 
   def textarea(assigns) do
     assigns =
@@ -54,12 +55,14 @@ defmodule MicWeb.TextboxComponent do
       name={@field.name}
       phx-target={@myself}
       onkeydown={@onkeydown}
+      disabled={@current_question == nil}
     ><%= @text %></textarea>
     """
   end
 
   attr :on_submit, :any, required: true
   attr :disabled, :boolean, required: true
+  attr :current_question, :atom, required: true
 
   def render(assigns) do
     %{assistant_scenario_id: assistant_scenario_id, uploads: uploads} = assigns
@@ -74,7 +77,13 @@ defmodule MicWeb.TextboxComponent do
         for={@form}
       >
         <div class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
-          <.textarea disabled={@disabled} field={@form[:text]} myself={@myself} text={@text} />
+          <.textarea
+            disabled={@disabled}
+            field={@form[:text]}
+            myself={@myself}
+            text={@text}
+            current_question={@current_question}
+          />
           <div class="absolute bottom-1.5 right-1.5 flex space-x-1 md:bottom-2.5 md:right-2.5">
             <%= if @assistant_scenario_id == "analyze-contract" do %>
               <.live_file_input upload={@uploads.file} />
@@ -84,6 +93,7 @@ defmodule MicWeb.TextboxComponent do
                 id="upload-button"
                 onclick={"document.getElementById('#{@uploads.file.ref}').click()"}
                 class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
+                disabled={@current_question == nil}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -105,6 +115,7 @@ defmodule MicWeb.TextboxComponent do
               id="transcriptionbtn"
               class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
               phx-click="initiate_voice_transcription"
+              disabled={@current_question == nil}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -130,6 +141,7 @@ defmodule MicWeb.TextboxComponent do
               id="transcriptionstopbtn"
               class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
               phx-click="stop_voice_transcription"
+              disabled={@current_question == nil}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -154,6 +166,7 @@ defmodule MicWeb.TextboxComponent do
             <button
               id="submitbtn"
               class="p-1 rounded-md text-gray-500 hover:bg-gray-100 dark:hover:text-gray-400 dark:hover:bg-gray-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent"
+              disabled={@current_question == nil}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
