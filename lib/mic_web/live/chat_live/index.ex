@@ -186,6 +186,12 @@ defmodule MicWeb.ChatLive.Index do
           nil
       end
 
+    # Subscribe to a topic for this user's profile generation
+    Phoenix.PubSub.subscribe(
+      Mic.PubSub,
+      "profile_generation:#{socket.assigns.current_user.id}"
+    )
+
     {:ok,
      socket
      |> assign(initial_state(scenario_description))
@@ -203,7 +209,8 @@ defmodule MicWeb.ChatLive.Index do
        saved_language_preference: user_settings.response_language,
        response_answer_detail: user_settings.response_answer_detail,
        current_question: nil,
-       profile_data: %{}
+       profile_data: %{},
+       profile_generating: false
      )
      |> allow_upload(:file,
        # TODO: make this an enum to share with textbox_component
@@ -745,11 +752,18 @@ defmodule MicWeb.ChatLive.Index do
             Logger.error("Failed to update user settings: #{inspect(changeset)}")
         end
 
+        {:noreply, assign(socket, profile_generating: true)}
+      else
         {:noreply, push_redirect(socket, to: "/")}
       end
     else
       {:noreply, assign(socket, %{loading: false})}
     end
+  end
+
+  # New handle_info clause for profile generation completion
+  def handle_info({:profile_generation_complete}, socket) do
+    {:noreply, push_redirect(socket, to: "/")}
   end
 
   @impl true

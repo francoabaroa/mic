@@ -20,6 +20,13 @@ defmodule Mic.Jobs.GenerateArtistProfileJob do
         description_content = response.content
         updated_profile_data = Map.put(profile_data, :artist_ai_description, description_content)
         process_updated_profile_data(updated_profile_data, current_user, language_preference)
+
+        Phoenix.PubSub.broadcast(
+          Mic.PubSub,
+          "profile_generation:#{current_user["id"]}",
+          {:profile_generation_complete}
+        )
+
         :ok
 
       {:error, reason} ->
