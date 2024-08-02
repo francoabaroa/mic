@@ -13,6 +13,10 @@ defmodule MicWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :check_profile do
+    plug MicWeb.Plugs.CheckProfile
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -111,7 +115,11 @@ defmodule MicWeb.Router do
 
       # TODO: merge chat and messages
       live "/chat/:scenario_id", ChatLive.Index, :index
-      live "/chat", ChatLive.Index, :index
+
+      scope "/" do
+        pipe_through :check_profile
+        live "/chat", ChatLive.Index, :index
+      end
 
       live "/dashboard", DashboardLive.Index, :index
     end
