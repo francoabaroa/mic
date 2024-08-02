@@ -14,7 +14,11 @@
         <% end %>
       </h1>
 
-      <%= Phoenix.HTML.raw(@personalized_resources) %>
+      <%= if @personalized_resources == "" do %>
+        <p>No personalized content available. Check back later.</p>
+      <% else %>
+        <%= Phoenix.HTML.raw(@personalized_resources) %>
+      <% end %>
     </div>
   </section>
 <% else %>
