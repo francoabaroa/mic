@@ -10,10 +10,16 @@ defmodule MicWeb.Plugs.CheckProfile do
   def call(conn, _opts) do
     user_id = conn.assigns[:current_user] && conn.assigns[:current_user].id
 
-    if user_id && Artists.get_profile_by_user_id!(user_id) do
-      conn
-      |> redirect(to: "/")
-      |> halt()
+    if user_id do
+      case Artists.get_profile_by_user_id(user_id) do
+        nil ->
+          conn
+
+        _profile ->
+          conn
+          |> redirect(to: "/")
+          |> halt()
+      end
     else
       conn
     end

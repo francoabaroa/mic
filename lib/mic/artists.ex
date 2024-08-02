@@ -103,6 +103,21 @@ defmodule Mic.Artists do
   end
 
   @doc """
+  Gets a single profile by user ID.
+
+  Returns `nil` if the Profile does not exist.
+
+  ## Examples
+
+      iex> get_profile_by_user_id(user_id)
+      %Profile{} | nil
+
+  """
+  def get_profile_by_user_id(user_id) do
+    Repo.one(from p in Profile, where: p.user_id == ^user_id)
+  end
+
+  @doc """
   Creates a profile.
 
   ## Examples
