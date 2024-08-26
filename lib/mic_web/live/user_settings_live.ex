@@ -114,7 +114,7 @@ defmodule MicWeb.UserSettingsLive do
             required
           />
           <:actions>
-            <.button phx-disable-with="Saving...">Save Settings</.button>
+            <.button phx-disable-with="Saving...">Change Response Settings</.button>
           </:actions>
         </.simple_form>
       </div>
