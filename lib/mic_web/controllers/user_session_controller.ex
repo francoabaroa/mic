@@ -6,7 +6,7 @@ defmodule MicWeb.UserSessionController do
 
   def create(conn, %{"_action" => "registered"} = params) do
     conn
-    |> put_session(:user_return_to, ~p"/chat")
+    |> put_session(:user_return_to, ~p"/onboarding")
     |> create(params, "Account created successfully!")
   end
 

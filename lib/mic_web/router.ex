@@ -118,7 +118,7 @@ defmodule MicWeb.Router do
 
       scope "/" do
         pipe_through :check_profile
-        live "/chat", ChatLive.Index, :index
+        live "/onboarding", OnboardingLive.Index, :index
       end
 
       live "/dashboard", DashboardLive.Index, :index

@@ -63,10 +63,11 @@ defmodule MicWeb.TextboxComponent do
   attr :on_submit, :any, required: true
   attr :disabled, :boolean, required: true
   attr :current_question, :atom, required: true
+  attr :uploads, :map, required: true
+  attr :text, :string, required: true
+  attr :assistant_scenario_id, :string, default: nil
 
   def render(assigns) do
-    %{assistant_scenario_id: assistant_scenario_id, uploads: uploads} = assigns
-
     ~H"""
     <div id="textbox" class="">
       <.form
