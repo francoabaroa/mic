@@ -99,8 +99,18 @@ defmodule MicWeb.OnboardingLive.Index do
     {:noreply, socket, changes} = QuestionFlow.handle_user_response(socket, text)
     updated_socket = assign(socket, changes)
 
+    # Handle Spotify link separately
     # Use the ai_instruction for the AI, not for the user message
     ai_instruction = Map.get(changes, :ai_instruction, "")
+
+    # Save the Spotify link to the profile data if it's the Spotify link question
+    updated_socket =
+      if updated_socket.assigns.current_question == :spotify_link do
+        updated_profile_data = Map.put(updated_socket.assigns.profile_data, :website_url, text)
+        assign(updated_socket, profile_data: updated_profile_data)
+      else
+        updated_socket
+      end
 
     spawn(fn ->
       case Mic.Chat.OpenAI.send(
@@ -115,6 +125,29 @@ defmodule MicWeb.OnboardingLive.Index do
         {:ok, result} ->
           Process.send(self(), {:add_message, result}, [])
           Process.send(self(), :stop_loading, [])
+
+          if updated_socket.assigns.current_question == :spotify_link do
+            {next_question, next_question_to_set} =
+              QuestionFlow.get_next_question(
+                :spotify_link,
+                updated_socket.assigns.profile_data.artist_name
+              )
+
+            translated_question =
+              QuestionFlow.translate_question(
+                next_question,
+                updated_socket.assigns.language_preference ||
+                  updated_socket.assigns.saved_language_preference
+              )
+
+            Process.send(
+              self(),
+              {:add_message, %Message{content: translated_question, sender: :assistant, id: 0}},
+              []
+            )
+
+            Process.send(self(), {:update_question, next_question_to_set}, [])
+          end
 
         {:error, e} ->
           IO.puts("error")

@@ -134,6 +134,9 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
           valid_date_struct = MicWeb.OnboardingLive.Helpers.generate_valid_dob_struct(text)
           Map.put(profile_data, :dob, valid_date_struct)
 
+        :spotify_link ->
+          Map.put(profile_data, :website_url, text)
+
         _ ->
           profile_data
       end
@@ -180,7 +183,7 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
      }}
   end
 
-  defp get_next_question(current_question, artist_name) do
+  def get_next_question(current_question, artist_name) do
     case current_question do
       :artist_name ->
         {"What's your music genre, " <> artist_name <> "?", :genre}
@@ -218,6 +221,10 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
            artist_name <> "?", :live_performances}
 
       :live_performances ->
+        {"What's your Spotify artist page link? It should look like https://open.spotify.com/artist/4q3ewBCX7sLwd24euuV69X",
+         :spotify_link}
+
+      :spotify_link ->
         {"Which country are you from, " <> artist_name <> "?", :country}
 
       :country ->
@@ -241,7 +248,7 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
     end
   end
 
-  defp translate_question(question, language) do
+  def translate_question(question, language) do
     case language do
       :spanish -> translate_to_spanish(question)
       :portuguese -> translate_to_portuguese(question)
@@ -303,6 +310,9 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
             "Gracias por crear tu perfil, #{name}. Serás redirigido a la página de inicio en breve."
         end
 
+      "What's your Spotify artist page link? It should look like https://open.spotify.com/artist/4q3ewBCX7sLwd24euuV69X" ->
+        "¿Cuál es el enlace de tu página de artista en Spotify? Debería verse como https://open.spotify.com/artist/4q3ewBCX7sLwd24euuV69X"
+
       _ ->
         question
     end
@@ -357,6 +367,9 @@ defmodule MicWeb.OnboardingLive.QuestionFlow do
         [name, ". You will be redirected to the home page shortly."] = String.split(rest, ".")
 
         "Obrigado por criar seu perfil, #{name}. Você será redirecionado para a página inicial em breve."
+
+      "What's your Spotify artist page link? It should look like https://open.spotify.com/artist/4q3ewBCX7sLwd24euuV69X" ->
+        "Qual é o link da sua página de artista no Spotify? Deve ser parecido com https://open.spotify.com/artist/4q3ewBCX7sLwd24euuV69X"
 
       _ ->
         question
