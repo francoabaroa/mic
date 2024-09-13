@@ -1,0 +1,162 @@
+defmodule Mic.Chat.Prompts.FinanceSyllabus do
+  def content do
+    """
+    # Comprehensive Syllabus for Financial Management and Strategy
+    ---
+    ## 1. Introduction to Financial Management for Music Artists
+    - **Understanding Basic Financial Concepts**
+    - Brief overview of key financial terminologies and concepts essential for music artists, including income, expenses, assets, liabilities, and cash flow.
+    - Brief introduction to financial statements relevant to artists: Balance Sheets, Income Statements, and Cash Flow Statements.
+    - **Importance of Financial Literacy**
+    - Discussing why financial literacy is pivotal for career longevity and independence in the music industry.
+    - Real-world examples of how financial knowledge can impact an artist's career trajectory.
+    ## 2. Revenue Collection
+    - **Royalties and Rights Management**
+    - Detailed explanation of different types of royalties (mechanical, performance, sync, etc.) and how they are collected.
+    - Understanding the role of PROs (Performing Rights Organizations) and mechanical licensing agencies in collecting royalties.
+    - Strategies for ensuring accurate royalty tracking and collection.
+    - **Digital Sales and Streaming**
+    - How revenue is generated from digital sales and streaming platforms, including pay-per-download and streaming royalties.
+    - Strategies for maximizing income from digital streams, such as playlist placement and algorithmic optimization.
+    - Case studies of artists successfully leveraging digital platforms for revenue generation.
+    - **Implementation Steps**
+    - Register with relevant PROs and mechanical licensing agencies.
+    - Regularly monitor and audit royalty statements.
+    - Optimize digital profiles and engage with streaming platforms to increase visibility and revenue potential.
+    ## 3. Monetization Strategies Beyond Traditional Means
+    - **Merchandising**
+    - Creating and marketing artist merchandise as an essential revenue stream.
+    - Best practices for designing, pricing, and selling merchandise online and at live events.
+    - Case studies on successful merchandising strategies employed by independent artists.
+    - **Live Performances**
+    - Analyzing the financial aspects of live performances, including booking, promotion, and ticket sales.
+    - Strategies for negotiating favorable performance contracts and maximizing revenue from live shows.
+    - Exploring alternative performance opportunities, such as house concerts and live-streamed events.
+    - **Fan Funding and Crowdfunding**
+    - Leveraging platforms like Patreon, Kickstarter, and GoFundMe for project funding and ongoing fan support.
+    - Discussing best practices for creating compelling crowdfunding campaigns and rewards.
+    - Case studies of artists who have successfully funded projects through crowdfunding.
+    - **Implementation Steps**
+    - Develop a range of merchandise items that align with your brand and fan preferences.
+    - Create a live performance strategy that balances revenue potential and audience engagement.
+    - Research and select the most appropriate fan funding or crowdfunding platform for your needs.
+    ## 4. Diversifying Revenue Streams
+    - **Brand Partnerships and Endorsements**
+    - Exploring how artists can collaborate with brands for mutual benefit, such as sponsored content or product endorsements.
+    - Navigating the legal and ethical considerations of brand partnerships.
+    - Tips for identifying and pitching to potential brand partners.
+    - **Sync Licensing**
+    - Understanding the sync licensing process and how artists can generate income from placing their music in films, TV shows, advertisements, and video games.
+    - Strategies for making your music more discoverable to music supervisors and licensing agencies.
+    - Case studies of successful sync placements and their impact on artists' careers.
+    - **Teaching and Workshops**
+    - Turning expertise into educational opportunities for additional income, such as offering music lessons, masterclasses, or workshops.
+    - Tips for developing engaging educational content and marketing your services.
+    - Exploring online teaching platforms and resources for reaching a wider audience.
+    - **Implementation Steps**
+    - Identify brands that align with your values and target audience.
+    - Create a sync licensing pitch package, including high-quality recordings and metadata.
+    - Develop a teaching curriculum and promotional plan for your educational offerings.
+    ## 5. Budgeting & Financial Planning
+    - **Creating and Managing Budgets**
+    - Step-by-step guide to creating effective budgets for projects (e.g., album releases, tours) and general living expenses.
+    - Tips for prioritizing expenses and allocating funds based on career goals.
+    - Tools and software recommendations for tracking finances and managing budgets.
+    - **Financial Goal Setting**
+    - The importance of setting short-term and long-term financial goals for your music career.
+    - Strategies for breaking down larger goals into manageable milestones.
+    - Case studies of artists who have successfully achieved their financial goals through effective planning.
+    - **Cash Flow Management**
+    - Understanding the importance of cash flow in a music career, especially when income may be irregular.
+    - Strategies for maintaining a positive cash flow, such as diversifying income streams and minimizing unnecessary expenses.
+    - Tips for managing cash flow during lean periods or between project payouts.
+    - **Emergency Funds and Financial Cushions**
+    - The importance of saving for unforeseen expenses or career disruptions.
+    - Guidelines for determining how much to save in an emergency fund based on your individual circumstances.
+    - Strategies for building and maintaining an emergency fund over time.
+    - **Implementation Steps**
+    - Create a comprehensive budget template for your music career, including income and expense categories.
+    - Set specific, measurable financial goals for the next 6 months, 1 year, and 5 years.
+    - Establish a separate savings account for your emergency fund and set up automatic contributions.
+    ## 6. Long-term Financial Planning
+    - **Investing for the Future**
+    - An overview of investment strategies suitable for artists, including retirement accounts, stocks, and real estate.
+    - Discussing the risks and benefits of various investment options.
+    - Tips for starting small and gradually building an investment portfolio over time.
+    - **Retirement Planning**
+    - Understanding retirement saving options available to independent artists and musicians, such as SEP IRAs and Solo 401(k)s.
+    - Strategies for determining how much to save for retirement based on your desired lifestyle and career trajectory.
+    - Case studies of artists who have successfully planned for retirement while navigating the unique challenges of the music industry.
+    - **Insurance**
+    - Types of insurance policies music artists should consider, such as health insurance, instrument insurance, and liability insurance.
+    - Discussing the importance of insurance in protecting your financial well-being and career assets.
+    - Tips for finding affordable insurance options and navigating the enrollment process.
+    - **Estate Planning**
+    - The importance of estate planning for music artists, including creating a will and designating beneficiaries.
+    - Overview of the key components of an estate plan, such as power of attorney and healthcare directives.
+    - Resources for finding legal assistance with estate planning and understanding the unique considerations for artists.
+    - **Implementation Steps**
+    - Research investment options and open a retirement account suitable for your needs.
+    - Assess your insurance needs and obtain necessary coverage.
+    - Begin the estate planning process by creating a will and designating beneficiaries for your assets.
+    ## 7. Navigating Taxes
+    - **Tax Obligations for Music Artists**
+    - Overview of tax responsibilities for self-employed artists, including income tax, self-employment tax, and estimated tax payments.
+    - Understanding tax deductions available to artists, such as home office expenses and equipment purchases.
+    - Discussion of state and local tax obligations, such as sales tax on merchandise sales.
+    - **Record Keeping and Documentation**
+    - The importance of maintaining accurate financial records for tax purposes.
+    - Best practices for tracking income and expenses throughout the year.
+    - Overview of documentation required for common tax deductions, such as receipts and mileage logs.
+    - **Strategies for Tax Planning**
+    - Tips for minimizing your tax liability through strategic planning, such as timing income and expenses.
+    - Discussion of the benefits of working with a tax professional who specializes in the music industry.
+    - Case studies of artists who have successfully navigated their tax obligations and minimized their liability.
+    - **International Tax Considerations**
+    - Overview of tax implications for income earned from international sources, such as touring or merchandise sales abroad.
+    - Discussion of tax treaties and how they impact an artist's tax obligations.
+    - Resources for finding guidance on international tax issues and ensuring compliance with foreign tax laws.
+    - **Implementation Steps**
+    - Set up a system for tracking income and expenses, such as using accounting software or a dedicated bank account.
+    - Research and implement tax deductions applicable to your music career.
+    - Consider working with a tax professional to develop a personalized tax strategy.
+    ## 8. Financial Health Check-ups
+    - **Regular Financial Reviews**
+    - The importance of conducting regular financial health assessments to ensure you're on track to meet your goals.
+    - Step-by-step guide to reviewing your financial situation, including assessing income, expenses, savings, and investments.
+    - Tips for identifying areas for improvement and making necessary adjustments to your financial plan.
+    - **Utilizing Financial Tools and Resources**
+    - Overview of financial management tools and resources designed specifically for music artists, such as budgeting apps and royalty tracking software.
+    - Discussion of the benefits of working with financial advisors, accountants, and other professionals who specialize in the music industry.
+    - Case studies of artists who have successfully utilized financial tools and resources to improve their financial health and achieve their goals.
+    - **Continuous Learning and Skill Development**
+    - The importance of staying informed about financial trends and best practices in the music industry.
+    - Resources for continuing your financial education, such as workshops, webinars, and online courses.
+    - Tips for building a network of financial mentors and peers who can provide guidance and support throughout your career.
+    - **Implementation Steps**
+    - Schedule regular financial check-ins, such as quarterly or semi-annual reviews.
+    - Research and implement financial tools and resources that align with your needs and goals.
+    - Identify opportunities for continuous learning and skill development in financial management.
+    ## 9. Resources for Further Learning
+    - **Books and Publications**
+    - Curated list of essential books on financial management for music artists, covering topics such as budgeting, investing, and taxes.
+    - Recommendations for industry publications and blogs that provide ongoing coverage of financial trends and best practices in the music industry.
+    - **Courses and Workshops**
+    - Overview of online courses and in-person workshops designed to help music artists improve their financial literacy and management skills.
+    - Recommendations for reputable course providers and educational institutions that offer specialized training for artists.
+    - **Professional Organizations and Networks**
+    - List of professional organizations and networks that provide resources and support for music artists navigating financial challenges, such as the Music Business Association and the American Association of Independent Music.
+    - Discussion of the benefits of joining these organizations, such as access to industry events, mentorship opportunities, and collaborative projects.
+    - **Financial Advisors and Coaches**
+    - Overview of the role of financial advisors and coaches in helping music artists achieve their financial goals.
+    - Tips for finding and working with financial professionals who specialize in the music industry, including what to look for in an advisor and how to establish a productive working relationship.
+    - Case studies of artists who have successfully worked with financial advisors and coaches to improve their financial situation and achieve long-term success.
+    - **Implementation Steps**
+    - Create a reading list of recommended books and publications and set aside dedicated time for financial learning.
+    - Research and enroll in courses or workshops that align with your learning goals and skill level.
+    - Consider joining a professional organization or network to access additional resources and support.
+    - Assess your need for personalized financial guidance and consider working with a financial advisor or coach.
+    ---
+    """
+  end
+end
