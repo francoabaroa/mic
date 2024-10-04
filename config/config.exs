@@ -21,15 +21,21 @@ config :mic,
   # gpt-4-turbo
   # TODO: can remove these 2 lines below
   # TODO: implement mechanism for free vs paid plan
-  model: "gpt-4o-mini",
+  model: "gpt-4o-2024-08-06",
   enabled_models: ["gpt-3.5-turbo", "davinci"],
-  default_model: :"gpt-4o-mini",
+  default_model: :"gpt-4o-2024-08-06",
   models: [
     %{
       id: :"gpt-4o-mini",
       provider: :openai,
       truncate_tokens: 127_000,
       name: "GPT4 Omni Mini (OpenAI)"
+    },
+    %{
+      id: :"gpt-4o-2024-08-06",
+      provider: :openai,
+      truncate_tokens: 127_000,
+      name: "GPT4 Omni 2024-08-06 (OpenAI)"
     },
     %{
       id: :"gpt-4o",
