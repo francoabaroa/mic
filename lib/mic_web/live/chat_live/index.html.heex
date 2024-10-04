@@ -36,11 +36,12 @@
   </div>
 
   <div class="sticky bottom-4 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2">
+    <!-- TODO: need to fix the passing in of @current_question -->
     <.live_component
       on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
       module={MicWeb.TextboxComponent}
       assistant_scenario_id={@assistant_scenario_id}
-      current_question={@current_question}
+      current_question={@current_question || true}
       uploads={@uploads}
       text={@text}
       disabled={@loading}
