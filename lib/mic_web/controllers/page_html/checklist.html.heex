@@ -1,8 +1,8 @@
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
   <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
-    <div class="mx-auto max-w-4xl lg:mx-0">
-      <h1 class="mt-2 text-lg font-semibold leading-8">
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-3xl font-bold text-white mb-8 flex items-center">
         <%= if @user_settings.response_language == :spanish do %>
           Lista de Verificación de Carrera Imprescindible
         <% else %>
@@ -13,552 +13,97 @@
           <% end %>
         <% end %>
       </h1>
-      <!-- High-Quality Music Production -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Producción Musical de Alta Calidad
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Produção Musical de Alta Qualidade
-            <% else %>
-              High-Quality Music Production
+
+      <%= for {title, items} <- [
+        {"High-Quality Music Production", [
+          "Are your tracks well-produced and mixed?",
+          "Are your songs mastered for streaming platforms?"
+        ]},
+        {"Artwork and Branding", [
+          "Do you have professional cover art for your releases?",
+          "Is your branding consistent and recognizable, including a logo?"
+        ]},
+        {"Distribution", [
+          "Have you used a digital distribution service like DistroKid or TuneCore?",
+          "If there is demand, have you considered producing physical copies like CDs or vinyl?"
+        ]},
+        {"Rights and Royalties", [
+          "Are you registered with a performance rights organization (PRO) like ASCAP?",
+          "Have you secured copyrights and UPC, ISRC codes for your releases?"
+        ]},
+        {"Online Presence", [
+          "Do you have an official website with your bio, news, show dates, and direct sales options?",
+          "Are your social media profiles (Instagram, Twitter, etc.) regularly updated?",
+          "Do you maintain a presence on platforms like SoundCloud, Bandcamp, and YouTube?"
+        ]},
+        {"Marketing and Promotion", [
+          "Do you have a basic marketing plan for your releases?",
+          "Have you prepared a press kit (EPK) with your bio, photos, music, and contact info?",
+          "Do you actively reach out to blogs, playlists, and local media?",
+          "Are you engaging with fans on social media, through mailing lists, and at shows?"
+        ]},
+        {"Performance and Networking", [
+          "Have you prepared a setlist for live performances?",
+          "Are you networking with industry professionals?",
+          "Do you have a schedule for performances and open mics?"
+        ]},
+        {"Merchandise", [
+          "Do you offer basic merchandise like t-shirts, stickers, and posters?"
+        ]},
+        {"Fan Engagement", [
+          "Do you have a mailing list for keeping your fans updated?",
+          "Are you releasing regular content like behind-the-scenes footage, blogs, or vlogs?"
+        ]},
+        {"Music Videos", [
+          "Have you created music videos or visualizers, budget permitting?"
+        ]},
+        {"Analytics and Feedback", [
+          "Do you monitor analytics through your distributors or streaming services?",
+          "Are you open to constructive feedback on your music and marketing strategies?"
+        ]},
+        {"Budgeting and Finance", [
+          "Have you established a clear budget for your projects?",
+          "Do you have a business account or method for managing music-related finances?"
+        ]},
+        {"Legal Considerations", [
+          "Do you have a basic understanding of contracts for collaborations?",
+          "Are you knowledgeable about music licensing for media use?"
+        ]},
+        {"Mental Preparedness and Resilience", [
+          "Are you patient and persistent in your growth and development as an artist?"
+        ]}
+      ] do %>
+        <div class="mt-8 bg-white bg-opacity-10 rounded-xl p-6 shadow-lg">
+          <h2 class="text-xl font-semibold text-yellow-400 mb-4">
+            <%= title %>
+          </h2>
+          <ul class="space-y-2">
+            <%= for item <- items do %>
+              <li class="flex items-start">
+                <svg
+                  class="w-6 h-6 text-green-400 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  >
+                  </path>
+                </svg>
+                <span class="text-white"><%= item %></span>
+              </li>
             <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Están bien producidas y mezcladas tus pistas?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                As suas faixas estão bem produzidas e mixadas?
-              <% else %>
-                Are your tracks well-produced and mixed?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Están tus canciones masterizadas para plataformas de streaming?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                As suas músicas estão masterizadas para plataformas de streaming?
-              <% else %>
-                Are your songs mastered for streaming platforms?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Artwork and Branding -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Arte y Marca
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Arte e Marca
-            <% else %>
-              Artwork and Branding
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes arte de portada profesional para tus lanzamientos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem arte de capa profissional para seus lançamentos?
-              <% else %>
-                Do you have professional cover art for your releases?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Es tu marca consistente y reconocible, incluyendo un logo?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                A sua marca é consistente e reconhecível, incluindo um logotipo?
-              <% else %>
-                Is your branding consistent and recognizable, including a logo?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Distribution -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Distribución
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Distribuição
-            <% else %>
-              Distribution
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has utilizado un servicio de distribución digital como DistroKid o TuneCore?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você usou um serviço de distribuição digital como DistroKid ou TuneCore?
-              <% else %>
-                Have you used a digital distribution service like DistroKid or TuneCore?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              Si hay demanda, ¿has considerado producir copias físicas como CDs o vinilos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Se houver demanda, você considerou produzir cópias físicas como CDs ou vinil?
-              <% else %>
-                If there is demand, have you considered producing physical copies like CDs or vinyl?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Rights and Royalties -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Derechos y Regalías
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Direitos e Royalties
-            <% else %>
-              Rights and Royalties
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Estás registrado en una organización de derechos de ejecución (PRO) como ASCAP?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você está registrado em uma organização de direitos de execução (PRO) como a ASCAP?
-              <% else %>
-                Are you registered with a performance rights organization (PRO) like ASCAP?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has asegurado derechos de autor y códigos UPC, ISRC para tus lanzamientos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você garantiu direitos autorais e códigos UPC, ISRC para seus lançamentos?
-              <% else %>
-                Have you secured copyrights and UPC, ISRC codes for your releases?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Online Presence -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Presencia en Línea
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Presença Online
-            <% else %>
-              Online Presence
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes un sitio web oficial con tu biografía, noticias, fechas de espectáculos y opciones de venta directa?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem um site oficial com sua biografia, notícias, datas de shows e opções de vendas diretas?
-              <% else %>
-                Do you have an official website with your bio, news, show dates, and direct sales options?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Están tus perfiles de redes sociales (Instagram, Twitter, etc.) actualizados regularmente?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Seus perfis de mídia social (Instagram, Twitter, etc.) são atualizados regularmente?
-              <% else %>
-                Are your social media profiles (Instagram, Twitter, etc.) regularly updated?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Mantienes una presencia en plataformas como SoundCloud, Bandcamp y YouTube?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você mantém uma presença em plataformas como SoundCloud, Bandcamp e YouTube?
-              <% else %>
-                Do you maintain a presence on platforms like SoundCloud, Bandcamp, and YouTube?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Marketing and Promotion -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Marketing y Promoción
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Marketing e Promoção
-            <% else %>
-              Marketing and Promotion
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes un plan de marketing básico para tus lanzamientos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem um plano de marketing básico para seus lançamentos?
-              <% else %>
-                Do you have a basic marketing plan for your releases?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has preparado un kit de prensa (EPK) con tu biografía, fotos, música e información de contacto?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você preparou um kit de imprensa (EPK) com sua biografia, fotos, música e informações de contato?
-              <% else %>
-                Have you prepared a press kit (EPK) with your bio, photos, music, and contact info?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Te comunicas activamente con blogs, listas de reproducción y medios locales?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você se comunica ativamente com blogs, playlists e mídia local?
-              <% else %>
-                Do you actively reach out to blogs, playlists, and local media?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Estás interactuando con los fans en las redes sociales, a través de listas de correo y en los shows?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você está interagindo com os fãs nas redes sociais, através de listas de e-mails e nos shows?
-              <% else %>
-                Are you engaging with fans on social media, through mailing lists, and at shows?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Performance and Networking -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Actuaciones y Networking
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Performances e Networking
-            <% else %>
-              Performance and Networking
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has preparado una lista de canciones para presentaciones en vivo?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você preparou uma lista de músicas para apresentações ao vivo?
-              <% else %>
-                Have you prepared a setlist for live performances?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Estás haciendo networking con profesionales de la industria?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você está fazendo networking com profissionais da indústria?
-              <% else %>
-                Are you networking with industry professionals?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes un calendario para presentaciones y micrófonos abiertos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem um cronograma para apresentações e microfones abertos?
-              <% else %>
-                Do you have a schedule for performances and open mics?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Merchandise -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Mercancía
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Mercadoria
-            <% else %>
-              Merchandise
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Ofreces mercancía básica como camisetas, pegatinas y carteles?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você oferece mercadorias básicas como camisetas, adesivos e pôsteres?
-              <% else %>
-                Do you offer basic merchandise like t-shirts, stickers, and posters?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Fan Engagement -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Compromiso con los Fans
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Engajamento com os Fãs
-            <% else %>
-              Fan Engagement
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes una lista de correo para mantener a tus fans actualizados?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem uma lista de e-mails para manter seus fãs atualizados?
-              <% else %>
-                Do you have a mailing list for keeping your fans updated?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Estás lanzando contenido regular como material detrás de cámaras, blogs o vlogs?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você está lançando conteúdo regular como material de bastidores, blogs ou vlogs?
-              <% else %>
-                Are you releasing regular content like behind-the-scenes footage, blogs, or vlogs?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Music Videos -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Videos Musicales
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Videoclipes
-            <% else %>
-              Music Videos
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has creado videos musicales o visualizadores, si el presupuesto lo permite?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você criou videoclipes ou visualizadores, se o orçamento permitir?
-              <% else %>
-                Have you created music videos or visualizers, budget permitting?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Analytics and Feedback -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Análisis y Retroalimentación
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Análise e Feedback
-            <% else %>
-              Analytics and Feedback
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Monitorea los análisis a través de tus distribuidores o servicios de streaming?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você monitora análises através de seus distribuidores ou serviços de streaming?
-              <% else %>
-                Do you monitor analytics through your distributors or streaming services?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Estás abierto a recibir comentarios constructivos sobre tu música y estrategias de marketing?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você está aberto a receber feedback construtivo sobre sua música e estratégias de marketing?
-              <% else %>
-                Are you open to constructive feedback on your music and marketing strategies?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Budgeting and Finance -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Presupuesto y Finanzas
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Orçamento e Finanças
-            <% else %>
-              Budgeting and Finance
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Has establecido un presupuesto claro para tus proyectos?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você estabeleceu um orçamento claro para seus projetos?
-              <% else %>
-                Have you established a clear budget for your projects?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes una cuenta comercial o un método para gestionar las finanzas relacionadas con la música?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem uma conta comercial ou um método para gerenciar finanças relacionadas à música?
-              <% else %>
-                Do you have a business account or method for managing music-related finances?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Legal Considerations -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Consideraciones Legales
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Considerações Legais
-            <% else %>
-              Legal Considerations
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes un conocimiento básico de los contratos para colaboraciones?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem um conhecimento básico de contratos para colaborações?
-              <% else %>
-                Do you have a basic understanding of contracts for collaborations?
-              <% end %>
-            <% end %>
-          </li>
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Tienes conocimientos sobre licencias de música para uso en medios?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você tem conhecimento sobre licenciamento de música para uso em mídia?
-              <% else %>
-                Are you knowledgeable about music licensing for media use?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      <!-- Mental Preparedness and Resilience -->
-      <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
-          <%= if @user_settings.response_language == :spanish do %>
-            Preparación Mental y Resiliencia
-          <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Preparação Mental e Resiliência
-            <% else %>
-              Mental Preparedness and Resilience
-            <% end %>
-          <% end %>
-        </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
-          <li>
-            <%= if @user_settings.response_language == :spanish do %>
-              ¿Eres paciente y persistente en tu crecimiento y desarrollo como artista?
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Você é paciente e persistente em seu crescimento e desenvolvimento como artista?
-              <% else %>
-                Are you patient and persistent in your growth and development as an artist?
-              <% end %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
+          </ul>
+        </div>
+      <% end %>
 
       <div class="mt-8 flex justify-center">
-        <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700">
+        <button class="px-6 py-3 bg-yellow-400 text-indigo-900 font-bold rounded-full hover:bg-yellow-300 transition-colors duration-300">
           <%= if @user_settings.response_language == :spanish do %>
             Explorar Más
           <% else %>
@@ -573,8 +118,57 @@
     </div>
   </section>
 <% else %>
-  <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-    <!-- TODO: Add content for guests goes here -->
-  <!-- Include a brief about the artist development program to entice new users to join -->
-  </section>
+  <div class="flex flex-col items-center justify-center h-screen px-4 sm:px-6 lg:px-8">
+    <svg
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="112"
+      height="112"
+      viewBox="0 0 612.000000 612.000000"
+      preserveAspectRatio="xMidYMid meet"
+      class="mb-8"
+    >
+      <!-- SVG content -->
+    </svg>
+    <h1 class="text-3xl font-bold text-white mb-4">Welcome to Incurator</h1>
+    <p class="text-xl text-white mb-8 text-center max-w-2xl">
+      Navigate the music industry with confidence, take control of your career, and join the biggest artist community in the world.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <a
+        href="/users/register"
+        class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors duration-300 text-center"
+      >
+        Sign Up
+      </a>
+      <a
+        href="/users/log_in"
+        class="bg-white bg-opacity-10 text-white font-bold py-3 px-6 rounded-full hover:bg-opacity-20 transition-colors duration-300 text-center"
+      >
+        Log In
+      </a>
+    </div>
+    <div class="flex space-x-4">
+      <a
+        href="https://twitter.com/future_page_of_the_mic_club"
+        class="text-white hover:text-yellow-400 transition-colors duration-300"
+      >
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+        </svg>
+      </a>
+      <a
+        href="https://instagram.com/incurator"
+        class="text-white hover:text-yellow-400 transition-colors duration-300"
+      >
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill-rule="evenodd"
+            d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
 <% end %>
