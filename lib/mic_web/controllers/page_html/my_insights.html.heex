@@ -1,32 +1,58 @@
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
-  <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
-    <div class="mx-auto max-w-xl lg:mx-0">
-      <h1 class="text-brand mt-10 mb-4 flex items-center text-lg font-semibold leading-6">
-        <%= if @user_settings.response_language == :spanish do %>
-          Perspectivas
-        <% else %>
-          <%= if @user_settings.response_language == :portuguese do %>
-            Perspectivas
-          <% else %>
-            Insights
-          <% end %>
-        <% end %>
+  <section class="py-8">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-white mb-6 flex items-center">
+        <%= case @user_settings.response_language do
+          :spanish -> "Perspectivas"
+          :portuguese -> "Perspectivas"
+          _ -> "Insights"
+        end %>
       </h1>
 
-      <%= if @personalized_resources == "" do %>
-        <p>No personalized content available. Check back later.</p>
+      <%= if Enum.empty?(@personalized_resources) do %>
+        <p class="text-white">No personalized content available. Check back later.</p>
       <% else %>
-        <%= Phoenix.HTML.raw(@personalized_resources) %>
+        <div class="space-y-4 w-full" id="collapsible-sections" phx-hook="CollapsibleSections">
+          <%= for resource <- @personalized_resources do %>
+            <div class="bg-white bg-opacity-10 rounded-xl overflow-hidden w-full">
+              <button
+                type="button"
+                class="collapsible-list w-full text-left px-6 py-4 text-xl font-semibold text-yellow-400 hover:bg-white hover:bg-opacity-5 transition-colors duration-200"
+              >
+                <span class="collapsible-button-content">
+                  <%= resource.subject %>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chevron-down"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </button>
+              <div class="collapsible-content px-4 py-3 text-white">
+                <%= raw(resource.content) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </section>
 <% else %>
-  <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-    <!-- TODO: Add content for guests goes here -->
-  <!-- Include a brief about the artist development program to entice new users to join -->
-    <div class="mx-auto max-w-xl lg:mx-0">
-      <h1 class="text-brand mt-10 flex items-center text-lg font-semibold leading-6">
+  <section class="py-10 sm:py-16 lg:py-24">
+    <div class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+      <!-- TODO: Add content for guests goes here -->
+      <!-- Include a brief about the artist development program to entice new users to join -->
+      <h1 class="text-brand mt-6 flex items-center text-lg font-semibold leading-6">
         Sign up today to get access!
       </h1>
     </div>

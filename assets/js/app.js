@@ -266,18 +266,27 @@ Hooks.VoiceAudioHandlers = {
   }
 };
 
-let collapsibleList = document.getElementsByClassName("collapsible-list");
-for (let i = 0; i < collapsibleList.length; i++) {
-  collapsibleList[i].addEventListener("click", function () {
-    this.classList.toggle("active");
-    let content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  });
-}
+Hooks.CollapsibleSections = {
+  mounted() {
+    const collapsibleList = this.el.querySelectorAll(".collapsible-list");
+    collapsibleList.forEach((collapsible) => {
+      collapsible.addEventListener("click", function () {
+        this.classList.toggle("active");
+        const content = this.parentElement.querySelector(".collapsible-content");
+
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    });
+  },
+  updated() {
+    // Re-attach event listeners if the DOM is updated
+    this.mounted();
+  }
+};
 
 document.addEventListener('click', initAudio);
 
