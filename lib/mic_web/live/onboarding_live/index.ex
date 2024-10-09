@@ -311,12 +311,7 @@ defmodule MicWeb.OnboardingLive.Index do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div
-      id="chatgpt"
-      class="flex"
-      style="height: calc(100vh - 64px); flex-direction: column"
-      phx-hook="VoiceAudioHandlers"
-    >
+    <div id="chatgpt" class="flex flex-col h-full" phx-hook="VoiceAudioHandlers">
       <%= if @profile_generating do %>
         <div class="loading-overlay">
           <div class="loading-spinner"></div>
@@ -324,7 +319,7 @@ defmodule MicWeb.OnboardingLive.Index do
         </div>
       <% end %>
 
-      <div class="mb-32" style="flex-grow: 1;">
+      <div class="flex-grow overflow-y-auto pb-24 bg-gradient-to-b from-black to-transparent rounded-lg">
         <div>
           <.live_component
             module={MicWeb.MessageListComponent}
@@ -347,7 +342,7 @@ defmodule MicWeb.OnboardingLive.Index do
         </div>
       </div>
 
-      <div class="sticky bottom-4 w-ful pt-2">
+      <div class="sticky bottom-4 w-full pt-2">
         <.live_component
           on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
           module={MicWeb.TextboxComponent}

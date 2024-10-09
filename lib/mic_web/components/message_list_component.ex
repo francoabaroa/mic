@@ -8,7 +8,7 @@ defmodule MicWeb.MessageListComponent do
 
   def render(assigns) do
     ~H"""
-    <div class="space-y-4 p-">
+    <div class="space-y-4 p-4">
       <%= for message <- @messages |> Enum.filter(& &1.content != "") do %>
         <.live_component
           module={MessageComponent}
