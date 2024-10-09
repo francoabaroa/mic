@@ -1,7 +1,7 @@
 <.flash_group flash={@flash} />
 <%= if @current_user do %>
   <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
-    <div class="mx-auto max-w-4xl lg:mx-0">
+    <div class="mx-auto max-w-4xl lg:mx-0 text-white">
       <h1 class="mt-2 text-lg font-semibold leading-8">
         <%= if @user_settings.response_language == :spanish do %>
           Embudo Musical: Un camino alternativo para el desarrollo de artistas
@@ -13,7 +13,7 @@
           <% end %>
         <% end %>
       </h1>
-      <p class="mt-4 text-base leading-7 text-zinc-600">
+      <p class="mt-4 text-base leading-7">
         <%= if @user_settings.response_language == :spanish do %>
           Obtén otra oportunidad de ser escuchado y ayudado por expertos de la industria.
         <% else %>
@@ -26,7 +26,7 @@
       </p>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Introducción al Embudo Musical
           <% else %>
@@ -37,7 +37,7 @@
             <% end %>
           <% end %>
         </h2>
-        <ul class="list-disc pl-6 mt-4 text-sm leading-5 text-zinc-600">
+        <ul class="list-disc pl-6 mt-4 text-sm leading-5">
           <li>
             <%= if @user_settings.response_language == :spanish do %>
               Una plataforma que fusiona IA y experiencia en la industria musical, ofreciendo un proceso estructurado de siete pasos para fomentar el desarrollo de músicos.
@@ -67,7 +67,7 @@
               <%= if @user_settings.response_language == :portuguese do %>
                 Alinha-se com as ambições dos artistas usando um modelo de ganhos futuros, garantindo sucesso mútuo sem altas taxas iniciais.
               <% else %>
-                Aligns with artists’ ambitions using a future earnings model, ensuring mutual success with no high upfront fees.
+                Aligns with artists' ambitions using a future earnings model, ensuring mutual success with no high upfront fees.
               <% end %>
             <% end %>
           </li>
@@ -86,7 +86,7 @@
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Los Pasos del Embudo Musical
           <% else %>
@@ -97,7 +97,7 @@
             <% end %>
           <% end %>
         </h2>
-        <ul class="list-decimal pl-6 mt-4 text-sm leading-5 text-zinc-600">
+        <ul class="list-decimal pl-6 mt-4 text-sm leading-5">
           <li>
             <strong><%= if @user_settings.response_language == :spanish do %>
               Envío de Entrada
@@ -242,7 +242,7 @@
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Embudo Musical: Más allá de la Aplicación
           <% else %>
@@ -253,7 +253,7 @@
             <% end %>
           <% end %>
         </h2>
-        <p class="mt-4 text-sm leading-5 text-zinc-600">
+        <p class="mt-4 text-sm leading-5">
           <%= if @user_settings.response_language == :spanish do %>
             Ofreciendo una experiencia holística adaptada a cada artista mientras se equilibra la tecnología y la atención personal para fomentar un entorno propicio para la creatividad.
           <% else %>
@@ -267,7 +267,7 @@
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Calificación para el Embudo Musical
           <% else %>
@@ -278,21 +278,21 @@
             <% end %>
           <% end %>
         </h2>
-        <p class="mt-4 text-sm leading-5 text-zinc-600">
+        <p class="mt-4 text-sm leading-5">
           <%= if @user_settings.response_language == :spanish do %>
             Calificación por mérito a través de picos observables en conteos de streaming, seguidores o reconocimiento de cazatalentos musicales. El acceso a procesos guiados se financia a través de un porcentaje de ganancias futuras.
           <% else %>
             <%= if @user_settings.response_language == :portuguese do %>
               Qualificação por mérito através de picos observáveis em contagens de streaming, seguidores ou reconhecimento de caçadores de talentos musicais. O acesso a processos guiados é financiado através de uma porcentagem dos ganhos futuros.
             <% else %>
-              Qualification by merit through observable spikes in streaming counts, followers, or music scouts’ recognition. Access to guided processes is financed through a percentage of future earnings.
+              Qualification by merit through observable spikes in streaming counts, followers, or music scouts' recognition. Access to guided processes is financed through a percentage of future earnings.
             <% end %>
           <% end %>
         </p>
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Asequibilidad y Monetización
           <% else %>
@@ -303,7 +303,7 @@
             <% end %>
           <% end %>
         </h2>
-        <p class="mt-4 text-sm leading-5 text-zinc-600">
+        <p class="mt-4 text-sm leading-5">
           <%= if @user_settings.response_language == :spanish do %>
             El modelo de participación en regalías que se alinea con el éxito del artista, proporcionando un enfoque rentable con beneficios mutuos.
           <% else %>
@@ -317,7 +317,7 @@
       </div>
 
       <div class="mt-8">
-        <h2 class="text-brand text-md font-semibold leading-6">
+        <h2 class="text-white text-md font-semibold leading-6">
           <%= if @user_settings.response_language == :spanish do %>
             Conclusión
           <% else %>
@@ -328,7 +328,7 @@
             <% end %>
           <% end %>
         </h2>
-        <p class="mt-4 text-sm leading-5 text-zinc-600">
+        <p class="mt-4 text-sm leading-5">
           <%= if @user_settings.response_language == :spanish do %>
             Embudo Musical proporciona una alternativa a las firmas de sellos discográficos tradicionales con un proceso apoyado por IA y liderado por expertos humanos para refinar y promover las carreras de los artistas.
           <% else %>
@@ -342,7 +342,7 @@
       </div>
 
       <div class="mt-8 flex justify-center">
-        <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700">
+        <button class="px-6 py-3 border border-transparent text-base font-medium rounded-md text-purple-900 bg-white shadow-sm hover:bg-gray-100">
           <%= if @user_settings.response_language == :spanish do %>
             Inscríbete en la lista de espera
           <% else %>
@@ -357,9 +357,12 @@
     </div>
   </section>
 <% else %>
-  <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-    <!-- TODO: Add content for guests goes here -->
-  <!-- You can include call-to-action (CTA) for sign-up or registration -->
-  <!-- Include a brief about Music Funnel to entice new users to join -->
+  <section class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32 bg-[#1A237E] text-white relative">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#1A237E] to-[#3949AB] opacity-80"></div>
+    <div class="relative z-10">
+      <!-- TODO: Add content for guests goes here -->
+      <!-- You can include call-to-action (CTA) for sign-up or registration -->
+      <!-- Include a brief about Music Funnel to entice new users to join -->
+    </div>
   </section>
 <% end %>

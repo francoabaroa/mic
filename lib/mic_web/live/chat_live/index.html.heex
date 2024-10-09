@@ -1,18 +1,16 @@
-<div
-  id="chatgpt"
-  class="flex"
-  style="height: calc(100vh - 64px); flex-direction: column"
-  phx-hook="VoiceAudioHandlers"
->
+<div id="chatgpt" class="flex flex-col h-screen rounded-lg" phx-hook="VoiceAudioHandlers">
   <%= if @profile_generating do %>
-    <div class="loading-overlay">
-      <div class="loading-spinner"></div>
-      <p>Generating your profile...</p>
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white bg-opacity-10 backdrop-blur-md rounded-lg p-8 flex flex-col items-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400">
+        </div>
+        <p class="mt-4 text-white font-semibold">Generating your profile...</p>
+      </div>
     </div>
   <% end %>
 
-  <div class="mb-32" style="flex-grow: 1;">
-    <div>
+  <div class="flex-grow overflow-y-auto px-4 py-6">
+    <div class="max-w-3xl mx-auto">
       <.live_component
         module={MicWeb.MessageListComponent}
         messages={@messages ++ [@streaming_message]}
@@ -22,30 +20,32 @@
       />
 
       <%= if Phoenix.Flash.get(@flash, :error) do %>
-        <div class="container mx-auto p-4">
+        <div class="mb-4">
           <AlertComponent.render text={Phoenix.Flash.get(@flash, :error)} />
         </div>
       <% end %>
 
       <%= if @loading do %>
-        <div class="container mx-auto p-4">
-          <LoadingIndicatorComponent.render />
+        <div class="flex justify-center items-center py-4">
+          <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-400">
+          </div>
         </div>
       <% end %>
     </div>
   </div>
 
-  <div class="sticky bottom-4 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2">
-    <!-- TODO: need to fix the passing in of @current_question -->
-    <.live_component
-      on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
-      module={MicWeb.TextboxComponent}
-      assistant_scenario_id={@assistant_scenario_id}
-      current_question={@current_question || true}
-      uploads={@uploads}
-      text={@text}
-      disabled={@loading}
-      id="textbox"
-    />
+  <div class="bg-white bg-opacity-10 backdrop-blur-md border-t border-white border-opacity-20 px-4 py-4">
+    <div class="max-w-3xl mx-auto">
+      <.live_component
+        on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
+        module={MicWeb.TextboxComponent}
+        assistant_scenario_id={@assistant_scenario_id}
+        current_question={@current_question || true}
+        uploads={@uploads}
+        text={@text}
+        disabled={@loading}
+        id="textbox"
+      />
+    </div>
   </div>
 </div>

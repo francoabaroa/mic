@@ -1,378 +1,411 @@
 <.flash_group flash={@flash} />
-<div class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 min-h-screen">
-  <%= if @current_user do %>
-    <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
-      <div class="mx-auto max-w-6xl">
-        <h1 class="text-3xl font-bold text-white mb-8 flex items-center">
-          <%= if @user_settings.response_language == :spanish do %>
-            ¡Bienvenido
+<%= if @current_user do %>
+  <section class="px-4 py-8 sm:px-6 sm:py-8 lg:px-8 xl:px-8 xl:py-8">
+    <div class="mx-auto max-w-6xl">
+      <h1 class="text-3xl font-bold text-white mb-8 flex items-center">
+        <%= if @user_settings.response_language == :spanish do %>
+          ¡Bienvenido
+          <span class="ml-2"><%= @profile_artist_name || @current_user.email %>!</span>
+        <% else %>
+          <%= if @user_settings.response_language == :portuguese do %>
+            Bem-vindo
             <span class="ml-2"><%= @profile_artist_name || @current_user.email %>!</span>
           <% else %>
-            <%= if @user_settings.response_language == :portuguese do %>
-              Bem-vindo
-              <span class="ml-2"><%= @profile_artist_name || @current_user.email %>!</span>
-            <% else %>
-              Welcome
-              <span class="ml-2"><%= @profile_artist_name || @current_user.email %>!</span>
-            <% end %>
+            Welcome <span class="ml-2"><%= @profile_artist_name || @current_user.email %>!</span>
           <% end %>
-        </h1>
-        <%= if @user_has_profile == false do %>
-          <div class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full mb-8">
-            <%= if @user_settings.response_language == :spanish do %>
-              Por favor, crea tu perfil.
-            <% else %>
-              <%= if @user_settings.response_language == :portuguese do %>
-                Por favor, crie seu perfil.
-              <% else %>
-                Please create your profile.
-              <% end %>
-            <% end %>
-          </div>
         <% end %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <%= if @user_has_profile do %>
-            <a
-              href={~p"/chat/distribution-guru"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+      </h1>
+      <%= if @user_has_profile == false do %>
+        <div class="mb-8 space-y-4">
+          <div class="bg-white bg-opacity-10 text-yellow-400 py-3 px-6 rounded-xl shadow-lg flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" /><circle
-                    cx="12"
-                    cy="12"
-                    r="2"
-                  /><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Distribución
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Distribuição
-                    <% else %>
-                      Distribution
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/chat/mental-wellness"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /><path d="M15.8 9.2a2.5 2.5 0 0 0-3.5 0l-.3.4-.35-.3a2.42 2.42 0 1 0-3.2 3.6l3.6 3.5 3.6-3.5c1.2-1.2 1.1-2.7.2-3.7" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Bienestar
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Bem-Estar
-                    <% else %>
-                      Wellness
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/chat/analyze-contract"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M15 8h-5" /><path d="M15 12h-5" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Contratos
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Contratos
-                    <% else %>
-                      Contracts
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/chat/production-expert"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2" /><path d="M6 8h4" /><path d="M14 8h.01" /><path d="M18 8h.01" /><path d="M2 12h20" /><path d="M6 12v4" /><path d="M10 12v4" /><path d="M14 12v4" /><path d="M18 12v4" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Producción
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Produção
-                    <% else %>
-                      Production
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/chat/finance-tips"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Finanzas
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Finanças
-                    <% else %>
-                      Finances
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/educational-hub"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect width="8" height="18" x="3" y="3" rx="1" /><path d="M7 3v18" /><path d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Centro Educativo
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Centro Educação
-                    <% else %>
-                      Educational Hub
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/dashboard"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M3 3v18h18" /><rect width="4" height="7" x="7" y="10" rx="1" /><rect
-                    width="4"
-                    height="12"
-                    x="15"
-                    y="5"
-                    rx="1"
-                  />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Mi Tablero
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Meu Painel
-                    <% else %>
-                      My Dashboard
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-            <a
-              href={~p"/music-funnel"}
-              class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
-            >
-              <span class="flex flex-col items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-8 h-8 mb-4 text-yellow-400"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
-                <span class="text-white font-semibold">
-                  <%= if @user_settings.response_language == :spanish do %>
-                    Embudo de Música
-                  <% else %>
-                    <%= if @user_settings.response_language == :portuguese do %>
-                      Funil de Música
-                    <% else %>
-                      Music Funnel
-                    <% end %>
-                  <% end %>
-                </span>
-              </span>
-            </a>
-          <% else %>
-            <a
-              href={~p"/onboarding"}
-              class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors duration-300"
-            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="text-sm font-medium">
               <%= if @user_settings.response_language == :spanish do %>
-                Crear Perfil
+                Por favor, crea tu perfil para acceder a todas las funciones.
               <% else %>
                 <%= if @user_settings.response_language == :portuguese do %>
-                  Criar Perfil
+                  Por favor, crie seu perfil para acessar todas as funções.
                 <% else %>
-                  Create Profile
+                  Please create your profile to access all features.
                 <% end %>
               <% end %>
+            </span>
+          </div>
+
+          <div class="flex justify-center">
+            <a
+              href={~p"/onboarding"}
+              class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-all duration-300 inline-flex items-center justify-center shadow-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
+              </svg>
+              <span>
+                <%= if @user_settings.response_language == :spanish do %>
+                  Crear Perfil
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Criar Perfil
+                  <% else %>
+                    Create Profile
+                  <% end %>
+                <% end %>
+              </span>
             </a>
-          <% end %>
+          </div>
         </div>
-      </div>
-    </section>
-  <% else %>
-    <div class="flex flex-col items-center justify-center h-screen px-4 sm:px-6 lg:px-8">
-      <svg
-        version="1.0"
-        xmlns="http://www.w3.org/2000/svg"
-        width="112"
-        height="112"
-        viewBox="0 0 612.000000 612.000000"
-        preserveAspectRatio="xMidYMid meet"
-        class="mb-8"
-      >
-        <g
-          transform="translate(0.000000,612.000000) scale(0.100000,-0.100000)"
-          fill="#ffffff"
-          stroke="none"
-        >
-          <path d="M607 5899 c-87 -20 -154 -74 -198 -159 l-24 -45 0 -2570 0 -2570 28 -57 c32 -65 81 -112 146 -141 45 -20 62 -20 2501 -18 2334 2 2457 3 2496 20 58 26 111 77 142 135 l27 51 0 2570 0 2570 -21 46 c-30 63 -79 116 -138 147 l-51 27 -2435 2 c-1401 0 -2451 -3 -2473 -8z m4646 -393 c18 -7 41 -23 52 -36 20 -22 20 -38 23 -2339 3 -2100 1 -2319 -13 -2346 -34 -65 152 -60 -2243 -63 -2404 -2 -2231 -7 -2272 60 -20 33 -20 44 -20 2336 0 2540 -5 2358 62 2387 48 21 4361 22 4411 1z" />
-          <path d="M1632 5078 c-18 -18 -17 -2967 1 -2991 11 -16 37 -17 287 -15 l275 3 8 545 c11 826 3 2435 -13 2455 -11 13 -52 15 -279 15 -194 0 -270 -3 -279 -12z" />
-          <path d="M3932 5077 c-17 -20 -18 -2973 -2 -2992 10 -12 58 -15 274 -15 190 0 265 3 274 12 17 17 17 2979 0 2996 -18 18 -531 17 -546 -1z" />
-          <path d="M2949 5037 c-104 -29 -199 -112 -247 -215 -24 -51 -27 -69 -27 -167 0 -106 1 -112 34 -173 45 -83 133 -164 208 -192 48 -18 74 -21 153 -18 81 3 105 8 162 35 120 56 195 156 220 292 31 163 -82 361 -240 422 -70 27 -197 34 -263 16z" />
-          <path d="M2773 3883 c-10 -4 -13 -194 -13 -903 0 -809 2 -898 16 -904 9 -3 141 -6 294 -6 244 0 279 2 284 16 3 9 6 413 6 898 0 673 -3 885 -12 894 -9 9 -86 12 -287 11 -152 0 -282 -3 -288 -6z" />
-          <path d="M1085 1605 l-25 -24 0 -216 c0 -121 4 -224 10 -235 14 -26 57 -34 86 -15 l24 15 0 235 c0 230 0 234 -22 249 -31 22 -45 20 -73 -9z" />
-          <path d="M1595 1614 c-18 -13 -20 -26 -18 -119 1 -58 -2 -105 -7 -105 -5 0 -57 52 -117 115 -153 164 -147 169 -151 -127 -2 -205 0 -238 14 -252 25 -26 62 -31 84 -11 17 16 20 32 20 122 0 56 4 103 9 103 4 0 31 -26 58 -57 136 -157 191 -199 206 -160 3 6 3 116 0 242 -5 186 -9 233 -21 248 -18 21 -50 22 -77 1z" />
-          <path d="M2329 1609 c-20 -20 -20 -29 -17 -197 3 -165 5 -180 26 -215 64 -102 219 -121 299 -35 45 48 53 87 53 262 l0 165 -27 20 c-17 14 -34 19 -47 15 -42 -12 -46 -30 -46 -199 0 -144 -2 -164 -18 -178 -27 -24 -69 -21 -97 8 -24 23 -25 28 -25 175 0 147 -1 152 -25 175 -30 30 -49 31 -76 4z" />
-          <path d="M1931 1593 c-87 -45 -131 -123 -131 -232 1 -198 227 -322 381 -208 15 10 32 31 38 44 10 22 9 29 -10 49 -32 34 -55 38 -85 15 -37 -29 -84 -35 -127 -17 -95 39 -103 182 -14 236 43 27 87 25 131 -5 33 -22 40 -24 63 -13 38 19 49 41 38 75 -15 42 -102 83 -175 83 -41 0 -70 -7 -109 -27z" />
-          <path d="M2790 1601 c-11 -21 -12 -223 -1 -385 6 -98 7 -100 34 -109 21 -7 34 -5 52 7 20 13 24 25 27 78 2 36 8 63 15 65 7 3 37 -29 67 -71 57 -76 80 -92 116 -81 34 11 35 49 4 102 -44 73 -44 76 -12 95 65 40 88 139 49 216 -40 79 -92 101 -238 102 -91 0 -103 -2 -113 -19z m231 -121 c12 -7 19 -21 19 -40 0 -40 -35 -62 -92 -58 l-43 3 -3 53 -3 52 51 0 c28 0 60 -5 71 -10z" />
-          <path d="M3317 1406 c-53 -119 -99 -226 -103 -240 -12 -48 65 -89 96 -51 7 8 23 34 35 58 l23 42 63 0 c61 0 64 -1 78 -30 7 -16 22 -40 33 -52 42 -45 108 -36 108 15 0 15 -44 126 -99 247 -76 171 -102 221 -118 223 -17 3 -34 -28 -116 -212z m130 -46 c11 -29 10 -30 -17 -30 -27 0 -28 1 -17 30 6 17 14 30 17 30 3 0 11 -13 17 -30z" />
-          <path d="M3622 1608 c-18 -18 -14 -73 6 -91 12 -11 36 -17 70 -17 l52 0 0 -184 c0 -202 2 -209 62 -209 53 0 58 17 58 215 l0 178 49 0 c59 0 81 18 81 65 0 24 -6 38 -19 45 -29 15 -344 13 -359 -2z" />
-          <path d="M4193 1599 c-125 -62 -179 -222 -117 -347 44 -89 131 -142 231 -142 102 1 183 55 229 155 56 120 3 269 -117 328 -69 35 -163 37 -226 6z m197 -134 c57 -54 62 -127 14 -185 -54 -64 -144 -61 -203 5 -52 60 -37 152 32 196 46 29 118 22 157 -16z" />
-          <path d="M4682 1608 c-9 -9 -12 -77 -12 -244 0 -253 0 -254 59 -256 49 -2 61 16 61 88 0 80 16 84 63 17 73 -106 113 -131 157 -95 l23 19 -39 71 -39 72 34 27 c60 48 76 123 42 198 -22 50 -69 91 -119 105 -52 14 -215 13 -230 -2z m232 -134 c19 -18 21 -65 4 -82 -7 -7 -38 -12 -70 -12 l-58 0 0 55 0 55 54 0 c36 0 60 -5 70 -16z" />
-        </g>
-      </svg>
-      <h1 class="text-3xl font-bold text-white mb-4">Welcome to Incurator</h1>
-      <p class="text-xl text-white mb-8 text-center max-w-2xl">
-        Navigate the music industry with confidence, take control of your career, and join the biggest artist community in the world.
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-        <a
-          href="/signup"
-          class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors duration-300 text-center"
-        >
-          Sign Up
-        </a>
-        <a
-          href="/login"
-          class="bg-white bg-opacity-10 text-white font-bold py-3 px-6 rounded-full hover:bg-opacity-20 transition-colors duration-300 text-center"
-        >
-          Log In
-        </a>
-      </div>
-      <div class="flex space-x-4">
-        <a
-          href="https://twitter.com/future_page_of_the_mic_club"
-          class="text-white hover:text-yellow-400 transition-colors duration-300"
-        >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-          </svg>
-        </a>
-        <a
-          href="https://instagram.com/incurator"
-          class="text-white hover:text-yellow-400 transition-colors duration-300"
-        >
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill-rule="evenodd"
-              d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </a>
+      <% end %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <%= if @user_has_profile do %>
+          <a
+            href={~p"/chat/distribution-guru"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" /><circle
+                  cx="12"
+                  cy="12"
+                  r="2"
+                /><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Distribución
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Distribuição
+                  <% else %>
+                    Distribution
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/chat/mental-wellness"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /><path d="M15.8 9.2a2.5 2.5 0 0 0-3.5 0l-.3.4-.35-.3a2.42 2.42 0 1 0-3.2 3.6l3.6 3.5 3.6-3.5c1.2-1.2 1.1-2.7.2-3.7" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Bienestar
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Bem-Estar
+                  <% else %>
+                    Wellness
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/chat/analyze-contract"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" /><path d="M19 17V5a2 2 0 0 0-2-2H4" /><path d="M15 8h-5" /><path d="M15 12h-5" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Contratos
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Contratos
+                  <% else %>
+                    Contracts
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/chat/production-expert"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2" /><path d="M6 8h4" /><path d="M14 8h.01" /><path d="M18 8h.01" /><path d="M2 12h20" /><path d="M6 12v4" /><path d="M10 12v4" /><path d="M14 12v4" /><path d="M18 12v4" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Producción
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Produção
+                  <% else %>
+                    Production
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/chat/finance-tips"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Finanzas
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Finanças
+                  <% else %>
+                    Finances
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/educational-hub"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="8" height="18" x="3" y="3" rx="1" /><path d="M7 3v18" /><path d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Centro Educativo
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Centro Educação
+                  <% else %>
+                    Educational Hub
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/dashboard"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 3v18h18" /><rect width="4" height="7" x="7" y="10" rx="1" /><rect
+                  width="4"
+                  height="12"
+                  x="15"
+                  y="5"
+                  rx="1"
+                />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Mi Tablero
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Meu Painel
+                  <% else %>
+                    My Dashboard
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+          <a
+            href={~p"/music-funnel"}
+            class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg hover:bg-opacity-20 transition-all duration-300"
+          >
+            <span class="flex flex-col items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8 mb-4 text-yellow-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+              <span class="text-white font-semibold">
+                <%= if @user_settings.response_language == :spanish do %>
+                  Embudo de Música
+                <% else %>
+                  <%= if @user_settings.response_language == :portuguese do %>
+                    Funil de Música
+                  <% else %>
+                    Music Funnel
+                  <% end %>
+                <% end %>
+              </span>
+            </span>
+          </a>
+        <% end %>
       </div>
     </div>
-  <% end %>
-</div>
+  </section>
+<% else %>
+  <div class="flex flex-col items-center justify-center h-screen px-4 sm:px-6 lg:px-8">
+    <svg
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="112"
+      height="112"
+      viewBox="0 0 612.000000 612.000000"
+      preserveAspectRatio="xMidYMid meet"
+      class="mb-8"
+    >
+      <g
+        transform="translate(0.000000,612.000000) scale(0.100000,-0.100000)"
+        fill="#ffffff"
+        stroke="none"
+      >
+        <path d="M607 5899 c-87 -20 -154 -74 -198 -159 l-24 -45 0 -2570 0 -2570 28 -57 c32 -65 81 -112 146 -141 45 -20 62 -20 2501 -18 2334 2 2457 3 2496 20 58 26 111 77 142 135 l27 51 0 2570 0 2570 -21 46 c-30 63 -79 116 -138 147 l-51 27 -2435 2 c-1401 0 -2451 -3 -2473 -8z m4646 -393 c18 -7 41 -23 52 -36 20 -22 20 -38 23 -2339 3 -2100 1 -2319 -13 -2346 -34 -65 152 -60 -2243 -63 -2404 -2 -2231 -7 -2272 60 -20 33 -20 44 -20 2336 0 2540 -5 2358 62 2387 48 21 4361 22 4411 1z" />
+        <path d="M1632 5078 c-18 -18 -17 -2967 1 -2991 11 -16 37 -17 287 -15 l275 3 8 545 c11 826 3 2435 -13 2455 -11 13 -52 15 -279 15 -194 0 -270 -3 -279 -12z" />
+        <path d="M3932 5077 c-17 -20 -18 -2973 -2 -2992 10 -12 58 -15 274 -15 190 0 265 3 274 12 17 17 17 2979 0 2996 -18 18 -531 17 -546 -1z" />
+        <path d="M2949 5037 c-104 -29 -199 -112 -247 -215 -24 -51 -27 -69 -27 -167 0 -106 1 -112 34 -173 45 -83 133 -164 208 -192 48 -18 74 -21 153 -18 81 3 105 8 162 35 120 56 195 156 220 292 31 163 -82 361 -240 422 -70 27 -197 34 -263 16z" />
+        <path d="M2773 3883 c-10 -4 -13 -194 -13 -903 0 -809 2 -898 16 -904 9 -3 141 -6 294 -6 244 0 279 2 284 16 3 9 6 413 6 898 0 673 -3 885 -12 894 -9 9 -86 12 -287 11 -152 0 -282 -3 -288 -6z" />
+        <path d="M1085 1605 l-25 -24 0 -216 c0 -121 4 -224 10 -235 14 -26 57 -34 86 -15 l24 15 0 235 c0 230 0 234 -22 249 -31 22 -45 20 -73 -9z" />
+        <path d="M1595 1614 c-18 -13 -20 -26 -18 -119 1 -58 -2 -105 -7 -105 -5 0 -57 52 -117 115 -153 164 -147 169 -151 -127 -2 -205 0 -238 14 -252 25 -26 62 -31 84 -11 17 16 20 32 20 122 0 56 4 103 9 103 4 0 31 -26 58 -57 136 -157 191 -199 206 -160 3 6 3 116 0 242 -5 186 -9 233 -21 248 -18 21 -50 22 -77 1z" />
+        <path d="M2329 1609 c-20 -20 -20 -29 -17 -197 3 -165 5 -180 26 -215 64 -102 219 -121 299 -35 45 48 53 87 53 262 l0 165 -27 20 c-17 14 -34 19 -47 15 -42 -12 -46 -30 -46 -199 0 -144 -2 -164 -18 -178 -27 -24 -69 -21 -97 8 -24 23 -25 28 -25 175 0 147 -1 152 -25 175 -30 30 -49 31 -76 4z" />
+        <path d="M1931 1593 c-87 -45 -131 -123 -131 -232 1 -198 227 -322 381 -208 15 10 32 31 38 44 10 22 9 29 -10 49 -32 34 -55 38 -85 15 -37 -29 -84 -35 -127 -17 -95 39 -103 182 -14 236 43 27 87 25 131 -5 33 -22 40 -24 63 -13 38 19 49 41 38 75 -15 42 -102 83 -175 83 -41 0 -70 -7 -109 -27z" />
+        <path d="M2790 1601 c-11 -21 -12 -223 -1 -385 6 -98 7 -100 34 -109 21 -7 34 -5 52 7 20 13 24 25 27 78 2 36 8 63 15 65 7 3 37 -29 67 -71 57 -76 80 -92 116 -81 34 11 35 49 4 102 -44 73 -44 76 -12 95 65 40 88 139 49 216 -40 79 -92 101 -238 102 -91 0 -103 -2 -113 -19z m231 -121 c12 -7 19 -21 19 -40 0 -40 -35 -62 -92 -58 l-43 3 -3 53 -3 52 51 0 c28 0 60 -5 71 -10z" />
+        <path d="M3317 1406 c-53 -119 -99 -226 -103 -240 -12 -48 65 -89 96 -51 7 8 23 34 35 58 l23 42 63 0 c61 0 64 -1 78 -30 7 -16 22 -40 33 -52 42 -45 108 -36 108 15 0 15 -44 126 -99 247 -76 171 -102 221 -118 223 -17 3 -34 -28 -116 -212z m130 -46 c11 -29 10 -30 -17 -30 -27 0 -28 1 -17 30 6 17 14 30 17 30 3 0 11 -13 17 -30z" />
+        <path d="M3622 1608 c-18 -18 -14 -73 6 -91 12 -11 36 -17 70 -17 l52 0 0 -184 c0 -202 2 -209 62 -209 53 0 58 17 58 215 l0 178 49 0 c59 0 81 18 81 65 0 24 -6 38 -19 45 -29 15 -344 13 -359 -2z" />
+        <path d="M4193 1599 c-125 -62 -179 -222 -117 -347 44 -89 131 -142 231 -142 102 1 183 55 229 155 56 120 3 269 -117 328 -69 35 -163 37 -226 6z m197 -134 c57 -54 62 -127 14 -185 -54 -64 -144 -61 -203 5 -52 60 -37 152 32 196 46 29 118 22 157 -16z" />
+        <path d="M4682 1608 c-9 -9 -12 -77 -12 -244 0 -253 0 -254 59 -256 49 -2 61 16 61 88 0 80 16 84 63 17 73 -106 113 -131 157 -95 l23 19 -39 71 -39 72 34 27 c60 48 76 123 42 198 -22 50 -69 91 -119 105 -52 14 -215 13 -230 -2z m232 -134 c19 -18 21 -65 4 -82 -7 -7 -38 -12 -70 -12 l-58 0 0 55 0 55 54 0 c36 0 60 -5 70 -16z" />
+      </g>
+    </svg>
+    <h1 class="text-3xl font-bold text-white mb-4">Welcome to Incurator</h1>
+    <p class="text-xl text-white mb-8 text-center max-w-2xl">
+      Navigate the music industry with confidence, take control of your career, and join the biggest artist community in the world.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <a
+        href="/users/register"
+        class="bg-yellow-400 text-indigo-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors duration-300 text-center"
+      >
+        Sign Up
+      </a>
+      <a
+        href="/users/log_in"
+        class="bg-white bg-opacity-10 text-white font-bold py-3 px-6 rounded-full hover:bg-opacity-20 transition-colors duration-300 text-center"
+      >
+        Log In
+      </a>
+    </div>
+    <div class="flex space-x-4">
+      <a
+        href="https://twitter.com/future_page_of_the_mic_club"
+        class="text-white hover:text-yellow-400 transition-colors duration-300"
+      >
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+        </svg>
+      </a>
+      <a
+        href="https://instagram.com/incurator"
+        class="text-white hover:text-yellow-400 transition-colors duration-300"
+      >
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill-rule="evenodd"
+            d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+<% end %>

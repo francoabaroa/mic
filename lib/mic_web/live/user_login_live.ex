@@ -3,7 +3,7 @@ defmodule MicWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm bg-white p-8 rounded-lg shadow-md">
       <.header class="text-center">
         Sign in to account
         <:subtitle>
@@ -20,8 +20,11 @@ defmodule MicWeb.UserLoginLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
+          <.input field={@form[:remember_me]} type="checkbox" label="Stay logged in" />
+          <.link
+            href={~p"/users/reset_password"}
+            class="text-sm font-semibold text-brand hover:underline"
+          >
             Forgot your password?
           </.link>
         </:actions>

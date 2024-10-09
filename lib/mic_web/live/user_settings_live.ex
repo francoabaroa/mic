@@ -5,99 +5,175 @@ defmodule MicWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      Account Settings
-      <:subtitle>Manage your account email address, password, and response settings</:subtitle>
-    </.header>
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl font-bold text-white mb-8 text-center">Account Settings</h1>
+      <p class="text-xl text-white mb-12 text-center">
+        Manage your account email address, password, and response settings
+      </p>
 
-    <div class="space-y-12 divide-y">
-      <div>
-        <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
-        >
-          <.input field={@email_form[:email]} type="email" label="Email" required />
-          <.input
-            field={@email_form[:current_password]}
-            name="current_password"
-            id="current_password_for_email"
-            type="password"
-            label="Current password"
-            value={@email_form_current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/log_in?_action=password_updated"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <.input
-            field={@password_form[:email]}
-            type="hidden"
-            id="hidden_user_email"
-            value={@current_email}
-          />
-          <.input field={@password_form[:password]} type="password" label="New password" required />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label="Confirm new password"
-          />
-          <.input
-            field={@password_form[:current_password]}
-            name="current_password"
-            type="password"
-            label="Current password"
-            id="current_password_for_password"
-            value={@current_password}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Changing...">Change Password</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@settings_form}
-          id="settings_form"
-          phx-submit="update_settings"
-          phx-change="validate_settings"
-        >
-          <.input
-            field={@settings_form[:response_language]}
-            type="select"
-            label="Response language"
-            options={[{"English", :english}, {"Spanish", :spanish}, {"Portuguese", :portuguese}]}
-            value={@current_settings.response_language}
-            required
-          />
-          <.input
-            field={@settings_form[:response_answer_detail]}
-            type="select"
-            label="Response answer detail"
-            options={[
-              {"Brief", :brief},
-              {"Super Brief", :super_brief},
-              {"Detailed", :detailed},
-              {"Normal", :normal}
-            ]}
-            value={@current_settings.response_answer_detail}
-            required
-          />
-          <%!-- <.input
+      <div class="space-y-12">
+        <div class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg">
+          <h2 class="text-2xl font-semibold text-white mb-6">Change Email</h2>
+          <.form
+            for={@email_form}
+            id="email_form"
+            phx-submit="update_email"
+            phx-change="validate_email"
+            class="space-y-4"
+          >
+            <div>
+              <label for="email" class="block text-sm font-medium text-white">Email</label>
+              <input
+                type="email"
+                name="user[email]"
+                id="email"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              />
+            </div>
+            <div>
+              <label for="current_password_for_email" class="block text-sm font-medium text-white">
+                Current password
+              </label>
+              <input
+                type="password"
+                name="current_password"
+                id="current_password_for_email"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-900 bg-yellow-400 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            >
+              Change Email
+            </button>
+          </.form>
+        </div>
+
+        <div class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg">
+          <h2 class="text-2xl font-semibold text-white mb-6">Change Password</h2>
+          <.form
+            for={@password_form}
+            id="password_form"
+            action={~p"/users/log_in?_action=password_updated"}
+            method="post"
+            phx-change="validate_password"
+            phx-submit="update_password"
+            phx-trigger-action={@trigger_submit}
+            class="space-y-4"
+          >
+            <input type="hidden" name="user[email]" id="hidden_user_email" value={@current_email} />
+            <div>
+              <label for="password" class="block text-sm font-medium text-white">
+                New password
+              </label>
+              <input
+                type="password"
+                name="user[password]"
+                id="password"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              />
+            </div>
+            <div>
+              <label for="password_confirmation" class="block text-sm font-medium text-white">
+                Confirm new password
+              </label>
+              <input
+                type="password"
+                name="user[password_confirmation]"
+                id="password_confirmation"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              />
+            </div>
+            <div>
+              <label for="current_password_for_password" class="block text-sm font-medium text-white">
+                Current password
+              </label>
+              <input
+                type="password"
+                name="current_password"
+                id="current_password_for_password"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-900 bg-yellow-400 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            >
+              Change Password
+            </button>
+          </.form>
+        </div>
+
+        <div class="bg-white bg-opacity-10 rounded-xl p-6 shadow-lg">
+          <h2 class="text-2xl font-semibold text-white mb-6">Response Settings</h2>
+          <.form
+            for={@settings_form}
+            id="settings_form"
+            phx-submit="update_settings"
+            phx-change="validate_settings"
+            class="space-y-4"
+          >
+            <div>
+              <label for="response_language" class="block text-sm font-medium text-white">
+                Response language
+              </label>
+              <select
+                name="settings[response_language]"
+                id="response_language"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              >
+                <option value="english" selected={@current_settings.response_language == :english}>
+                  English
+                </option>
+                <option value="spanish" selected={@current_settings.response_language == :spanish}>
+                  Spanish
+                </option>
+                <option
+                  value="portuguese"
+                  selected={@current_settings.response_language == :portuguese}
+                >
+                  Portuguese
+                </option>
+              </select>
+            </div>
+            <div>
+              <label for="response_answer_detail" class="block text-sm font-medium text-white">
+                Response answer detail
+              </label>
+              <select
+                name="settings[response_answer_detail]"
+                id="response_answer_detail"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              >
+                <option value="brief" selected={@current_settings.response_answer_detail == :brief}>
+                  Brief
+                </option>
+                <option
+                  value="super_brief"
+                  selected={@current_settings.response_answer_detail == :super_brief}
+                >
+                  Super Brief
+                </option>
+                <option
+                  value="detailed"
+                  selected={@current_settings.response_answer_detail == :detailed}
+                >
+                  Detailed
+                </option>
+                <option value="normal" selected={@current_settings.response_answer_detail == :normal}>
+                  Normal
+                </option>
+              </select>
+            </div>
+            <%!-- <.input
             field={@settings_form[:response_answer_style]}
             type="select"
             label="Response answer style"
@@ -105,18 +181,32 @@ defmodule MicWeb.UserSettingsLive do
             value={@current_settings.response_answer_style}
             required
           /> --%>
-          <.input
-            field={@settings_form[:response_medium]}
-            type="select"
-            label="Response medium"
-            options={[{"Text", :text}, {"Voice", :voice}]}
-            value={@current_settings.response_medium}
-            required
-          />
-          <:actions>
-            <.button phx-disable-with="Saving...">Change Response Settings</.button>
-          </:actions>
-        </.simple_form>
+            <div>
+              <label for="response_medium" class="block text-sm font-medium text-white">
+                Response medium
+              </label>
+              <select
+                name="settings[response_medium]"
+                id="response_medium"
+                required
+                class="mt-1 block w-full rounded-md bg-white bg-opacity-20 border-transparent focus:border-white focus:bg-opacity-30 focus:ring-0 text-white"
+              >
+                <option value="text" selected={@current_settings.response_medium == :text}>
+                  Text
+                </option>
+                <option value="voice" selected={@current_settings.response_medium == :voice}>
+                  Voice
+                </option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-900 bg-yellow-400 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+            >
+              Change Response Settings
+            </button>
+          </.form>
+        </div>
       </div>
     </div>
     """

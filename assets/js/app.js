@@ -108,7 +108,25 @@ Hooks.CommentsChart = {
           }
         ]
       },
-      options: {}
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white'
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          },
+          y: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          }
+        },
+      }
     });
     this.handleEvent("comments", ({ comments }) => {
       this.chart.data.datasets[0].data = comments;
@@ -133,7 +151,25 @@ Hooks.ListenersChart = {
           }
         ]
       },
-      options: {}
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white'
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          },
+          y: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          }
+        }
+      }
     });
     this.handleEvent("listeners", ({ listeners }) => {
       this.chart.data.datasets[0].data = listeners;
@@ -158,7 +194,25 @@ Hooks.LikesChart = {
           },
         ]
       },
-      options: {}
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white'
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          },
+          y: {
+            ticks: { color: 'white' },
+            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+          }
+        }
+      }
     });
     this.handleEvent("likes", ({ likes }) => {
       this.chart.data.datasets[0].data = likes;

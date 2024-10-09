@@ -347,7 +347,7 @@ defmodule MicWeb.OnboardingLive.Index do
         </div>
       </div>
 
-      <div class="sticky bottom-4 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2">
+      <div class="sticky bottom-4 w-ful pt-2">
         <.live_component
           on_submit={fn val -> Process.send(self(), {:msg_submit, val, false, nil}, []) end}
           module={MicWeb.TextboxComponent}

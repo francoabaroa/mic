@@ -503,7 +503,12 @@ defmodule MicWeb.ChatLive.Index do
 
           {:error, reason} ->
             Logger.error("Chat Completions DOB Struct Error: #{inspect(reason)}")
+            nil
         end
+
+      {:error, reason} ->
+        Logger.error("Failed to generate ISO 8601 date string: #{inspect(reason)}")
+        nil
     end
   end
 

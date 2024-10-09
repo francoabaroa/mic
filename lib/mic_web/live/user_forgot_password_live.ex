@@ -5,7 +5,7 @@ defmodule MicWeb.UserForgotPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm bg-white p-8 rounded-lg shadow-md">
       <.header class="text-center">
         Forgot your password?
         <:subtitle>We'll send a password reset link to your inbox</:subtitle>
