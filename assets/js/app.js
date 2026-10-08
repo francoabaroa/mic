@@ -49,7 +49,8 @@ function fetchAndDecodeAudio(base64Data) {
         playBuffer();
       }
     })
-    .catch(err => console.error('Error with decoding audio:', err));
+    .catch(err => console.error('Error with decoding audio:', err))
+    .finally(() => URL.revokeObjectURL(url));
 }
 
 function playBuffer() {
