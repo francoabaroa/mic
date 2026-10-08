@@ -49,7 +49,8 @@ function fetchAndDecodeAudio(base64Data) {
         playBuffer();
       }
     })
-    .catch(err => console.error('Error with decoding audio:', err));
+    .catch(err => console.error('Error with decoding audio:', err))
+    .finally(() => URL.revokeObjectURL(url));
 }
 
 function playBuffer() {
@@ -132,6 +133,9 @@ Hooks.CommentsChart = {
       this.chart.data.datasets[0].data = comments;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
@@ -175,6 +179,9 @@ Hooks.ListenersChart = {
       this.chart.data.datasets[0].data = listeners;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
@@ -218,6 +225,9 @@ Hooks.LikesChart = {
       this.chart.data.datasets[0].data = likes;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
