@@ -60,3 +60,19 @@ for (const [name, options] of [
     assert.deepEqual(revoked, ["blob:test"]);
   });
 }
+
+for (const name of ["CommentsChart", "ListenersChart", "LikesChart"]) {
+  test(`${name} releases each chart when its LiveView hook is removed`, () => {
+    const { context, charts } = loadApp();
+    const hook = vm.runInContext(`Hooks.${name}`, context);
+    for (let navigation = 0; navigation < 3; navigation++) {
+      const instance = { el: { getContext: () => ({}) }, handleEvent() {} };
+      hook.mounted.call(instance);
+      assert.equal(instance.chart.destroyed, false);
+      hook.destroyed.call(instance);
+      assert.equal(instance.chart.destroyed, true);
+    }
+    assert.equal(charts.length, 3);
+    assert.ok(charts.every(chart => chart.destroyed));
+  });
+}

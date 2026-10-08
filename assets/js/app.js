@@ -133,6 +133,9 @@ Hooks.CommentsChart = {
       this.chart.data.datasets[0].data = comments;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
@@ -176,6 +179,9 @@ Hooks.ListenersChart = {
       this.chart.data.datasets[0].data = listeners;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
@@ -219,6 +225,9 @@ Hooks.LikesChart = {
       this.chart.data.datasets[0].data = likes;
       this.chart.update();
     });
+  },
+  destroyed() {
+    this.chart.destroy();
   }
 }
 
