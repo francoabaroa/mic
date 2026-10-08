@@ -50,7 +50,7 @@
    callers to sanitize untrusted output; escaping is not a sanitizer. Its package
    is now retired. Do not replace rich content with plaintext as a silent change.
    Reference: https://earmark.hexdocs.pm/1.4.46/Earmark.html#module-security
-3. **High, planned — password byte boundaries:** `accounts/user.ex:61,75,140`:
+3. **High, fixed — password byte boundaries:** `accounts/user.ex:61,75,140`:
    byte validation happens inside the hash pipeline after the validity check;
    validation-only forms omit it and verification accepts oversized inputs.
    Reference: https://bcrypt-elixir.hexdocs.pm/3.1.0/Bcrypt.html
@@ -83,7 +83,7 @@
     (`page_controller.ex:66`); dashboard assumes a profile, hardcodes artist 3963,
     and labels followers/views as likes/comments. Chartmetric search double-decodes
     JSON (`artists/chartmetric.ex`). Resolve intended data presentation first.
-11. **Low, planned — browser cleanup:** playback blob URLs and chart instances in
+11. **Low, fixed — browser cleanup:** playback blob URLs and chart instances in
     `assets/js/app.js` are never released. Small lifecycle fixes, no new packages.
 12. **Low, deferred — dead code and state helpers:** MessageStore has no callers,
     reverses initial history and allocates IDs non-atomically; Anthropic message
@@ -95,5 +95,61 @@
 
 ## Validation and outcomes
 
-Pending. Baseline host build fails in Credo 1.7.5 with Regex.CompileError on OTP 28;
-an installed OTP 27 runtime is being checked without changing project dependencies.
+Baseline: `5d50c9910c6a107cfcc892d209378998e9324324`; branch:
+`codex/quick-wins-audit`. Source references above are relative to `lib/mic` for
+contexts and `lib/mic_web` for web modules; line numbers describe the surveyed base.
+
+Committed fixes:
+
+- `0d53b23`: enforce the 72-byte bcrypt limit before hashing and in form validation,
+  and reject login suffixes beyond the supported limit. Three regression tests
+  failed on the original code and pass after the change, using real Ecto and bcrypt.
+- `e7de92c`: release playback blob URLs after success, fetch failure or decode
+  failure. Three regression tests failed before the fix and pass afterward.
+- `16cb243`: destroy all three chart instances on LiveView hook teardown. Three
+  lifecycle tests failed before the fix and pass afterward, including repeated mounts.
+
+Validation performed:
+
+- `npm test --prefix assets`: **6 passed**. Browser APIs are doubles, not a real
+  browser/device test. The actual JavaScript entry point is evaluated in a VM with
+  imports removed; production import resolution is separately checked by bundling.
+- Password regression tests: **3 passed**, loaded directly with ExUnit and the
+  locked, compiled Ecto/bcrypt dependencies, without starting the full application:
+
+  ```sh
+  elixir -pa '_build/dev/lib/*/ebin' -r lib/mic/accounts/user.ex -e 'Application.ensure_all_started(:bcrypt_elixir); Application.put_env(:bcrypt_elixir, :log_rounds, 4); ExUnit.start(); Code.require_file("test/mic/accounts/user_password_test.exs")'
+  ```
+
+- JavaScript bundle: **passed**, esbuild **0.17.11**, with the `config/config.exs`
+  target, external paths, and dependencies. CSS bundle: **passed**, Tailwind
+  **3.3.2**, using the project config and assets dependencies. Compilers were
+  installed under `/tmp/mic-build-tools`; output is in ignored `priv/static/assets`.
+  From `assets/`, the equivalent commands are:
+
+  ```sh
+  NODE_PATH=../deps /tmp/mic-build-tools/node_modules/.bin/esbuild js/app.js --bundle --target=es2017 --outdir=../priv/static/assets '--external:/fonts/*' '--external:/images/*'
+  /tmp/mic-build-tools/node_modules/.bin/tailwindcss --config=tailwind.config.js --input=css/app.css --output=../priv/static/assets/app.css
+  ```
+
+- `git diff --check`: **passed**.
+- Full build (`mix compile`): **blocked before app compilation**, baseline Credo
+  1.7.5 raises `Regex.CompileError: invalid range in character class at position 16`
+  in `lib/credo/check/config_comment_finder.ex:9` under host OTP 28/Elixir 1.18.4.
+- Full suite (`MIX_BUILD_PATH=_build/dev mix test`): **blocked by the same error**;
+  no full-suite pass is claimed. This preserves reuse of downloaded/compiled deps;
+  it does not bypass tests. Standard `mix assets.build` and project formatter check
+  also stop at that dependency.
+- An apparent `erlang@27` installation also reports OTP 28. An alternate build
+  attempt hit Erlang dependency compilation errors; production-mode reuse of
+  partial artifacts also failed. Neither is presented as a new application defect.
+- Confirmed the HTML concern locally: Earmark 1.4.46 preserves both a script block
+  and a Markdown `javascript:` link in generated HTML. This matches its security
+  documentation and is not merely a deprecated-API suspicion.
+
+No fix was reverted: each retained change has direct passing regression coverage.
+No dependency version, existing database, deployment, or provider configuration was
+changed. No production or external app operations ran. Larger repairs are deferred
+in the ordered ledger above. The overall request's green full-build/full-suite gate
+remains **unmet**; restoring a reproducible runtime and the stale integration suite
+is required before this branch can be called fully validated for release.
